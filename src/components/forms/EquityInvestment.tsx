@@ -2,9 +2,10 @@
 import React from 'react';
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { FormData } from '@/pages/Index';
+import FinancialTooltip from '@/components/ui/FinancialTooltip';
 
 interface EquityInvestmentProps {
   formData: FormData;
@@ -22,81 +23,112 @@ const EquityInvestment: React.FC<EquityInvestmentProps> = ({ formData, setFormDa
 
   return (
     <div className="space-y-6">
+      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+        <h3 className="font-medium text-blue-800 mb-2">Let's Find Your Perfect Equity Match</h3>
+        <p className="text-sm text-blue-700">
+          Share your equity funding details and we'll connect you with investors who align with your vision and growth stage.
+        </p>
+      </div>
+
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="space-y-2">
-          <Label htmlFor="raiseAmount" className="text-sm font-medium text-gray-700">
-            Amount you're looking to raise ($) *
-          </Label>
+          <FinancialTooltip 
+            term="Raise Amount" 
+            definition="The total amount of equity funding you're seeking in this round. This should align with your business plan and growth objectives for the next 12-18 months."
+          >
+            <Label htmlFor="raiseAmount" className="text-sm font-medium text-gray-700">
+              Amount you're looking to raise ($) *
+            </Label>
+          </FinancialTooltip>
           <Input
             id="raiseAmount"
             value={formData.raiseAmount}
             onChange={(e) => handleInputChange('raiseAmount', e.target.value)}
-            placeholder="e.g., 2,000,000"
+            placeholder="e.g., $2,000,000"
             required
             className="border-gray-300 focus:border-red-500 focus:ring-red-500"
           />
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="plannedValuation" className="text-sm font-medium text-gray-700">
-            Planned valuation or cap ($)
-          </Label>
+          <FinancialTooltip 
+            term="Valuation/Cap" 
+            definition="Your company's estimated value (pre-money valuation) or the maximum valuation at which convertible securities will convert to equity (valuation cap)."
+          >
+            <Label htmlFor="plannedValuation" className="text-sm font-medium text-gray-700">
+              Planned valuation or cap ($)
+            </Label>
+          </FinancialTooltip>
           <Input
             id="plannedValuation"
             value={formData.plannedValuation}
             onChange={(e) => handleInputChange('plannedValuation', e.target.value)}
-            placeholder="e.g., 10,000,000"
+            placeholder="e.g., $10,000,000"
             className="border-gray-300 focus:border-red-500 focus:ring-red-500"
           />
         </div>
+      </div>
 
-        <div className="space-y-2 md:col-span-2">
-          <Label htmlFor="useOfFunds" className="text-sm font-medium text-gray-700">
-            Use of funds *
-          </Label>
-          <Select value={formData.useOfFunds} onValueChange={(value) => handleInputChange('useOfFunds', value)}>
-            <SelectTrigger className="border-gray-300 focus:border-red-500 focus:ring-red-500">
-              <SelectValue placeholder="Select use of funds" />
-            </SelectTrigger>
-            <SelectContent className="bg-white">
-              <SelectItem value="long-term-wc">Long Term Working Capital (&gt; 12 months to finance Growth/Expansion/Acquisition)</SelectItem>
-              <SelectItem value="short-term-saas">Short Term Working Capital (&lt; 12 months to finance Subscription/SaaS/Unearned Revenue)</SelectItem>
-              <SelectItem value="short-term-ar">Short Term Working Capital (&lt; 12 months to finance AR/Inventory/Invoice/PO)</SelectItem>
-              <SelectItem value="capex-general">CapEX - General</SelectItem>
-              <SelectItem value="capex-specialty">CapEx - Specialty Equipment</SelectItem>
-              <SelectItem value="capex-it">CapEx - IT Equipment</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
+      <div className="space-y-2">
+        <Label htmlFor="useOfFunds" className="text-sm font-medium text-gray-700">
+          Primary use of funds *
+        </Label>
+        <Select value={formData.useOfFunds} onValueChange={(value) => handleInputChange('useOfFunds', value)}>
+          <SelectTrigger className="border-gray-300 focus:border-red-500 focus:ring-red-500">
+            <SelectValue placeholder="Select how you'll use the funding" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="growth">Growth & Expansion (hiring, marketing, new markets)</SelectItem>
+            <SelectItem value="product">Product Development & R&D</SelectItem>
+            <SelectItem value="working-capital">Working Capital & Operations</SelectItem>
+            <SelectItem value="acquisition">Strategic Acquisitions</SelectItem>
+            <SelectItem value="equipment">Equipment & Infrastructure</SelectItem>
+            <SelectItem value="inventory">Inventory & Supply Chain</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
 
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="space-y-2">
-          <Label htmlFor="lastTwelveRevenue" className="text-sm font-medium text-gray-700">
-            Last 12 mo revenue (ARR/MRR) ($) *
-          </Label>
+          <FinancialTooltip 
+            term="ARR/MRR" 
+            definition="Annual Recurring Revenue (ARR) or Monthly Recurring Revenue (MRR). This shows your predictable, subscription-based revenue streams."
+          >
+            <Label htmlFor="lastTwelveRevenue" className="text-sm font-medium text-gray-700">
+              Last 12 months revenue (ARR/MRR) ($) *
+            </Label>
+          </FinancialTooltip>
           <Input
             id="lastTwelveRevenue"
             value={formData.lastTwelveRevenue}
             onChange={(e) => handleInputChange('lastTwelveRevenue', e.target.value)}
-            placeholder="e.g., 1,200,000"
+            placeholder="e.g., $1,200,000"
             required
             className="border-gray-300 focus:border-red-500 focus:ring-red-500"
           />
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="growthRate" className="text-sm font-medium text-gray-700">
-            Growth rate (% MoM or YoY) *
-          </Label>
+          <FinancialTooltip 
+            term="Growth Rate" 
+            definition="Your revenue growth rate, typically expressed as Month-over-Month (MoM) or Year-over-Year (YoY) percentage increase."
+          >
+            <Label htmlFor="growthRate" className="text-sm font-medium text-gray-700">
+              Growth rate (% MoM or YoY) *
+            </Label>
+          </FinancialTooltip>
           <Input
             id="growthRate"
             value={formData.growthRate}
             onChange={(e) => handleInputChange('growthRate', e.target.value)}
-            placeholder="e.g., 15% MoM"
+            placeholder="e.g., 15% MoM or 180% YoY"
             required
             className="border-gray-300 focus:border-red-500 focus:ring-red-500"
           />
         </div>
+      </div>
 
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="space-y-2">
           <Label htmlFor="customersUsers" className="text-sm font-medium text-gray-700">
             Number of customers/users *
@@ -105,43 +137,69 @@ const EquityInvestment: React.FC<EquityInvestmentProps> = ({ formData, setFormDa
             id="customersUsers"
             value={formData.customersUsers}
             onChange={(e) => handleInputChange('customersUsers', e.target.value)}
-            placeholder="e.g., 50,000"
+            placeholder="e.g., 15,000 users"
             required
             className="border-gray-300 focus:border-red-500 focus:ring-red-500"
           />
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="grossMargin" className="text-sm font-medium text-gray-700">
-            Gross margin (%) *
-          </Label>
+          <FinancialTooltip 
+            term="Gross Margin" 
+            definition="The percentage of revenue remaining after subtracting the cost of goods sold (COGS). Higher margins indicate better unit economics and scalability."
+          >
+            <Label htmlFor="grossMargin" className="text-sm font-medium text-gray-700">
+              Gross margin (%) *
+            </Label>
+          </FinancialTooltip>
           <Input
             id="grossMargin"
             value={formData.grossMargin}
             onChange={(e) => handleInputChange('grossMargin', e.target.value)}
-            placeholder="e.g., 75"
+            placeholder="e.g., 75%"
             required
             className="border-gray-300 focus:border-red-500 focus:ring-red-500"
           />
         </div>
+      </div>
 
-        <div className="space-y-2">
+      <div className="space-y-2">
+        <FinancialTooltip 
+          term="Burn Rate & Runway" 
+          definition="Burn rate is how much cash you spend per month. Runway is how many months of operating expenses you can cover with current cash reserves."
+        >
           <Label htmlFor="burnRate" className="text-sm font-medium text-gray-700">
-            Burn rate & runway (months) *
+            Monthly burn rate & runway (months) *
           </Label>
-          <Input
-            id="burnRate"
-            value={formData.burnRate}
-            onChange={(e) => handleInputChange('burnRate', e.target.value)}
-            placeholder="e.g., $100k/month, 18 months runway"
-            required
-            className="border-gray-300 focus:border-red-500 focus:ring-red-500"
-          />
-        </div>
+        </FinancialTooltip>
+        <Input
+          id="burnRate"
+          value={formData.burnRate}
+          onChange={(e) => handleInputChange('burnRate', e.target.value)}
+          placeholder="e.g., $150k/month, 12 months runway"
+          required
+          className="border-gray-300 focus:border-red-500 focus:ring-red-500"
+        />
+      </div>
 
+      <div className="space-y-2">
+        <Label htmlFor="foundersInfo" className="text-sm font-medium text-gray-700">
+          Founders' names, titles & LinkedIn URLs
+        </Label>
+        <Textarea
+          id="foundersInfo"
+          value={formData.foundersInfo}
+          onChange={(e) => handleInputChange('foundersInfo', e.target.value)}
+          placeholder="e.g., John Smith, CEO - linkedin.com/in/johnsmith; Jane Doe, CTO - linkedin.com/in/janedoe"
+          className="border-gray-300 focus:border-red-500 focus:ring-red-500"
+          rows={3}
+        />
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="space-y-2">
           <Label htmlFor="headcount" className="text-sm font-medium text-gray-700">
-            Full time employees (headcount) *
+            Full-time employees (headcount) *
           </Label>
           <Input
             id="headcount"
@@ -149,33 +207,6 @@ const EquityInvestment: React.FC<EquityInvestmentProps> = ({ formData, setFormDa
             onChange={(e) => handleInputChange('headcount', e.target.value)}
             placeholder="e.g., 25"
             required
-            className="border-gray-300 focus:border-red-500 focus:ring-red-500"
-          />
-        </div>
-
-        <div className="space-y-2 md:col-span-2">
-          <Label htmlFor="foundersInfo" className="text-sm font-medium text-gray-700">
-            Founders' names + titles + LinkedIn URLs
-          </Label>
-          <Textarea
-            id="foundersInfo"
-            value={formData.foundersInfo}
-            onChange={(e) => handleInputChange('foundersInfo', e.target.value)}
-            placeholder="John Doe, CEO, linkedin.com/in/johndoe"
-            className="border-gray-300 focus:border-red-500 focus:ring-red-500"
-            rows={3}
-          />
-        </div>
-
-        <div className="space-y-2">
-          <Label htmlFor="existingInvestors" className="text-sm font-medium text-gray-700">
-            Existing investors (if any)
-          </Label>
-          <Input
-            id="existingInvestors"
-            value={formData.existingInvestors}
-            onChange={(e) => handleInputChange('existingInvestors', e.target.value)}
-            placeholder="e.g., Sequoia Capital, Andreessen Horowitz"
             className="border-gray-300 focus:border-red-500 focus:ring-red-500"
           />
         </div>
@@ -188,38 +219,53 @@ const EquityInvestment: React.FC<EquityInvestmentProps> = ({ formData, setFormDa
             id="totalEquityRaised"
             value={formData.totalEquityRaised}
             onChange={(e) => handleInputChange('totalEquityRaised', e.target.value)}
-            placeholder="e.g., 5,000,000"
+            placeholder="e.g., $500,000"
             className="border-gray-300 focus:border-red-500 focus:ring-red-500"
           />
         </div>
+      </div>
 
-        <div className="space-y-2 md:col-span-2">
-          <Label htmlFor="productDescription" className="text-sm font-medium text-gray-700">
-            Brief product/service description (1 sentence)
-          </Label>
-          <Textarea
-            id="productDescription"
-            value={formData.productDescription}
-            onChange={(e) => handleInputChange('productDescription', e.target.value)}
-            placeholder="We provide AI-powered analytics for e-commerce businesses to optimize their inventory management."
-            className="border-gray-300 focus:border-red-500 focus:ring-red-500"
-            rows={2}
-          />
-        </div>
+      <div className="space-y-2">
+        <Label htmlFor="existingInvestors" className="text-sm font-medium text-gray-700">
+          Existing investors (if any)
+        </Label>
+        <Input
+          id="existingInvestors"
+          value={formData.existingInvestors}
+          onChange={(e) => handleInputChange('existingInvestors', e.target.value)}
+          placeholder="e.g., Acme Ventures, Angel investor John Smith"
+          className="border-gray-300 focus:border-red-500 focus:ring-red-500"
+        />
+      </div>
 
-        <div className="space-y-2 md:col-span-2">
-          <Label htmlFor="competitiveLandscape" className="text-sm font-medium text-gray-700">
-            Competitive landscape (key competitors)
-          </Label>
-          <Input
-            id="competitiveLandscape"
-            value={formData.competitiveLandscape}
-            onChange={(e) => handleInputChange('competitiveLandscape', e.target.value)}
-            placeholder="e.g., Competitor A, Competitor B, Competitor C"
-            className="border-gray-300 focus:border-red-500 focus:ring-red-500"
-          />
-        </div>
+      <div className="space-y-2">
+        <Label htmlFor="productDescription" className="text-sm font-medium text-gray-700">
+          Brief product/service description (1-2 sentences)
+        </Label>
+        <Textarea
+          id="productDescription"
+          value={formData.productDescription}
+          onChange={(e) => handleInputChange('productDescription', e.target.value)}
+          placeholder="Describe what your company does and the problem you solve..."
+          className="border-gray-300 focus:border-red-500 focus:ring-red-500"
+          rows={2}
+        />
+      </div>
 
+      <div className="space-y-2">
+        <Label htmlFor="competitiveLandscape" className="text-sm font-medium text-gray-700">
+          Key competitors or comparable companies
+        </Label>
+        <Input
+          id="competitiveLandscape"
+          value={formData.competitiveLandscape}
+          onChange={(e) => handleInputChange('competitiveLandscape', e.target.value)}
+          placeholder="e.g., Slack, Microsoft Teams, Discord"
+          className="border-gray-300 focus:border-red-500 focus:ring-red-500"
+        />
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="space-y-2">
           <Label htmlFor="pitchDeck" className="text-sm font-medium text-gray-700">
             Upload pitch deck (PDF)
@@ -227,24 +273,39 @@ const EquityInvestment: React.FC<EquityInvestmentProps> = ({ formData, setFormDa
           <Input
             id="pitchDeck"
             type="file"
-            accept=".pdf"
+            accept=".pdf,.ppt,.pptx"
             onChange={(e) => handleFileChange('pitchDeck', e.target.files?.[0] || null)}
             className="border-gray-300 focus:border-red-500 focus:ring-red-500"
           />
+          <p className="text-xs text-gray-500">PDF or PowerPoint format, max 10MB</p>
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="financialModel" className="text-sm font-medium text-gray-700">
-            Upload financial model/cap table
-          </Label>
+          <FinancialTooltip 
+            term="Financial Model/Cap Table" 
+            definition="Your financial projections spreadsheet and capitalization table showing current ownership structure and how new investment will affect ownership percentages."
+          >
+            <Label htmlFor="financialModel" className="text-sm font-medium text-gray-700">
+              Upload financial model/cap table
+            </Label>
+          </FinancialTooltip>
           <Input
             id="financialModel"
             type="file"
-            accept=".xlsx,.xls,.pdf"
+            accept=".xlsx,.xls,.csv,.pdf"
             onChange={(e) => handleFileChange('financialModel', e.target.files?.[0] || null)}
             className="border-gray-300 focus:border-red-500 focus:ring-red-500"
           />
+          <p className="text-xs text-gray-500">Excel, CSV, or PDF format, max 10MB</p>
         </div>
+      </div>
+
+      <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+        <h4 className="font-medium text-green-800 mb-2">💡 Pro Tip</h4>
+        <p className="text-sm text-green-700">
+          Having trouble with any of these metrics? Our team can help you prepare investor-ready financials. 
+          We'll connect you with resources to strengthen your application.
+        </p>
       </div>
     </div>
   );

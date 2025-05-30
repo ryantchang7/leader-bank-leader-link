@@ -1,11 +1,12 @@
 import React from 'react';
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { FormData } from '@/pages/Index';
+import FinancialTooltip from '@/components/ui/FinancialTooltip';
 
 interface DebtFinancingProps {
   formData: FormData;
@@ -27,106 +28,83 @@ const DebtFinancing: React.FC<DebtFinancingProps> = ({ formData, setFormData }) 
   };
 
   const handleFileChange = (field: keyof FormData, files: FileList | null) => {
-    setFormData(prev => ({ 
-      ...prev, 
-      [field]: files ? Array.from(files) : null 
-    }));
+    if (files) {
+      setFormData(prev => ({ ...prev, [field]: Array.from(files) }));
+    }
   };
 
-  const handleSingleFileChange = (field: keyof FormData, files: FileList | null) => {
-    setFormData(prev => ({ 
-      ...prev, 
-      [field]: files?.[0] || null 
-    }));
+  const handleSingleFileChange = (field: keyof FormData, file: File | null) => {
+    setFormData(prev => ({ ...prev, [field]: file }));
   };
-
-  const debtTypes = [
-    { value: 'sba', label: 'SBA loan' },
-    { value: 'venture-debt', label: 'Venture debt' },
-    { value: 'real-estate', label: 'Real estate financing' },
-    { value: 'equipment', label: 'Equipment financing' },
-    { value: 'revenue-based', label: 'Revenue based financing' },
-    { value: 'other', label: 'Other' },
-    { value: 'consultation', label: 'Consultation' }
-  ];
 
   return (
     <div className="space-y-6">
-      <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-        <h3 className="font-medium text-yellow-800 mb-2">Legal Disclaimer</h3>
-        <p className="text-sm text-yellow-700">
-          All information provided will be reviewed by our legal and compliance teams. 
-          Terms and conditions apply to all debt financing products.
+      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+        <h3 className="font-medium text-blue-800 mb-2">Let's Structure Your Ideal Debt Solution</h3>
+        <p className="text-sm text-blue-700">
+          Our debt financing experts will help you find the right lending partner and structure that fits your business needs and growth plans.
         </p>
       </div>
 
       <div className="space-y-4">
         <Label className="text-sm font-medium text-gray-700">
-          What type of debt are you interested in? *
+          What type of debt financing interests you? *
         </Label>
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-          {debtTypes.map((type) => (
-            <div key={type.value} className="flex items-center space-x-2">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+          {[
+            { value: 'sba', label: 'SBA Loan', desc: 'Government-backed loans with favorable terms' },
+            { value: 'venture-debt', label: 'Venture Debt', desc: 'For VC-backed companies seeking growth capital' },
+            { value: 'real-estate', label: 'Real Estate Financing', desc: 'Commercial property loans and mortgages' },
+            { value: 'equipment', label: 'Equipment Financing', desc: 'Loans secured by business equipment' },
+            { value: 'revenue-based', label: 'Revenue-Based Financing', desc: 'Repayment tied to your revenue streams' },
+            { value: 'other', label: 'Other/Consultation', desc: 'Explore other debt options with our experts' }
+          ].map((option) => (
+            <div key={option.value} className="flex items-start space-x-3 p-3 border border-gray-200 rounded-lg hover:bg-gray-50">
               <Checkbox
-                id={type.value}
-                checked={formData.debtType.includes(type.value)}
-                onCheckedChange={(checked) => handleCheckboxChange(type.value, checked as boolean)}
+                id={option.value}
+                checked={formData.debtType.includes(option.value)}
+                onCheckedChange={(checked) => handleCheckboxChange(option.value, checked as boolean)}
+                className="mt-1"
               />
-              <Label htmlFor={type.value} className="text-sm text-gray-700 cursor-pointer">
-                {type.label}
-              </Label>
+              <div className="flex-1">
+                <Label htmlFor={option.value} className="font-medium text-gray-900 cursor-pointer">
+                  {option.label}
+                </Label>
+                <p className="text-xs text-gray-600 mt-1">{option.desc}</p>
+              </div>
             </div>
           ))}
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="space-y-2 md:col-span-2">
-          <Label htmlFor="debtDescription" className="text-sm font-medium text-gray-700">
-            Description of request *
-          </Label>
-          <Textarea
-            id="debtDescription"
-            value={formData.debtDescription}
-            onChange={(e) => handleInputChange('debtDescription', e.target.value)}
-            placeholder="E.g. 'We need a $10MM credit facility...'"
-            required
-            className="border-gray-300 focus:border-red-500 focus:ring-red-500"
-            rows={3}
-          />
-        </div>
+      <div className="space-y-2">
+        <Label htmlFor="debtDescription" className="text-sm font-medium text-gray-700">
+          Describe your financing need *
+        </Label>
+        <Textarea
+          id="debtDescription"
+          value={formData.debtDescription}
+          onChange={(e) => handleInputChange('debtDescription', e.target.value)}
+          placeholder="e.g., We need a $2M credit facility to support inventory growth for our expanding e-commerce business..."
+          required
+          className="border-gray-300 focus:border-red-500 focus:ring-red-500"
+          rows={3}
+        />
+      </div>
 
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="space-y-2">
           <Label htmlFor="debtSize" className="text-sm font-medium text-gray-700">
-            Size of request ($) *
+            Loan amount requested ($) *
           </Label>
           <Input
             id="debtSize"
             value={formData.debtSize}
             onChange={(e) => handleInputChange('debtSize', e.target.value)}
-            placeholder="e.g., 10,000,000"
+            placeholder="e.g., $2,000,000"
             required
             className="border-gray-300 focus:border-red-500 focus:ring-red-500"
           />
-        </div>
-
-        <div className="space-y-2">
-          <Label htmlFor="debtUseOfFunds" className="text-sm font-medium text-gray-700">
-            Use of funds *
-          </Label>
-          <Select value={formData.debtUseOfFunds} onValueChange={(value) => handleInputChange('debtUseOfFunds', value)}>
-            <SelectTrigger className="border-gray-300 focus:border-red-500 focus:ring-red-500">
-              <SelectValue placeholder="Select use of funds" />
-            </SelectTrigger>
-            <SelectContent className="bg-white">
-              <SelectItem value="long-term-wc">Long Term Working Capital (&gt; 12 months)</SelectItem>
-              <SelectItem value="short-term-saas">Short Term Working Capital (&lt; 12 months SaaS)</SelectItem>
-              <SelectItem value="short-term-ar">Short Term Working Capital (&lt; 12 months AR/Inventory)</SelectItem>
-              <SelectItem value="capex-general">CapEX - General</SelectItem>
-              <SelectItem value="capex-specialty">CapEx - Specialty Equipment</SelectItem>
-              <SelectItem value="capex-it">CapEx - IT Equipment</SelectItem>
-            </SelectContent>
-          </Select>
         </div>
 
         <div className="space-y-2">
@@ -137,12 +115,33 @@ const DebtFinancing: React.FC<DebtFinancingProps> = ({ formData, setFormData }) 
             id="monthsInBusiness"
             value={formData.monthsInBusiness}
             onChange={(e) => handleInputChange('monthsInBusiness', e.target.value)}
-            placeholder="e.g., 36"
+            placeholder="e.g., 24"
             required
             className="border-gray-300 focus:border-red-500 focus:ring-red-500"
           />
         </div>
+      </div>
 
+      <div className="space-y-2">
+        <Label htmlFor="debtUseOfFunds" className="text-sm font-medium text-gray-700">
+          Primary use of loan proceeds *
+        </Label>
+        <Select value={formData.debtUseOfFunds} onValueChange={(value) => handleInputChange('debtUseOfFunds', value)}>
+          <SelectTrigger className="border-gray-300 focus:border-red-500 focus:ring-red-500">
+            <SelectValue placeholder="Select primary use of funds" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="working-capital-long">Working Capital - Long Term (Growth/Expansion)</SelectItem>
+            <SelectItem value="working-capital-short-saas">Working Capital - Short Term (SaaS/Subscription)</SelectItem>
+            <SelectItem value="working-capital-short-ar">Working Capital - Short Term (AR/Inventory/PO)</SelectItem>
+            <SelectItem value="capex-general">Capital Expenditures - General</SelectItem>
+            <SelectItem value="capex-specialty">Capital Expenditures - Specialty Equipment</SelectItem>
+            <SelectItem value="capex-it">Capital Expenditures - IT Equipment</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="space-y-2">
           <Label htmlFor="priorYearRevenue" className="text-sm font-medium text-gray-700">
             Prior year revenue ($) *
@@ -151,7 +150,7 @@ const DebtFinancing: React.FC<DebtFinancingProps> = ({ formData, setFormData }) 
             id="priorYearRevenue"
             value={formData.priorYearRevenue}
             onChange={(e) => handleInputChange('priorYearRevenue', e.target.value)}
-            placeholder="e.g., 5,000,000"
+            placeholder="e.g., $3,500,000"
             required
             className="border-gray-300 focus:border-red-500 focus:ring-red-500"
           />
@@ -165,90 +164,102 @@ const DebtFinancing: React.FC<DebtFinancingProps> = ({ formData, setFormData }) 
             id="projectedRevenue"
             value={formData.projectedRevenue}
             onChange={(e) => handleInputChange('projectedRevenue', e.target.value)}
-            placeholder="e.g., 7,500,000"
+            placeholder="e.g., $5,200,000"
             required
             className="border-gray-300 focus:border-red-500 focus:ring-red-500"
           />
         </div>
+      </div>
 
-        <div className="space-y-2">
-          <Label className="text-sm font-medium text-gray-700">
-            Do you have recurring revenue? *
-          </Label>
-          <RadioGroup value={formData.hasRecurringRevenue} onValueChange={(value) => handleInputChange('hasRecurringRevenue', value)}>
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem value="yes" id="recurring-yes" />
-              <Label htmlFor="recurring-yes">Yes</Label>
-            </div>
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem value="no" id="recurring-no" />
-              <Label htmlFor="recurring-no">No</Label>
-            </div>
-          </RadioGroup>
-        </div>
-
-        {formData.hasRecurringRevenue === 'yes' && (
-          <div className="space-y-2">
-            <Label htmlFor="annualRecurringRevenue" className="text-sm font-medium text-gray-700">
-              Annual recurring revenue ($) *
-            </Label>
-            <Input
-              id="annualRecurringRevenue"
-              value={formData.annualRecurringRevenue}
-              onChange={(e) => handleInputChange('annualRecurringRevenue', e.target.value)}
-              placeholder="e.g., 6,000,000"
-              required
-              className="border-gray-300 focus:border-red-500 focus:ring-red-500"
-            />
+      <div className="space-y-4">
+        <Label className="text-sm font-medium text-gray-700">
+          Do you have recurring revenue? *
+        </Label>
+        <RadioGroup value={formData.hasRecurringRevenue} onValueChange={(value) => handleInputChange('hasRecurringRevenue', value)}>
+          <div className="flex items-center space-x-2">
+            <RadioGroupItem value="yes" id="recurring-yes" />
+            <Label htmlFor="recurring-yes">Yes</Label>
           </div>
-        )}
+          <div className="flex items-center space-x-2">
+            <RadioGroupItem value="no" id="recurring-no" />
+            <Label htmlFor="recurring-no">No</Label>
+          </div>
+        </RadioGroup>
+      </div>
 
+      {formData.hasRecurringRevenue === 'yes' && (
         <div className="space-y-2">
+          <FinancialTooltip 
+            term="Annual Recurring Revenue (ARR)" 
+            definition="The predictable revenue that your business expects to receive annually from subscriptions, contracts, or other recurring revenue streams."
+          >
+            <Label htmlFor="annualRecurringRevenue" className="text-sm font-medium text-gray-700">
+              Annual recurring revenue (ARR) ($) *
+            </Label>
+          </FinancialTooltip>
+          <Input
+            id="annualRecurringRevenue"
+            value={formData.annualRecurringRevenue}
+            onChange={(e) => handleInputChange('annualRecurringRevenue', e.target.value)}
+            placeholder="e.g., $2,400,000"
+            required
+            className="border-gray-300 focus:border-red-500 focus:ring-red-500"
+          />
+        </div>
+      )}
+
+      <div className="space-y-4">
+        <FinancialTooltip 
+          term="EBITDA Positive" 
+          definition="Earnings Before Interest, Taxes, Depreciation, and Amortization. Being EBITDA positive means your core business operations are profitable before these expenses."
+        >
           <Label className="text-sm font-medium text-gray-700">
             Are you EBITDA positive? *
           </Label>
-          <RadioGroup value={formData.isEbitdaPositive} onValueChange={(value) => handleInputChange('isEbitdaPositive', value)}>
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem value="yes" id="ebitda-yes" />
-              <Label htmlFor="ebitda-yes">Yes</Label>
-            </div>
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem value="no" id="ebitda-no" />
-              <Label htmlFor="ebitda-no">No</Label>
-            </div>
-          </RadioGroup>
-        </div>
-
-        {formData.isEbitdaPositive === 'no' && (
-          <div className="space-y-2">
-            <Label htmlFor="monthsToEbitda" className="text-sm font-medium text-gray-700">
-              Months until EBITDA positive *
-            </Label>
-            <Input
-              id="monthsToEbitda"
-              value={formData.monthsToEbitda}
-              onChange={(e) => handleInputChange('monthsToEbitda', e.target.value)}
-              placeholder="e.g., 12"
-              required
-              className="border-gray-300 focus:border-red-500 focus:ring-red-500"
-            />
+        </FinancialTooltip>
+        <RadioGroup value={formData.isEbitdaPositive} onValueChange={(value) => handleInputChange('isEbitdaPositive', value)}>
+          <div className="flex items-center space-x-2">
+            <RadioGroupItem value="yes" id="ebitda-yes" />
+            <Label htmlFor="ebitda-yes">Yes</Label>
           </div>
-        )}
+          <div className="flex items-center space-x-2">
+            <RadioGroupItem value="no" id="ebitda-no" />
+            <Label htmlFor="ebitda-no">No</Label>
+          </div>
+        </RadioGroup>
+      </div>
 
-        <div className="space-y-2 md:col-span-2">
-          <Label htmlFor="ventureBacked" className="text-sm font-medium text-gray-700">
-            Are you venture-backed & Names of investors *
+      {formData.isEbitdaPositive === 'no' && (
+        <div className="space-y-2">
+          <Label htmlFor="monthsToEbitda" className="text-sm font-medium text-gray-700">
+            Months until EBITDA positive *
           </Label>
           <Input
-            id="ventureBacked"
-            value={formData.ventureBacked}
-            onChange={(e) => handleInputChange('ventureBacked', e.target.value)}
-            placeholder="e.g., Yes - Sequoia Capital, Andreessen Horowitz"
+            id="monthsToEbitda"
+            value={formData.monthsToEbitda}
+            onChange={(e) => handleInputChange('monthsToEbitda', e.target.value)}
+            placeholder="e.g., 8"
             required
             className="border-gray-300 focus:border-red-500 focus:ring-red-500"
           />
         </div>
+      )}
 
+      <div className="space-y-2">
+        <Label htmlFor="ventureBacked" className="text-sm font-medium text-gray-700">
+          Are you venture-backed? (List investor names) *
+        </Label>
+        <Input
+          id="ventureBacked"
+          value={formData.ventureBacked}
+          onChange={(e) => handleInputChange('ventureBacked', e.target.value)}
+          placeholder="e.g., Acme Ventures, Growth Capital Partners, or 'No'"
+          required
+          className="border-gray-300 focus:border-red-500 focus:ring-red-500"
+        />
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="space-y-2">
           <Label htmlFor="totalPEVCFunding" className="text-sm font-medium text-gray-700">
             Total PE/VC funding received ($) *
@@ -257,26 +268,10 @@ const DebtFinancing: React.FC<DebtFinancingProps> = ({ formData, setFormData }) 
             id="totalPEVCFunding"
             value={formData.totalPEVCFunding}
             onChange={(e) => handleInputChange('totalPEVCFunding', e.target.value)}
-            placeholder="e.g., 15,000,000"
+            placeholder="e.g., $5,000,000 or $0"
             required
             className="border-gray-300 focus:border-red-500 focus:ring-red-500"
           />
-        </div>
-
-        <div className="space-y-2">
-          <Label className="text-sm font-medium text-gray-700">
-            Do you have VCs on your board? *
-          </Label>
-          <RadioGroup value={formData.hasVCBoard} onValueChange={(value) => handleInputChange('hasVCBoard', value)}>
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem value="yes" id="vc-board-yes" />
-              <Label htmlFor="vc-board-yes">Yes</Label>
-            </div>
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem value="no" id="vc-board-no" />
-              <Label htmlFor="vc-board-no">No</Label>
-            </div>
-          </RadioGroup>
         </div>
 
         <div className="space-y-2">
@@ -292,48 +287,66 @@ const DebtFinancing: React.FC<DebtFinancingProps> = ({ formData, setFormData }) 
             className="border-gray-300 focus:border-red-500 focus:ring-red-500"
           />
         </div>
+      </div>
 
-        <div className="space-y-2">
-          <Label className="text-sm font-medium text-gray-700">
-            Do you have collateral to pledge? *
-          </Label>
-          <RadioGroup value={formData.hasCollateral} onValueChange={(value) => handleInputChange('hasCollateral', value)}>
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem value="yes" id="collateral-yes" />
-              <Label htmlFor="collateral-yes">Yes</Label>
-            </div>
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem value="no" id="collateral-no" />
-              <Label htmlFor="collateral-no">No</Label>
-            </div>
-          </RadioGroup>
-        </div>
-
-        {formData.hasCollateral === 'yes' && (
-          <div className="space-y-2">
-            <Label htmlFor="collateralType" className="text-sm font-medium text-gray-700">
-              What type of collateral? *
-            </Label>
-            <Select value={formData.collateralType} onValueChange={(value) => handleInputChange('collateralType', value)}>
-              <SelectTrigger className="border-gray-300 focus:border-red-500 focus:ring-red-500">
-                <SelectValue placeholder="Select collateral type" />
-              </SelectTrigger>
-              <SelectContent className="bg-white">
-                <SelectItem value="real-estate">Real estate</SelectItem>
-                <SelectItem value="equipment">Equipment</SelectItem>
-                <SelectItem value="inventory">Inventory</SelectItem>
-                <SelectItem value="accounts-receivable">Accounts receivable</SelectItem>
-                <SelectItem value="intellectual-property">Intellectual property</SelectItem>
-                <SelectItem value="personal-assets">Personal assets</SelectItem>
-                <SelectItem value="other">Other</SelectItem>
-              </SelectContent>
-            </Select>
+      <div className="space-y-4">
+        <Label className="text-sm font-medium text-gray-700">
+          Do you have VCs on your board? *
+        </Label>
+        <RadioGroup value={formData.hasVCBoard} onValueChange={(value) => handleInputChange('hasVCBoard', value)}>
+          <div className="flex items-center space-x-2">
+            <RadioGroupItem value="yes" id="vc-board-yes" />
+            <Label htmlFor="vc-board-yes">Yes</Label>
           </div>
-        )}
+          <div className="flex items-center space-x-2">
+            <RadioGroupItem value="no" id="vc-board-no" />
+            <Label htmlFor="vc-board-no">No</Label>
+          </div>
+        </RadioGroup>
+      </div>
 
+      <div className="space-y-4">
+        <Label className="text-sm font-medium text-gray-700">
+          Do you have collateral to pledge? *
+        </Label>
+        <RadioGroup value={formData.hasCollateral} onValueChange={(value) => handleInputChange('hasCollateral', value)}>
+          <div className="flex items-center space-x-2">
+            <RadioGroupItem value="yes" id="collateral-yes" />
+            <Label htmlFor="collateral-yes">Yes</Label>
+          </div>
+          <div className="flex items-center space-x-2">
+            <RadioGroupItem value="no" id="collateral-no" />
+            <Label htmlFor="collateral-no">No</Label>
+          </div>
+        </RadioGroup>
+      </div>
+
+      {formData.hasCollateral === 'yes' && (
         <div className="space-y-2">
+          <Label htmlFor="collateralType" className="text-sm font-medium text-gray-700">
+            What type of collateral? *
+          </Label>
+          <Select value={formData.collateralType} onValueChange={(value) => handleInputChange('collateralType', value)}>
+            <SelectTrigger className="border-gray-300 focus:border-red-500 focus:ring-red-500">
+              <SelectValue placeholder="Select collateral type" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="real-estate">Real Estate</SelectItem>
+              <SelectItem value="equipment">Equipment</SelectItem>
+              <SelectItem value="inventory">Inventory</SelectItem>
+              <SelectItem value="accounts-receivable">Accounts Receivable</SelectItem>
+              <SelectItem value="intellectual-property">Intellectual Property</SelectItem>
+              <SelectItem value="personal-assets">Personal Assets</SelectItem>
+              <SelectItem value="other">Other</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+      )}
+
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="space-y-4">
           <Label className="text-sm font-medium text-gray-700">
-            Are you willing to personally guarantee? *
+            Personal guarantee? *
           </Label>
           <RadioGroup value={formData.personalGuarantee} onValueChange={(value) => handleInputChange('personalGuarantee', value)}>
             <div className="flex items-center space-x-2">
@@ -347,10 +360,15 @@ const DebtFinancing: React.FC<DebtFinancingProps> = ({ formData, setFormData }) 
           </RadioGroup>
         </div>
 
-        <div className="space-y-2">
-          <Label className="text-sm font-medium text-gray-700">
-            Are you willing to accept covenants? *
-          </Label>
+        <div className="space-y-4">
+          <FinancialTooltip 
+            term="Loan Covenants" 
+            definition="Contractual agreements that require you to maintain certain financial ratios or meet specific performance metrics throughout the loan term."
+          >
+            <Label className="text-sm font-medium text-gray-700">
+              Accept covenants? *
+            </Label>
+          </FinancialTooltip>
           <RadioGroup value={formData.acceptCovenants} onValueChange={(value) => handleInputChange('acceptCovenants', value)}>
             <div className="flex items-center space-x-2">
               <RadioGroupItem value="yes" id="covenants-yes" />
@@ -363,10 +381,15 @@ const DebtFinancing: React.FC<DebtFinancingProps> = ({ formData, setFormData }) 
           </RadioGroup>
         </div>
 
-        <div className="space-y-2">
-          <Label className="text-sm font-medium text-gray-700">
-            Are you willing to pledge warrants? *
-          </Label>
+        <div className="space-y-4">
+          <FinancialTooltip 
+            term="Warrants" 
+            definition="Financial instruments that give lenders the right to purchase equity in your company at a predetermined price, often used in venture debt arrangements."
+          >
+            <Label className="text-sm font-medium text-gray-700">
+              Pledge warrants? *
+            </Label>
+          </FinancialTooltip>
           <RadioGroup value={formData.pledgeWarrants} onValueChange={(value) => handleInputChange('pledgeWarrants', value)}>
             <div className="flex items-center space-x-2">
               <RadioGroupItem value="yes" id="warrants-yes" />
@@ -378,19 +401,22 @@ const DebtFinancing: React.FC<DebtFinancingProps> = ({ formData, setFormData }) 
             </div>
           </RadioGroup>
         </div>
+      </div>
 
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="space-y-2">
           <Label htmlFor="financialStatements" className="text-sm font-medium text-gray-700">
-            Upload recent financial statements (P&L, balance sheet)
+            Upload financial statements (P&L, Balance Sheet)
           </Label>
           <Input
             id="financialStatements"
             type="file"
             multiple
-            accept=".pdf,.xlsx,.xls,.doc,.docx"
+            accept=".pdf,.xlsx,.xls"
             onChange={(e) => handleFileChange('financialStatements', e.target.files)}
             className="border-gray-300 focus:border-red-500 focus:ring-red-500"
           />
+          <p className="text-xs text-gray-500">Multiple files accepted, max 1GB each</p>
         </div>
 
         <div className="space-y-2">
@@ -400,11 +426,21 @@ const DebtFinancing: React.FC<DebtFinancingProps> = ({ formData, setFormData }) 
           <Input
             id="businessPlan"
             type="file"
-            accept=".pdf,.xlsx,.xls,.doc,.docx"
-            onChange={(e) => handleSingleFileChange('businessPlan', e.target.files)}
+            accept=".pdf,.doc,.docx"
+            onChange={(e) => handleSingleFileChange('businessPlan', e.target.files?.[0] || null)}
             className="border-gray-300 focus:border-red-500 focus:ring-red-500"
           />
+          <p className="text-xs text-gray-500">PDF or Word document, max 10MB</p>
         </div>
+      </div>
+
+      <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+        <h4 className="font-medium text-yellow-800 mb-2">📋 Document Preparation Tips</h4>
+        <ul className="text-sm text-yellow-700 space-y-1">
+          <li>• Include 2-3 years of financial statements if available</li>
+          <li>• Business plan should highlight your competitive advantages</li>
+          <li>• Our loan officers can help you prepare missing documentation</li>
+        </ul>
       </div>
     </div>
   );
