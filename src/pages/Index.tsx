@@ -8,7 +8,7 @@ import EquityInvestment from '@/components/forms/EquityInvestment';
 import DebtFinancing from '@/components/forms/DebtFinancing';
 import AcceleratorProgram from '@/components/forms/AcceleratorProgram';
 import FinalSteps from '@/components/forms/FinalSteps';
-import { ChevronLeft, ChevronRight, CheckCircle, Circle, Heart, Users, TrendingUp } from 'lucide-react';
+import { ChevronLeft, ChevronRight, CheckCircle, Circle, Users, TrendingUp, Shield, Lock } from 'lucide-react';
 
 export interface FormData {
   // Basic Info
@@ -162,40 +162,36 @@ const Index = () => {
 
   const getStepTitle = (step: number) => {
     switch (step) {
-      case 1: return "Basic Company Information";
-      case 2: return "Funding & Support Options";
-      case 3: return "Equity Investment Details";
-      case 4: return "Debt Financing Details";
-      case 5: return "Accelerator Program Information";
-      case 6: return "Final Steps";
+      case 1: return "Company Information";
+      case 2: return "Funding Type";
+      case 3: return "Funding Details";
+      case 4: return "Partnership Agreement";
       default: return "";
     }
   };
 
   const getStepDescription = (step: number) => {
     switch (step) {
-      case 1: return "Let's start by getting to know your business - we're here to help you succeed";
-      case 2: return "Help us understand your funding goals so we can connect you with the right opportunities";
-      case 3: return "Share your equity investment details - we'll match you with relevant investors";
-      case 4: return "Tell us about your debt financing needs - our experts will find the best solutions";
-      case 5: return "Let's explore accelerator programs that align with your growth objectives";
-      case 6: return "Almost there! Let's finalize your partnership with Leader Bank Cap Connect";
+      case 1: return "Tell us about your business - we're here to support your growth";
+      case 2: return "Select your funding goal so we can match you with the right opportunities";
+      case 3: return "Share specific details to help us find the perfect funding partners for you";
+      case 4: return "Complete your partnership with Leader Bank Cap Connect";
       default: return "";
     }
   };
 
   const getVisibleSteps = () => {
     const steps = [1, 2];
-    if (formData.seekingType === 'equity') steps.push(3);
-    if (formData.seekingType === 'debt') steps.push(4);
-    if (formData.seekingType === 'accelerator') steps.push(5);
-    steps.push(6);
+    if (formData.seekingType === 'equity' || formData.seekingType === 'debt' || formData.seekingType === 'accelerator') {
+      steps.push(3);
+    }
+    steps.push(4);
     return steps;
   };
 
   const visibleSteps = getVisibleSteps();
   const currentStepIndex = visibleSteps.indexOf(currentStep);
-  const progressPercentage = ((currentStepIndex + 1) / visibleSteps.length) * 100;
+  const progressPercentage = ((currentStepIndex + 1) / 4) * 100; // Always 4 steps for clarity
 
   const isStepComplete = (step: number) => {
     return completedSteps.includes(step);
@@ -213,12 +209,6 @@ const Index = () => {
         return formData.seekingType === 'equity' ? 
                formData.raiseAmount && formData.useOfFunds && formData.lastTwelveRevenue : true;
       case 4:
-        return formData.seekingType === 'debt' ? 
-               formData.debtType.length > 0 && formData.debtDescription && formData.debtSize : true;
-      case 5:
-        return formData.seekingType === 'accelerator' ? 
-               formData.pastAccelerator && formData.currentlyApplying : true;
-      case 6:
         return formData.finalFullName && formData.titleRole && 
                formData.agreeTerms === 'yes' && formData.agreePrivacy === 'yes';
       default:
@@ -266,12 +256,14 @@ const Index = () => {
       case 2:
         return <FundingOptions formData={formData} setFormData={setFormData} />;
       case 3:
-        return <EquityInvestment formData={formData} setFormData={setFormData} />;
+        return formData.seekingType === 'equity' ? (
+          <EquityInvestment formData={formData} setFormData={setFormData} />
+        ) : formData.seekingType === 'debt' ? (
+          <DebtFinancing formData={formData} setFormData={setFormData} />
+        ) : (
+          <AcceleratorProgram formData={formData} setFormData={setFormData} />
+        );
       case 4:
-        return <DebtFinancing formData={formData} setFormData={setFormData} />;
-      case 5:
-        return <AcceleratorProgram formData={formData} setFormData={setFormData} />;
-      case 6:
         return <FinalSteps formData={formData} setFormData={setFormData} />;
       default:
         return null;
@@ -292,28 +284,63 @@ const Index = () => {
               />
               <div className="border-l border-gray-300 pl-4">
                 <h1 className="text-3xl font-bold text-gray-900">Cap Connect</h1>
-                <p className="text-red-600 font-medium flex items-center gap-2">
-                  <Heart className="h-4 w-4" />
-                  Your partner in finding the right funding path
+                <p className="text-red-600 font-medium">
+                  Your strategic partner in finding the right funding path
                 </p>
-                <p className="text-sm text-gray-600">FDIC-Insured - Backed by the full faith and credit of the U.S. Government</p>
+                <p className="text-sm text-gray-600">FDIC-Insured - Member FDIC - Equal Housing Lender</p>
               </div>
             </div>
             <div className="hidden md:flex flex-col items-end space-y-2">
               <div className="flex items-center space-x-2 text-sm text-gray-600">
-                <span className="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs font-medium">
-                  Secure Application
+                <span className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-xs font-medium flex items-center gap-1">
+                  <Shield className="h-3 w-3" />
+                  Bank-Grade Security
                 </span>
               </div>
               <div className="flex items-center gap-4 text-xs text-gray-500">
                 <div className="flex items-center gap-1">
                   <Users className="h-3 w-3" />
-                  <span>Expert Guidance</span>
+                  <span>Expert Team</span>
                 </div>
                 <div className="flex items-center gap-1">
                   <TrendingUp className="h-3 w-3" />
-                  <span>Growth Focused</span>
+                  <span>Growth Partners</span>
                 </div>
+                <div className="flex items-center gap-1">
+                  <Lock className="h-3 w-3" />
+                  <span>Confidential Process</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* 4-Step Process Overview */}
+      <div className="bg-red-50 border-b border-red-100">
+        <div className="max-w-6xl mx-auto px-4 py-4">
+          <div className="text-center mb-4">
+            <h2 className="text-lg font-semibold text-gray-900 mb-2">Simple 4-Step Process</h2>
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 text-sm">
+              <div className="flex flex-col items-center">
+                <div className="w-8 h-8 bg-red-600 text-white rounded-full flex items-center justify-center font-bold mb-2">1</div>
+                <span className="font-medium text-gray-900">Company Info</span>
+                <span className="text-xs text-gray-600">Basic details</span>
+              </div>
+              <div className="flex flex-col items-center">
+                <div className="w-8 h-8 bg-red-600 text-white rounded-full flex items-center justify-center font-bold mb-2">2</div>
+                <span className="font-medium text-gray-900">Funding Type</span>
+                <span className="text-xs text-gray-600">Choose your path</span>
+              </div>
+              <div className="flex flex-col items-center">
+                <div className="w-8 h-8 bg-red-600 text-white rounded-full flex items-center justify-center font-bold mb-2">3</div>
+                <span className="font-medium text-gray-900">Details</span>
+                <span className="text-xs text-gray-600">Specific requirements</span>
+              </div>
+              <div className="flex flex-col items-center">
+                <div className="w-8 h-8 bg-red-600 text-white rounded-full flex items-center justify-center font-bold mb-2">4</div>
+                <span className="font-medium text-gray-900">Partnership</span>
+                <span className="text-xs text-gray-600">Start collaboration</span>
               </div>
             </div>
           </div>
@@ -326,7 +353,7 @@ const Index = () => {
           <div className="flex items-center justify-between mb-4">
             <div>
               <h2 className="text-lg font-semibold text-gray-900">
-                {getStepTitle(currentStep)}
+                Step {currentStepIndex + 1}: {getStepTitle(currentStep)}
               </h2>
               <p className="text-sm text-gray-600">
                 {getStepDescription(currentStep)}
@@ -334,7 +361,7 @@ const Index = () => {
             </div>
             <div className="text-right">
               <span className="text-sm font-medium text-gray-700">
-                Step {currentStepIndex + 1} of {visibleSteps.length}
+                Step {currentStepIndex + 1} of 4
               </span>
               <div className="text-xs text-gray-500">
                 {Math.round(progressPercentage)}% Complete
@@ -344,33 +371,10 @@ const Index = () => {
           
           <Progress value={progressPercentage} className="h-3 mb-4" />
           
-          {/* Step indicators */}
-          <div className="flex justify-between items-center">
-            {visibleSteps.map((step, index) => (
-              <div key={step} className="flex items-center">
-                <div className={`flex items-center justify-center w-8 h-8 rounded-full border-2 transition-all duration-200 ${
-                  step === currentStep 
-                    ? 'border-red-600 bg-red-600 text-white' 
-                    : isStepComplete(step)
-                    ? 'border-green-600 bg-green-600 text-white'
-                    : 'border-gray-300 bg-white text-gray-500'
-                }`}>
-                  {isStepComplete(step) && step !== currentStep ? (
-                    <CheckCircle className="w-5 h-5" />
-                  ) : (
-                    <span className="text-sm font-medium">{index + 1}</span>
-                  )}
-                </div>
-                <span className={`ml-2 text-sm font-medium ${
-                  step === currentStep ? 'text-red-600' : 'text-gray-500'
-                }`}>
-                  {getStepTitle(step)}
-                </span>
-                {index < visibleSteps.length - 1 && (
-                  <div className="w-12 h-px bg-gray-300 ml-4"></div>
-                )}
-              </div>
-            ))}
+          {/* Security Notice */}
+          <div className="flex items-center justify-center text-xs text-gray-500 gap-2">
+            <Shield className="h-3 w-3" />
+            <span>Your information is encrypted and protected by bank-grade security</span>
           </div>
         </div>
       </div>
@@ -382,9 +386,7 @@ const Index = () => {
             <div className="flex items-center justify-between">
               <div>
                 <CardTitle className="text-xl text-gray-900 flex items-center">
-                  {currentStep === currentStep && (
-                    <Circle className="w-3 h-3 fill-red-600 text-red-600 mr-2" />
-                  )}
+                  <Circle className="w-3 h-3 fill-red-600 text-red-600 mr-2" />
                   {getStepTitle(currentStep)}
                 </CardTitle>
                 <CardDescription className="mt-1">
@@ -414,13 +416,13 @@ const Index = () => {
               </Button>
               
               <div className="flex items-center space-x-3">
-                {currentStepIndex === visibleSteps.length - 1 ? (
+                {currentStepIndex === 3 ? (
                   <Button
                     onClick={handleSubmit}
                     className="bg-red-600 hover:bg-red-700 text-white flex items-center space-x-2 px-8 py-3 font-medium shadow-lg hover:shadow-xl transition-all duration-200"
                     disabled={!formData.agreeTerms || !formData.agreePrivacy}
                   >
-                    <span>Start Our Partnership</span>
+                    <span>Start Partnership</span>
                     <CheckCircle className="w-4 h-4" />
                   </Button>
                 ) : (
@@ -429,7 +431,7 @@ const Index = () => {
                     className="bg-red-600 hover:bg-red-700 text-white flex items-center space-x-2 px-8 py-3 font-medium shadow-lg hover:shadow-xl transition-all duration-200"
                     disabled={!validateStep(currentStep)}
                   >
-                    <span>Continue</span>
+                    <span>Continue to Step {currentStepIndex + 2}</span>
                     <ChevronRight className="w-4 h-4" />
                   </Button>
                 )}
@@ -438,32 +440,39 @@ const Index = () => {
           </CardContent>
         </Card>
 
-        {/* Enhanced Trust indicators with partnership messaging */}
+        {/* Trust & Security indicators */}
         <div className="mt-8 text-center">
           <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200 mb-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-3">Why Choose Leader Bank Cap Connect?</h3>
+            <h3 className="text-lg font-semibold text-gray-900 mb-3 flex items-center justify-center gap-2">
+              <Shield className="h-5 w-5 text-green-600" />
+              Why Choose Leader Bank Cap Connect?
+            </h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
               <div className="text-center">
                 <div className="w-3 h-3 bg-green-500 rounded-full mx-auto mb-2"></div>
-                <p className="font-medium text-gray-800">Expert Partnership</p>
-                <p className="text-gray-600">Dedicated team with deep startup & VC experience</p>
+                <p className="font-medium text-gray-800">Strategic Partnership</p>
+                <p className="text-gray-600">Dedicated experts with deep finance experience</p>
               </div>
               <div className="text-center">
                 <div className="w-3 h-3 bg-blue-500 rounded-full mx-auto mb-2"></div>
-                <p className="font-medium text-gray-800">Secure & Trusted</p>
-                <p className="text-gray-600">FDIC insured with bank-grade security</p>
+                <p className="font-medium text-gray-800">Bank-Grade Security</p>
+                <p className="text-gray-600">FDIC insured with enterprise-level protection</p>
               </div>
               <div className="text-center">
                 <div className="w-3 h-3 bg-red-500 rounded-full mx-auto mb-2"></div>
                 <p className="font-medium text-gray-800">Comprehensive Network</p>
-                <p className="text-gray-600">Access to VCs, lenders & accelerators</p>
+                <p className="text-gray-600">Direct access to vetted funding partners</p>
               </div>
             </div>
           </div>
           
           <div className="text-sm text-gray-600">
-            <p className="mb-2">🚀 <strong>What happens next?</strong> Our team will review your submission and reach out within 2-3 business days with personalized recommendations.</p>
-            <p>💡 Questions? Email us at <a href="mailto:capconnect@leaderbank.com" className="text-red-600 hover:underline">capconnect@leaderbank.com</a> or call (555) 123-4567</p>
+            <p className="mb-2">🚀 <strong>Next Steps:</strong> Our expert team reviews submissions within 2-3 business days and provides personalized funding recommendations.</p>
+            <p>💡 <strong>Questions?</strong> Contact our Cap Connect team at <a href="mailto:capconnect@leaderbank.com" className="text-red-600 hover:underline">capconnect@leaderbank.com</a> or call (555) 123-4567</p>
+            <p className="text-xs text-gray-500 mt-2 flex items-center justify-center gap-1">
+              <Lock className="h-3 w-3" />
+              All communications are confidential and protected by banking privacy regulations
+            </p>
           </div>
         </div>
       </div>
