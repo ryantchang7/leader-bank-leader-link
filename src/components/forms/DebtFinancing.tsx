@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -31,6 +30,13 @@ const DebtFinancing: React.FC<DebtFinancingProps> = ({ formData, setFormData }) 
     setFormData(prev => ({ 
       ...prev, 
       [field]: files ? Array.from(files) : null 
+    }));
+  };
+
+  const handleSingleFileChange = (field: keyof FormData, files: FileList | null) => {
+    setFormData(prev => ({ 
+      ...prev, 
+      [field]: files?.[0] || null 
     }));
   };
 
@@ -395,7 +401,7 @@ const DebtFinancing: React.FC<DebtFinancingProps> = ({ formData, setFormData }) 
             id="businessPlan"
             type="file"
             accept=".pdf,.xlsx,.xls,.doc,.docx"
-            onChange={(e) => handleFileChange('businessPlan', e.target.files?.[0] || null)}
+            onChange={(e) => handleSingleFileChange('businessPlan', e.target.files)}
             className="border-gray-300 focus:border-red-500 focus:ring-red-500"
           />
         </div>
