@@ -2,7 +2,7 @@
 import React from 'react';
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { FormData } from '@/pages/Index';
+import { FormData } from '@/types/formData';
 
 interface FundingOptionsProps {
   formData: FormData;

@@ -4,8 +4,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { ExternalLink, Users, Calendar, TrendingUp, MapPin } from 'lucide-react';
-import { FormData } from '@/pages/Index';
+import { ExternalLink, Users, Calendar, MapPin, Mail, Phone } from 'lucide-react';
+import { FormData } from '@/types/formData';
 
 interface AcceleratorRecommendationsProps {
   formData: FormData;
@@ -20,14 +20,13 @@ interface Accelerator {
   stages: string[];
   founded: string;
   duration: string;
-  investments: number;
-  exits: number;
   website: string;
   location: string;
   specialization: string;
   whyGoodFit: string;
   keyBenefits: string[];
-  founders?: string[];
+  contactEmail?: string;
+  contactPhone?: string;
 }
 
 const accelerators: Accelerator[] = [
@@ -40,13 +39,12 @@ const accelerators: Accelerator[] = [
     stages: ['seed', 'series-a'],
     founded: '2009',
     duration: '20 weeks',
-    investments: 2659,
-    exits: 139,
     website: 'https://masschallenge.org',
     location: 'Boston, MA',
     specialization: 'Industry Agnostic with Global Reach',
     whyGoodFit: 'Perfect for startups seeking comprehensive support across all industries with access to a massive global network.',
-    keyBenefits: ['Zero equity taken', 'Global mentor network', 'Access to corporate partners', 'Demo day exposure']
+    keyBenefits: ['Zero equity taken', 'Global mentor network', 'Access to corporate partners', 'Demo day exposure'],
+    contactEmail: 'info@masschallenge.org'
   },
   {
     id: 'techstars-boston',
@@ -57,30 +55,28 @@ const accelerators: Accelerator[] = [
     stages: ['seed', 'series-a'],
     founded: '2006',
     duration: '13 weeks',
-    investments: 203,
-    exits: 40,
     website: 'https://techstars.com/accelerators/boston',
     location: 'Boston, MA',
     specialization: 'Tech-focused with strong mentor network',
     whyGoodFit: 'Ideal for technology startups ready for intensive mentorship and rapid scaling.',
-    keyBenefits: ['$100K+ funding', 'Lifetime mentor network', 'Techstars alumni network', 'Investor demo day']
+    keyBenefits: ['$100K+ funding', 'Lifetime mentor network', 'Techstars alumni network', 'Investor demo day'],
+    contactEmail: 'boston@techstars.com'
   },
   {
     id: 'fintech-sandbox',
     name: 'Fintech Sandbox',
     description: 'Non-profit helping fintech startups build great products',
     industries: ['financial'],
-    verticals: ['fintech', 'insurtech'],
+    verticals: ['fintech'],
     stages: ['pre-seed', 'seed'],
     founded: '2014',
     duration: '24 weeks',
-    investments: 112,
-    exits: 13,
     website: 'https://fintechsandbox.org',
     location: 'Boston, MA',
     specialization: 'FinTech Innovation Hub',
     whyGoodFit: 'Specialized for financial technology companies needing industry connections and regulatory guidance.',
-    keyBenefits: ['Free data access', 'Regulatory guidance', 'Bank partnerships', 'FinTech community']
+    keyBenefits: ['Free data access', 'Regulatory guidance', 'Bank partnerships', 'FinTech community'],
+    contactEmail: 'info@fintechsandbox.org'
   },
   {
     id: 'carb-x',
@@ -91,13 +87,12 @@ const accelerators: Accelerator[] = [
     stages: ['pre-seed', 'seed'],
     founded: '2016',
     duration: '18 months',
-    investments: 101,
-    exits: 25,
     website: 'https://carb-x.org',
     location: 'Boston, MA',
     specialization: 'Antibacterial & Pharmaceutical Innovation',
     whyGoodFit: 'Essential for life sciences companies developing solutions for drug-resistant bacteria and infectious diseases.',
-    keyBenefits: ['Up to $9M funding', 'Regulatory expertise', 'Global partnerships', 'Clinical development support']
+    keyBenefits: ['Up to $9M funding', 'Regulatory expertise', 'Global partnerships', 'Clinical development support'],
+    contactEmail: 'info@carb-x.org'
   },
   {
     id: 'learnlaunch',
@@ -108,13 +103,12 @@ const accelerators: Accelerator[] = [
     stages: ['seed', 'series-a'],
     founded: '2013',
     duration: '11 weeks',
-    investments: 83,
-    exits: 7,
     website: 'https://learnlaunch.com',
     location: 'Boston, MA',
     specialization: 'Education Technology Focus',
     whyGoodFit: 'Perfect for education technology companies seeking sector-specific expertise and connections.',
-    keyBenefits: ['EdTech expertise', 'School district connections', 'Pilot program opportunities', 'Education investor network']
+    keyBenefits: ['EdTech expertise', 'School district connections', 'Pilot program opportunities', 'Education investor network'],
+    contactEmail: 'info@learnlaunch.com'
   },
   {
     id: 'accelicity',
@@ -125,13 +119,12 @@ const accelerators: Accelerator[] = [
     stages: ['seed', 'series-a'],
     founded: '2010',
     duration: '9 weeks',
-    investments: 31,
-    exits: 0,
     website: 'https://accelicity.com',
     location: 'Boston, MA',
     specialization: 'Climate Tech & Smart Cities',
     whyGoodFit: 'Ideal for climate technology and smart city solution companies.',
-    keyBenefits: ['City pilot programs', 'Government connections', 'Sustainability focus', 'Climate tech network']
+    keyBenefits: ['City pilot programs', 'Government connections', 'Sustainability focus', 'Climate tech network'],
+    contactEmail: 'info@accelicity.com'
   },
   {
     id: 'petri',
@@ -142,13 +135,12 @@ const accelerators: Accelerator[] = [
     stages: ['pre-seed', 'seed'],
     founded: '2019',
     duration: '6 months',
-    investments: 6,
-    exits: 0,
     website: 'https://petri.bio',
     location: 'Boston, MA',
     specialization: 'Biotech & Bio-Engineering',
     whyGoodFit: 'Specialized for cutting-edge biotech companies combining biology and engineering.',
-    keyBenefits: ['Bio-engineering expertise', 'Lab access', 'Scientific mentorship', 'Biotech investor network']
+    keyBenefits: ['Bio-engineering expertise', 'Lab access', 'Scientific mentorship', 'Biotech investor network'],
+    contactEmail: 'info@petri.bio'
   }
 ];
 
@@ -162,7 +154,7 @@ const AcceleratorRecommendations: React.FC<AcceleratorRecommendationsProps> = ({
       acc.industries.includes(formData.industry) || 
       acc.verticals.includes(formData.vertical) ||
       (acc.stages.includes(formData.businessStage))
-    ).slice(0, 5); // Show top 5 matches
+    ).slice(0, 5);
   };
 
   const recommendedAccelerators = getRecommendedAccelerators();
@@ -206,12 +198,12 @@ const AcceleratorRecommendations: React.FC<AcceleratorRecommendationsProps> = ({
               
               <div className="flex items-center justify-between text-xs text-gray-500 mb-3">
                 <div className="flex items-center gap-1">
-                  <Users className="h-3 w-3" />
-                  <span>{accelerator.investments} investments</span>
+                  <Calendar className="h-3 w-3" />
+                  <span>Founded {accelerator.founded}</span>
                 </div>
                 <div className="flex items-center gap-1">
-                  <TrendingUp className="h-3 w-3" />
-                  <span>{accelerator.exits} exits</span>
+                  <MapPin className="h-3 w-3" />
+                  <span>{accelerator.location}</span>
                 </div>
               </div>
 
@@ -223,7 +215,7 @@ const AcceleratorRecommendations: React.FC<AcceleratorRecommendationsProps> = ({
                     className="w-full text-red-600 border-red-200 hover:bg-red-50"
                     onClick={() => setSelectedAccelerator(accelerator)}
                   >
-                    Why This Fits Your Startup
+                    View Details & Connect
                   </Button>
                 </DialogTrigger>
                 <DialogContent className="max-w-2xl">
@@ -248,10 +240,6 @@ const AcceleratorRecommendations: React.FC<AcceleratorRecommendationsProps> = ({
                         <Users className="h-4 w-4 text-gray-500" />
                         <span><strong>Founded:</strong> {accelerator.founded}</span>
                       </div>
-                      <div className="flex items-center gap-2">
-                        <TrendingUp className="h-4 w-4 text-gray-500" />
-                        <span><strong>Track Record:</strong> {accelerator.investments} investments, {accelerator.exits} exits</span>
-                      </div>
                     </div>
 
                     <div className="bg-green-50 p-4 rounded-lg border border-green-200">
@@ -271,24 +259,54 @@ const AcceleratorRecommendations: React.FC<AcceleratorRecommendationsProps> = ({
                       </ul>
                     </div>
 
+                    <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
+                      <h4 className="font-semibold text-blue-900 mb-2">🤝 How Leader Bank Cap Connect Can Help</h4>
+                      <ul className="space-y-1 text-sm text-blue-800">
+                        <li>• Warm introduction to program directors</li>
+                        <li>• Application guidance and review</li>
+                        <li>• Potential discounts on program fees</li>
+                        <li>• Ongoing support throughout the process</li>
+                      </ul>
+                    </div>
+
+                    <div className="space-y-2">
+                      <h4 className="font-semibold text-gray-900">Contact Information:</h4>
+                      <div className="flex flex-col gap-2 text-sm">
+                        <div className="flex items-center gap-2">
+                          <ExternalLink className="h-4 w-4 text-gray-500" />
+                          <a href={accelerator.website} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
+                            {accelerator.website}
+                          </a>
+                        </div>
+                        {accelerator.contactEmail && (
+                          <div className="flex items-center gap-2">
+                            <Mail className="h-4 w-4 text-gray-500" />
+                            <a href={`mailto:${accelerator.contactEmail}`} className="text-blue-600 hover:underline">
+                              {accelerator.contactEmail}
+                            </a>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
                     <div className="flex gap-3 pt-4 border-t">
                       <Button 
                         className="flex-1 bg-red-600 hover:bg-red-700"
-                        onClick={() => window.open(accelerator.website, '_blank')}
+                        onClick={() => {
+                          const subject = `Introduction Request via Leader Bank Cap Connect`;
+                          const body = `Dear Leader Bank Cap Connect Team,\n\nI would like to request an introduction to ${accelerator.name}. Based on my startup profile, this accelerator seems like a great fit.\n\nCompany: ${formData.borrowerName}\nContact: ${formData.contactName}\nEmail: ${formData.contactEmail}\n\nPlease help facilitate this connection.\n\nBest regards,\n${formData.contactName}`;
+                          window.location.href = `mailto:connect@leaderbank.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+                        }}
                       >
-                        <ExternalLink className="h-4 w-4 mr-2" />
-                        Visit Their Website
+                        Request Introduction via Cap Connect
                       </Button>
                       <Button 
                         variant="outline" 
                         className="flex-1"
-                        onClick={() => {
-                          const subject = `Partnership Inquiry from Leader Bank Cap Connect`;
-                          const body = `Hi ${accelerator.name} team,\n\nI was referred to your accelerator through Leader Bank's Cap Connect platform. I'm interested in learning more about your program.\n\nBest regards,\n${formData.contactName}`;
-                          window.location.href = `mailto:info@${accelerator.website.replace('https://', '').replace('http://', '')}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-                        }}
+                        onClick={() => window.open(accelerator.website, '_blank')}
                       >
-                        Contact Them
+                        <ExternalLink className="h-4 w-4 mr-2" />
+                        Visit Website
                       </Button>
                     </div>
                   </div>
@@ -301,7 +319,7 @@ const AcceleratorRecommendations: React.FC<AcceleratorRecommendationsProps> = ({
 
       <div className="mt-4 text-center">
         <p className="text-xs text-gray-600">
-          💡 <strong>Next Step:</strong> Our team will also provide personalized introductions to the best-fit accelerators based on your complete profile.
+          💡 <strong>Next Step:</strong> Our team will provide personalized introductions and help you get the best terms with these accelerators.
         </p>
       </div>
     </div>

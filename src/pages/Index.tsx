@@ -105,23 +105,25 @@ const Index = () => {
   const renderCurrentStep = () => {
     switch (currentStep) {
       case 1:
-        return (
-          <>
-            <BasicInfo formData={formData} setFormData={setFormData} />
-            {formData.industry && formData.vertical && (
-              <AcceleratorRecommendations formData={formData} />
-            )}
-          </>
-        );
+        return <BasicInfo formData={formData} setFormData={setFormData} />;
       case 2:
         return <FundingOptions formData={formData} setFormData={setFormData} />;
       case 3:
-        return formData.seekingType === 'equity' ? (
+        const stepContent = formData.seekingType === 'equity' ? (
           <EquityInvestment formData={formData} setFormData={setFormData} />
         ) : formData.seekingType === 'debt' ? (
           <DebtFinancing formData={formData} setFormData={setFormData} />
         ) : (
           <AcceleratorProgram formData={formData} setFormData={setFormData} />
+        );
+        
+        return (
+          <>
+            {stepContent}
+            {formData.seekingType === 'accelerator' && formData.industry && formData.vertical && (
+              <AcceleratorRecommendations formData={formData} />
+            )}
+          </>
         );
       case 4:
         return <FinalSteps formData={formData} setFormData={setFormData} />;
