@@ -1,9 +1,8 @@
-
 import React from 'react';
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { FormData } from '@/pages/Index';
+import { FormData } from '@/types/formData';
 import { Handshake, Clock, Users, TrendingUp } from 'lucide-react';
 
 interface FinalStepsProps {

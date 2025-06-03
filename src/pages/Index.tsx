@@ -6,7 +6,7 @@ import EquityInvestment from '@/components/forms/EquityInvestment';
 import DebtFinancing from '@/components/forms/DebtFinancing';
 import AcceleratorProgram from '@/components/forms/AcceleratorProgram';
 import FinalSteps from '@/components/forms/FinalSteps';
-import AcceleratorRecommendations from '@/components/AcceleratorRecommendations';
+import AcceleratorResults from '@/components/AcceleratorResults';
 import Header from '@/components/layout/Header';
 import ProcessOverview from '@/components/layout/ProcessOverview';
 import ProgressSection from '@/components/layout/ProgressSection';
@@ -85,6 +85,8 @@ const Index = () => {
     agreePrivacy: ''
   });
 
+  const [showResults, setShowResults] = useState(false);
+
   const {
     currentStep,
     currentStepIndex,
@@ -97,10 +99,24 @@ const Index = () => {
   const handleSubmit = async () => {
     console.log('Form submitted:', formData);
     
-    const successMessage = `Thanks, ${formData.finalFullName}! 🎉\n\nOur expert team will review your information and reach out within 2-3 business days with personalized funding recommendations.\n\nIn the meantime, we'll send you some helpful resources based on your ${formData.seekingType} funding goals.\n\nWelcome to the Leader Bank Cap Connect family!`;
-    
-    alert(successMessage);
+    if (formData.seekingType === 'accelerator') {
+      setShowResults(true);
+    } else {
+      const successMessage = `Thanks, ${formData.finalFullName}! 🎉\n\nOur expert team will review your information and reach out within 2-3 business days with personalized funding recommendations.\n\nIn the meantime, we'll send you some helpful resources based on your ${formData.seekingType} funding goals.\n\nWelcome to the Leader Bank Cap Connect family!`;
+      alert(successMessage);
+    }
   };
+
+  // Show results page for accelerator users after submission
+  if (showResults && formData.seekingType === 'accelerator') {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
+        <Header />
+        <AcceleratorResults formData={formData} />
+        <TrustIndicators />
+      </div>
+    );
+  }
 
   const renderCurrentStep = () => {
     switch (currentStep) {
@@ -109,22 +125,13 @@ const Index = () => {
       case 2:
         return <FundingOptions formData={formData} setFormData={setFormData} />;
       case 3:
-        const stepContent = formData.seekingType === 'equity' ? (
-          <EquityInvestment formData={formData} setFormData={setFormData} />
-        ) : formData.seekingType === 'debt' ? (
-          <DebtFinancing formData={formData} setFormData={setFormData} />
-        ) : (
-          <AcceleratorProgram formData={formData} setFormData={setFormData} />
-        );
-        
-        return (
-          <>
-            {stepContent}
-            {formData.seekingType === 'accelerator' && formData.industry && formData.vertical && (
-              <AcceleratorRecommendations formData={formData} />
-            )}
-          </>
-        );
+        if (formData.seekingType === 'equity') {
+          return <EquityInvestment formData={formData} setFormData={setFormData} />;
+        } else if (formData.seekingType === 'debt') {
+          return <DebtFinancing formData={formData} setFormData={setFormData} />;
+        } else {
+          return <AcceleratorProgram formData={formData} setFormData={setFormData} />;
+        }
       case 4:
         return <FinalSteps formData={formData} setFormData={setFormData} />;
       default:
