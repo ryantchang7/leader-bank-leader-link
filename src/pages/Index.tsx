@@ -8,6 +8,7 @@ import EquityInvestment from '@/components/forms/EquityInvestment';
 import DebtFinancing from '@/components/forms/DebtFinancing';
 import AcceleratorProgram from '@/components/forms/AcceleratorProgram';
 import FinalSteps from '@/components/forms/FinalSteps';
+import AcceleratorRecommendations from '@/components/AcceleratorRecommendations';
 import { ChevronLeft, ChevronRight, CheckCircle, Circle, Users, TrendingUp, Shield, Lock } from 'lucide-react';
 
 export interface FormData {
@@ -252,7 +253,14 @@ const Index = () => {
   const renderCurrentStep = () => {
     switch (currentStep) {
       case 1:
-        return <BasicInfo formData={formData} setFormData={setFormData} />;
+        return (
+          <>
+            <BasicInfo formData={formData} setFormData={setFormData} />
+            {formData.industry && formData.vertical && (
+              <AcceleratorRecommendations formData={formData} />
+            )}
+          </>
+        );
       case 2:
         return <FundingOptions formData={formData} setFormData={setFormData} />;
       case 3:
