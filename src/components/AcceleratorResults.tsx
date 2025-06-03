@@ -4,103 +4,40 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { ExternalLink, Users, Calendar, MapPin, Mail, Phone, Star, Rocket } from 'lucide-react';
+import { ExternalLink, Users, Calendar, MapPin, Mail, Phone, Star, Rocket, Award } from 'lucide-react';
 import { FormData } from '@/types/formData';
+import { getRecommendedAccelerators, Accelerator } from '@/data/accelerators';
 
 interface AcceleratorResultsProps {
   formData: FormData;
 }
 
-interface Accelerator {
-  id: string;
-  name: string;
-  description: string;
-  industries: string[];
-  verticals: string[];
-  stages: string[];
-  founded: string;
-  duration: string;
-  website: string;
-  location: string;
-  specialization: string;
-  whyGoodFit: string;
-  keyBenefits: string[];
-  contactEmail?: string;
-  contactPhone?: string;
-  logoUrl: string;
-}
-
-const accelerators: Accelerator[] = [
-  {
-    id: 'masschallenge',
-    name: 'MassChallenge',
-    description: 'Global network solving big problems through innovation',
-    industries: ['b2b', 'b2c', 'technology', 'healthcare', 'financial'],
-    verticals: ['saas', 'fintech', 'health', 'ai-ml', 'other'],
-    stages: ['seed', 'series-a'],
-    founded: '2009',
-    duration: '20 weeks',
-    website: 'https://masschallenge.org',
-    location: 'Boston, MA',
-    specialization: 'Industry Agnostic with Global Reach',
-    whyGoodFit: 'Perfect for startups seeking comprehensive support across all industries with access to a massive global network.',
-    keyBenefits: ['Zero equity taken', 'Global mentor network', 'Access to corporate partners', 'Demo day exposure'],
-    contactEmail: 'info@masschallenge.org',
-    logoUrl: 'https://images.crunchbase.com/image/upload/c_lpad,h_256,w_256,f_auto,q_auto:eco,dpr_1/v1455514364/pim02bzqvgz0hibsra41.png'
-  },
-  {
-    id: 'techstars-boston',
-    name: 'Techstars Boston',
-    description: 'Giving access to money, mentors, talent, and tools',
-    industries: ['technology', 'b2b', 'b2c'],
-    verticals: ['saas', 'ai-ml', 'fintech', 'health'],
-    stages: ['seed', 'series-a'],
-    founded: '2006',
-    duration: '13 weeks',
-    website: 'https://techstars.com/accelerators/boston',
-    location: 'Boston, MA',
-    specialization: 'Tech-focused with strong mentor network',
-    whyGoodFit: 'Ideal for technology startups ready for intensive mentorship and rapid scaling.',
-    keyBenefits: ['$100K+ funding', 'Lifetime mentor network', 'Techstars alumni network', 'Investor demo day'],
-    contactEmail: 'boston@techstars.com',
-    logoUrl: 'https://images.crunchbase.com/image/upload/c_lpad,h_256,w_256,f_auto,q_auto:eco,dpr_1/v1397181252/8c8cfc3de3de90ca90bc1633c72c0a32.png'
-  },
-  {
-    id: 'fintech-sandbox',
-    name: 'Fintech Sandbox',
-    description: 'Non-profit helping fintech startups build great products',
-    industries: ['financial'],
-    verticals: ['fintech'],
-    stages: ['pre-seed', 'seed'],
-    founded: '2014',
-    duration: '24 weeks',
-    website: 'https://fintechsandbox.org',
-    location: 'Boston, MA',
-    specialization: 'FinTech Innovation Hub',
-    whyGoodFit: 'Specialized for financial technology companies needing industry connections and regulatory guidance.',
-    keyBenefits: ['Free data access', 'Regulatory guidance', 'Bank partnerships', 'FinTech community'],
-    contactEmail: 'info@fintechsandbox.org',
-    logoUrl: 'https://images.crunchbase.com/image/upload/c_lpad,h_256,w_256,f_auto,q_auto:eco,dpr_1/v1473719522/tg8wdj6gkgfrsnwkpn61.png'
-  }
-];
-
 const AcceleratorResults: React.FC<AcceleratorResultsProps> = ({ formData }) => {
   const [selectedAccelerator, setSelectedAccelerator] = useState<Accelerator | null>(null);
-
-  const getRecommendedAccelerators = () => {
-    if (!formData.industry || !formData.vertical) return [];
-    
-    return accelerators.filter(acc => 
-      acc.industries.includes(formData.industry) || 
-      acc.verticals.includes(formData.vertical) ||
-      (acc.stages.includes(formData.businessStage))
-    ).slice(0, 3);
-  };
-
-  const recommendedAccelerators = getRecommendedAccelerators();
+  const recommendedAccelerators = getRecommendedAccelerators(formData);
 
   if (recommendedAccelerators.length === 0) {
-    return null;
+    return (
+      <div className="max-w-6xl mx-auto px-4 py-8">
+        <div className="text-center">
+          <Rocket className="h-12 w-12 text-red-600 mx-auto mb-4" />
+          <h1 className="text-2xl font-bold text-gray-900 mb-4">No Direct Matches Found</h1>
+          <p className="text-gray-600 mb-6">
+            We couldn't find accelerators that perfectly match your criteria, but our team can help you find the right fit.
+          </p>
+          <Button 
+            className="bg-red-600 hover:bg-red-700 text-white"
+            onClick={() => {
+              const subject = `Custom Accelerator Matching Request`;
+              const body = `Dear Leader Bank Cap Connect Team,\n\nI need help finding accelerators that match my startup profile:\n\nCompany: ${formData.borrowerName}\nIndustry: ${formData.industry}\nVertical: ${formData.vertical}\nStage: ${formData.businessStage}\n\nPlease help me find suitable accelerator opportunities.\n\nBest regards,\n${formData.contactName}`;
+              window.location.href = `mailto:capconnect@leaderbank.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+            }}
+          >
+            Get Personal Accelerator Matching
+          </Button>
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -108,11 +45,12 @@ const AcceleratorResults: React.FC<AcceleratorResultsProps> = ({ formData }) => 
       <div className="text-center mb-8">
         <div className="flex items-center justify-center gap-3 mb-4">
           <Rocket className="h-8 w-8 text-red-600" />
-          <h1 className="text-3xl font-bold text-gray-900">Your Accelerator Matches</h1>
+          <h1 className="text-3xl font-bold text-gray-900">Your Top 3 Accelerator Matches</h1>
         </div>
         <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-          Based on your profile as a {formData.industry} company in {formData.vertical}, 
-          here are the top 3 accelerators we recommend for your growth journey.
+          Based on your profile as a <span className="font-semibold">{formData.businessStage}</span> stage{' '}
+          <span className="font-semibold">{formData.industry}</span> company in{' '}
+          <span className="font-semibold">{formData.vertical}</span>, here are our top recommendations.
         </p>
       </div>
 
@@ -127,14 +65,9 @@ const AcceleratorResults: React.FC<AcceleratorResultsProps> = ({ formData }) => 
             
             <CardHeader className="pb-4">
               <div className="flex items-center gap-4 mb-3">
-                <img 
-                  src={accelerator.logoUrl} 
-                  alt={`${accelerator.name} logo`}
-                  className="w-12 h-12 object-contain rounded"
-                  onError={(e) => {
-                    e.currentTarget.src = `https://ui-avatars.com/api/?name=${accelerator.name}&background=ef4444&color=fff&size=48`;
-                  }}
-                />
+                <div className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center">
+                  <Award className="h-6 w-6 text-red-600" />
+                </div>
                 <div>
                   <CardTitle className="text-lg font-bold text-gray-900">
                     {accelerator.name}
@@ -143,10 +76,12 @@ const AcceleratorResults: React.FC<AcceleratorResultsProps> = ({ formData }) => 
                 </div>
               </div>
               <div className="flex items-center justify-between text-xs text-gray-500">
-                <div className="flex items-center gap-1">
-                  <Calendar className="h-3 w-3" />
-                  <span>{accelerator.duration}</span>
-                </div>
+                {accelerator.duration && (
+                  <div className="flex items-center gap-1">
+                    <Calendar className="h-3 w-3" />
+                    <span>{accelerator.duration}</span>
+                  </div>
+                )}
                 <div className="flex items-center gap-1">
                   <MapPin className="h-3 w-3" />
                   <span>{accelerator.location}</span>
@@ -162,9 +97,10 @@ const AcceleratorResults: React.FC<AcceleratorResultsProps> = ({ formData }) => 
               <div className="bg-green-50 p-3 rounded-lg mb-4">
                 <div className="flex items-center gap-2 mb-2">
                   <Star className="h-4 w-4 text-green-600" />
-                  <span className="text-sm font-medium text-green-900">Perfect Fit Because:</span>
+                  <span className="text-sm font-medium text-green-900">Perfect Fit:</span>
                 </div>
-                <p className="text-xs text-green-800">{accelerator.whyGoodFit}</p>
+                <p className="text-xs text-green-800">{accelerator.equityTaken}</p>
+                <p className="text-xs text-green-800">{accelerator.cohortBased ? 'Cohort-based' : 'Flexible timeline'}</p>
               </div>
 
               <Dialog>
@@ -179,14 +115,7 @@ const AcceleratorResults: React.FC<AcceleratorResultsProps> = ({ formData }) => 
                 <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
                   <DialogHeader>
                     <DialogTitle className="flex items-center gap-3">
-                      <img 
-                        src={accelerator.logoUrl} 
-                        alt={`${accelerator.name} logo`}
-                        className="w-8 h-8 object-contain rounded"
-                        onError={(e) => {
-                          e.currentTarget.src = `https://ui-avatars.com/api/?name=${accelerator.name}&background=ef4444&color=fff&size=32`;
-                        }}
-                      />
+                      <Award className="h-6 w-6 text-red-600" />
                       {accelerator.name}
                       <Badge variant="secondary">{accelerator.specialization}</Badge>
                     </DialogTitle>
@@ -194,23 +123,29 @@ const AcceleratorResults: React.FC<AcceleratorResultsProps> = ({ formData }) => 
                   
                   <div className="space-y-4">
                     <div className="grid grid-cols-2 gap-4 text-sm">
-                      <div className="flex items-center gap-2">
-                        <Calendar className="h-4 w-4 text-gray-500" />
-                        <span><strong>Duration:</strong> {accelerator.duration}</span>
-                      </div>
+                      {accelerator.duration && (
+                        <div className="flex items-center gap-2">
+                          <Calendar className="h-4 w-4 text-gray-500" />
+                          <span><strong>Duration:</strong> {accelerator.duration}</span>
+                        </div>
+                      )}
                       <div className="flex items-center gap-2">
                         <MapPin className="h-4 w-4 text-gray-500" />
                         <span><strong>Location:</strong> {accelerator.location}</span>
                       </div>
                       <div className="flex items-center gap-2">
                         <Users className="h-4 w-4 text-gray-500" />
-                        <span><strong>Founded:</strong> {accelerator.founded}</span>
+                        <span><strong>Equity:</strong> {accelerator.equityTaken}</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Star className="h-4 w-4 text-gray-500" />
+                        <span><strong>Format:</strong> {accelerator.cohortBased ? 'Cohort-based' : 'Flexible'}</span>
                       </div>
                     </div>
 
                     <div className="bg-green-50 p-4 rounded-lg border border-green-200">
                       <h4 className="font-semibold text-green-900 mb-2">🎯 Why This Is Perfect For You</h4>
-                      <p className="text-sm text-green-800">{accelerator.whyGoodFit}</p>
+                      <p className="text-sm text-green-800">{accelerator.description}</p>
                     </div>
 
                     <div>
@@ -252,6 +187,14 @@ const AcceleratorResults: React.FC<AcceleratorResultsProps> = ({ formData }) => 
                             </a>
                           </div>
                         )}
+                        {accelerator.contactPhone && (
+                          <div className="flex items-center gap-2">
+                            <Phone className="h-4 w-4 text-gray-500" />
+                            <a href={`tel:${accelerator.contactPhone}`} className="text-blue-600 hover:underline">
+                              {accelerator.contactPhone}
+                            </a>
+                          </div>
+                        )}
                       </div>
                     </div>
 
@@ -260,7 +203,7 @@ const AcceleratorResults: React.FC<AcceleratorResultsProps> = ({ formData }) => 
                         className="flex-1 bg-red-600 hover:bg-red-700"
                         onClick={() => {
                           const subject = `Introduction Request via Leader Bank Cap Connect - ${accelerator.name}`;
-                          const body = `Dear Leader Bank Cap Connect Team,\n\nI would like to request an introduction to ${accelerator.name}. Based on my startup profile, this accelerator seems like a perfect fit.\n\nCompany: ${formData.borrowerName}\nContact: ${formData.contactName}\nEmail: ${formData.contactEmail}\nIndustry: ${formData.industry}\nVertical: ${formData.vertical}\n\nPlease help facilitate this connection and explore any potential discounts or special terms.\n\nBest regards,\n${formData.contactName}`;
+                          const body = `Dear Leader Bank Cap Connect Team,\n\nI would like to request an introduction to ${accelerator.name}. Based on my startup profile, this accelerator seems like a perfect fit.\n\nCompany: ${formData.borrowerName}\nContact: ${formData.contactName}\nEmail: ${formData.contactEmail}\nIndustry: ${formData.industry}\nVertical: ${formData.vertical}\nStage: ${formData.businessStage}\n\nPlease help facilitate this connection and explore any potential discounts or special terms.\n\nBest regards,\n${formData.contactName}`;
                           window.location.href = `mailto:capconnect@leaderbank.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
                         }}
                       >
@@ -293,7 +236,7 @@ const AcceleratorResults: React.FC<AcceleratorResultsProps> = ({ formData }) => 
           className="bg-red-600 hover:bg-red-700 text-white px-8 py-3"
           onClick={() => {
             const subject = `Accelerator Introduction Package Request`;
-            const body = `Dear Leader Bank Cap Connect Team,\n\nI'm interested in getting introductions to the recommended accelerators from my Cap Connect assessment.\n\nCompany: ${formData.borrowerName}\nContact: ${formData.contactName}\nEmail: ${formData.contactEmail}\n\nPlease contact me to discuss the next steps and introduction process.\n\nBest regards,\n${formData.contactName}`;
+            const body = `Dear Leader Bank Cap Connect Team,\n\nI'm interested in getting introductions to the recommended accelerators from my Cap Connect assessment.\n\nCompany: ${formData.borrowerName}\nContact: ${formData.contactName}\nEmail: ${formData.contactEmail}\n\nRecommended Accelerators:\n${recommendedAccelerators.map(acc => `- ${acc.name}`).join('\n')}\n\nPlease contact me to discuss the next steps and introduction process.\n\nBest regards,\n${formData.contactName}`;
             window.location.href = `mailto:capconnect@leaderbank.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
           }}
         >
