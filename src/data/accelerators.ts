@@ -341,19 +341,38 @@ export const getRecommendedAccelerators = (formData: any): Accelerator[] => {
       const industryMatch = acc.industries.includes(industry);
       const verticalMatch = acc.verticals.includes(vertical);
       
-      // Score based on matches
+      // Include if at least one criteria matches
       return stageMatch || industryMatch || verticalMatch;
     })
     .sort((a, b) => {
-      // Prioritize GrowthCraft for industry-agnostic needs
-      if (a.id === 'growthcraft' && (vertical === 'other' || industry === 'b2b')) return -1;
-      if (b.id === 'growthcraft' && (vertical === 'other' || industry === 'b2b')) return 1;
+      // Special prioritization for GrowthCraft for industry-agnostic needs
+      if (a.id === 'growthcraft' && (vertical === 'other' || industry === 'b2b' || industry === 'technology')) return -1;
+      if (b.id === 'growthcraft' && (vertical === 'other' || industry === 'b2b' || industry === 'technology')) return 1;
       
-      // Score by number of matches
-      const scoreA = [a.stages.includes(businessStage), a.industries.includes(industry), a.verticals.includes(vertical)].filter(Boolean).length;
-      const scoreB = [b.stages.includes(businessStage), b.industries.includes(industry), b.verticals.includes(vertical)].filter(Boolean).length;
+      // Score based on number of exact matches
+      const scoreA = [
+        a.stages.includes(businessStage),
+        a.industries.includes(industry),
+        a.verticals.includes(vertical)
+      ].filter(Boolean).length;
       
-      return scoreB - scoreA;
+      const scoreB = [
+        b.stages.includes(businessStage),
+        b.industries.includes(industry), 
+        b.verticals.includes(vertical)
+      ].filter(Boolean).length;
+      
+      // Higher score first
+      if (scoreB !== scoreA) return scoreB - scoreA;
+      
+      // If scores are equal, prioritize zero-equity programs
+      const aZeroEquity = a.equityTaken.includes('0%');
+      const bZeroEquity = b.equityTaken.includes('0%');
+      if (aZeroEquity && !bZeroEquity) return -1;
+      if (!aZeroEquity && bZeroEquity) return 1;
+      
+      // Finally, sort alphabetically
+      return a.name.localeCompare(b.name);
     })
-    .slice(0, 3);
+    .slice(0, 3); // Limit to top 3 matches
 };

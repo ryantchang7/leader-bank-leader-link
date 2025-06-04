@@ -17,18 +17,21 @@ const AcceleratorAdmin = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStage, setFilterStage] = useState('all');
   const [filterIndustry, setFilterIndustry] = useState('all');
+  const [filterVertical, setFilterVertical] = useState('all');
 
   const filteredAccelerators = accelerators.filter(acc => {
     const matchesSearch = acc.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          acc.description.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesStage = filterStage === 'all' || acc.stages.includes(filterStage);
     const matchesIndustry = filterIndustry === 'all' || acc.industries.includes(filterIndustry);
+    const matchesVertical = filterVertical === 'all' || acc.verticals.includes(filterVertical);
     
-    return matchesSearch && matchesStage && matchesIndustry;
+    return matchesSearch && matchesStage && matchesIndustry && matchesVertical;
   });
 
-  const stageOptions = ['pre-seed', 'seed', 'series-a', 'series-b', 'self-funded'];
-  const industryOptions = ['b2b', 'b2c', 'technology', 'healthcare', 'financial', 'energy', 'consumer', 'media', 'retail'];
+  const stageOptions = ['pre-seed', 'seed', 'series-a', 'series-b', 'self-funded', 'na'];
+  const industryOptions = ['b2b', 'b2c', 'technology', 'healthcare', 'financial', 'energy', 'consumer', 'media', 'retail', 'real-estate', 'life-sciences'];
+  const verticalOptions = ['saas', 'consumer', 'e-commerce', 'hr-tech', 'other', 'ai-ml', 'hardware', 'robotics', 'it', 'health', 'life-sciences', 'agtech', 'energy', 'food-beverage', 'transportation', 'gaming', 'govtech', 'infrastructure', 'insurtech', 'fintech', 'education', 'media'];
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -54,7 +57,7 @@ const AcceleratorAdmin = () => {
             <CardTitle className="text-lg">Search & Filter</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
               <div>
                 <Label htmlFor="search">Search Accelerators</Label>
                 <Input
@@ -88,6 +91,20 @@ const AcceleratorAdmin = () => {
                     <SelectItem value="all">All Industries</SelectItem>
                     {industryOptions.map(industry => (
                       <SelectItem key={industry} value={industry}>{industry}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div>
+                <Label>Filter by Vertical</Label>
+                <Select value={filterVertical} onValueChange={setFilterVertical}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="All verticals" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Verticals</SelectItem>
+                    {verticalOptions.map(vertical => (
+                      <SelectItem key={vertical} value={vertical}>{vertical}</SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
@@ -129,9 +146,9 @@ const AcceleratorAdmin = () => {
           <Card>
             <CardContent className="p-6">
               <div className="text-2xl font-bold text-purple-600">
-                {new Set(accelerators.flatMap(acc => acc.industries)).size}
+                {filteredAccelerators.length}
               </div>
-              <div className="text-sm text-gray-600">Industries Covered</div>
+              <div className="text-sm text-gray-600">Filtered Results</div>
             </CardContent>
           </Card>
         </div>
@@ -261,6 +278,21 @@ const AcceleratorAdmin = () => {
                               ))}
                             </div>
                           </div>
+
+                          <div>
+                            <Label>Verticals</Label>
+                            <div className="grid grid-cols-3 gap-2 mt-2">
+                              {verticalOptions.map(vertical => (
+                                <div key={vertical} className="flex items-center space-x-2">
+                                  <Checkbox 
+                                    id={`vertical-${vertical}`}
+                                    defaultChecked={accelerator.verticals.includes(vertical)}
+                                  />
+                                  <Label htmlFor={`vertical-${vertical}`} className="text-sm">{vertical}</Label>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
                         </div>
 
                         <div>
@@ -290,6 +322,7 @@ const AcceleratorAdmin = () => {
                   <Badge variant="outline" className="text-xs">
                     {accelerator.cohortBased ? 'Cohort' : 'Flexible'}
                   </Badge>
+                  <Badge variant="outline" className="text-xs">{accelerator.specialization}</Badge>
                 </div>
 
                 <div className="space-y-2">
