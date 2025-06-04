@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -16,9 +16,17 @@ const AcceleratorResults: React.FC<AcceleratorResultsProps> = ({ formData }) => 
   const [selectedAccelerator, setSelectedAccelerator] = useState<Accelerator | null>(null);
   const recommendedAccelerators = getRecommendedAccelerators(formData);
 
+  // Scroll to results when component mounts
+  useEffect(() => {
+    const resultsSection = document.querySelector('.accelerator-results-section');
+    if (resultsSection) {
+      resultsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }, []);
+
   if (recommendedAccelerators.length === 0) {
     return (
-      <div className="max-w-6xl mx-auto px-4 py-8">
+      <div className="max-w-6xl mx-auto px-4 py-8 accelerator-results-section">
         <div className="text-center">
           <Rocket className="h-12 w-12 text-red-600 mx-auto mb-4" />
           <h1 className="text-2xl font-bold text-gray-900 mb-4">No Direct Matches Found</h1>
@@ -41,7 +49,7 @@ const AcceleratorResults: React.FC<AcceleratorResultsProps> = ({ formData }) => 
   }
 
   return (
-    <div className="max-w-6xl mx-auto px-4 py-8">
+    <div className="max-w-6xl mx-auto px-4 py-8 accelerator-results-section">
       <div className="text-center mb-8">
         <div className="flex items-center justify-center gap-3 mb-4">
           <Rocket className="h-8 w-8 text-red-600" />
@@ -56,57 +64,57 @@ const AcceleratorResults: React.FC<AcceleratorResultsProps> = ({ formData }) => 
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
         {recommendedAccelerators.map((accelerator, index) => (
-          <Card key={accelerator.id} className="hover:shadow-xl transition-all duration-300 border-2 hover:border-red-200 relative overflow-hidden">
+          <Card key={accelerator.id} className="hover:shadow-xl transition-all duration-300 border-2 hover:border-red-200 relative overflow-hidden h-full flex flex-col">
             <div className="absolute top-4 right-4">
               <Badge variant="secondary" className="bg-red-100 text-red-700">
                 #{index + 1} Match
               </Badge>
             </div>
             
-            <CardHeader className="pb-4">
+            <CardHeader className="pb-4 flex-shrink-0">
               <div className="flex items-center gap-4 mb-3">
-                <div className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center">
+                <div className="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center flex-shrink-0">
                   <Award className="h-6 w-6 text-red-600" />
                 </div>
-                <div>
-                  <CardTitle className="text-lg font-bold text-gray-900">
+                <div className="min-w-0 flex-1">
+                  <CardTitle className="text-lg font-bold text-gray-900 line-clamp-2">
                     {accelerator.name}
                   </CardTitle>
-                  <p className="text-sm text-gray-600">{accelerator.specialization}</p>
+                  <p className="text-sm text-gray-600 line-clamp-1">{accelerator.specialization}</p>
                 </div>
               </div>
               <div className="flex items-center justify-between text-xs text-gray-500">
                 {accelerator.duration && (
                   <div className="flex items-center gap-1">
-                    <Calendar className="h-3 w-3" />
-                    <span>{accelerator.duration}</span>
+                    <Calendar className="h-3 w-3 flex-shrink-0" />
+                    <span className="truncate">{accelerator.duration}</span>
                   </div>
                 )}
                 <div className="flex items-center gap-1">
-                  <MapPin className="h-3 w-3" />
-                  <span>{accelerator.location}</span>
+                  <MapPin className="h-3 w-3 flex-shrink-0" />
+                  <span className="truncate">{accelerator.location}</span>
                 </div>
               </div>
             </CardHeader>
             
-            <CardContent>
-              <p className="text-sm text-gray-700 mb-4 line-clamp-3">
+            <CardContent className="flex-1 flex flex-col">
+              <p className="text-sm text-gray-700 mb-4 line-clamp-3 flex-1">
                 {accelerator.description}
               </p>
               
-              <div className="bg-green-50 p-3 rounded-lg mb-4">
+              <div className="bg-green-50 p-3 rounded-lg mb-4 flex-shrink-0">
                 <div className="flex items-center gap-2 mb-2">
-                  <Star className="h-4 w-4 text-green-600" />
+                  <Star className="h-4 w-4 text-green-600 flex-shrink-0" />
                   <span className="text-sm font-medium text-green-900">Perfect Fit:</span>
                 </div>
-                <p className="text-xs text-green-800">{accelerator.equityTaken}</p>
+                <p className="text-xs text-green-800 mb-1">{accelerator.equityTaken}</p>
                 <p className="text-xs text-green-800">{accelerator.cohortBased ? 'Cohort-based' : 'Flexible timeline'}</p>
               </div>
 
               <Dialog>
                 <DialogTrigger asChild>
                   <Button 
-                    className="w-full bg-red-600 hover:bg-red-700 text-white"
+                    className="w-full bg-red-600 hover:bg-red-700 text-white mt-auto"
                     onClick={() => setSelectedAccelerator(accelerator)}
                   >
                     View Details & Get Introduction

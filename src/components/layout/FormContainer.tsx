@@ -31,9 +31,12 @@ const FormContainer: React.FC<FormContainerProps> = ({
   onPrevious,
   onSubmit
 }) => {
-  // Scroll to top when step changes
+  // Scroll to form content when step changes
   useEffect(() => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    const formContent = document.querySelector('.form-content-area');
+    if (formContent) {
+      formContent.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
   }, [currentStep]);
 
   const handleNext = () => {
@@ -67,7 +70,7 @@ const FormContainer: React.FC<FormContainerProps> = ({
             )}
           </div>
         </CardHeader>
-        <CardContent className="p-8">
+        <CardContent className="p-8 form-content-area">
           <div className="transition-all duration-300 ease-in-out">
             {children}
           </div>
