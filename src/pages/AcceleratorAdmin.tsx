@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -183,22 +182,6 @@ const AcceleratorAdmin = () => {
                         <DialogTitle>Edit {accelerator.name}</DialogTitle>
                       </DialogHeader>
                       <div className="space-y-6">
-                        {/* Image Upload Section */}
-                        <div className="bg-gray-50 p-6 rounded-lg">
-                          <Label className="text-sm font-medium">Logo Upload</Label>
-                          <div className="mt-2 flex items-center gap-4">
-                            <div className="w-20 h-20 bg-white border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center">
-                              <Upload className="h-8 w-8 text-gray-400" />
-                            </div>
-                            <div>
-                              <Button variant="outline" size="sm">
-                                Upload Logo
-                              </Button>
-                              <p className="text-xs text-gray-500 mt-1">PNG, JPG up to 2MB</p>
-                            </div>
-                          </div>
-                        </div>
-
                         {/* Basic Info */}
                         <div className="grid grid-cols-2 gap-4">
                           <div>

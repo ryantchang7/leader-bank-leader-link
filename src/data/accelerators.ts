@@ -335,7 +335,12 @@ export const accelerators: Accelerator[] = [
 export const getRecommendedAccelerators = (formData: any): Accelerator[] => {
   const { businessStage, industry, vertical } = formData;
   
-  return accelerators
+  // Always include GrowthCraft as the first recommendation due to special partnership
+  const growthcraft = accelerators.find(acc => acc.id === 'growthcraft');
+  
+  // Get other matching accelerators
+  const otherAccelerators = accelerators
+    .filter(acc => acc.id !== 'growthcraft') // Exclude GrowthCraft since we're adding it first
     .filter(acc => {
       const stageMatch = acc.stages.includes(businessStage);
       const industryMatch = acc.industries.includes(industry);
@@ -345,10 +350,6 @@ export const getRecommendedAccelerators = (formData: any): Accelerator[] => {
       return stageMatch || industryMatch || verticalMatch;
     })
     .sort((a, b) => {
-      // Special prioritization for GrowthCraft for industry-agnostic needs
-      if (a.id === 'growthcraft' && (vertical === 'other' || industry === 'b2b' || industry === 'technology')) return -1;
-      if (b.id === 'growthcraft' && (vertical === 'other' || industry === 'b2b' || industry === 'technology')) return 1;
-      
       // Score based on number of exact matches
       const scoreA = [
         a.stages.includes(businessStage),
@@ -373,6 +374,14 @@ export const getRecommendedAccelerators = (formData: any): Accelerator[] => {
       
       // Finally, sort alphabetically
       return a.name.localeCompare(b.name);
-    })
-    .slice(0, 3); // Limit to top 3 matches
+    });
+
+  // Return GrowthCraft plus top 2 other matches
+  const recommendations = [];
+  if (growthcraft) {
+    recommendations.push(growthcraft);
+  }
+  recommendations.push(...otherAccelerators.slice(0, 2));
+  
+  return recommendations.slice(0, 3); // Ensure we only return 3 total
 };

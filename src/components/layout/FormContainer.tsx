@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { ChevronLeft, ChevronRight, CheckCircle, Circle } from 'lucide-react';
@@ -31,6 +31,19 @@ const FormContainer: React.FC<FormContainerProps> = ({
   onPrevious,
   onSubmit
 }) => {
+  // Scroll to top when step changes
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, [currentStep]);
+
+  const handleNext = () => {
+    onNext();
+  };
+
+  const handlePrevious = () => {
+    onPrevious();
+  };
+
   return (
     <div className="max-w-4xl mx-auto px-4 py-8">
       <Card className="shadow-lg border-0 bg-white">
@@ -58,7 +71,7 @@ const FormContainer: React.FC<FormContainerProps> = ({
           <div className="flex justify-between items-center pt-8 border-t border-gray-200 mt-8">
             <Button
               variant="outline"
-              onClick={onPrevious}
+              onClick={handlePrevious}
               disabled={currentStepIndex === 0}
               className="flex items-center space-x-2 border-gray-300 hover:border-red-300 hover:text-red-600 disabled:opacity-50"
             >
@@ -78,7 +91,7 @@ const FormContainer: React.FC<FormContainerProps> = ({
                 </Button>
               ) : (
                 <Button
-                  onClick={onNext}
+                  onClick={handleNext}
                   className="bg-red-600 hover:bg-red-700 text-white flex items-center space-x-2 px-8 py-3 font-medium shadow-lg hover:shadow-xl transition-all duration-200"
                   disabled={!validateStep(currentStep, formData)}
                 >
