@@ -44,6 +44,10 @@ const FormContainer: React.FC<FormContainerProps> = ({
     onPrevious();
   };
 
+  const handleSubmit = () => {
+    onSubmit();
+  };
+
   return (
     <div className="max-w-4xl mx-auto px-4 py-8">
       <Card className="shadow-lg border-0 bg-white">
@@ -82,7 +86,7 @@ const FormContainer: React.FC<FormContainerProps> = ({
             <div className="flex items-center space-x-3">
               {currentStepIndex === 3 ? (
                 <Button
-                  onClick={onSubmit}
+                  onClick={handleSubmit}
                   className="bg-red-600 hover:bg-red-700 text-white flex items-center space-x-2 px-8 py-3 font-medium shadow-lg hover:shadow-xl transition-all duration-200"
                   disabled={!formData.agreeTerms || !formData.agreePrivacy}
                 >
