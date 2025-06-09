@@ -1,6 +1,7 @@
 
 import React from 'react';
-import { Users, TrendingUp, Shield, Lock } from 'lucide-react';
+import { Users, TrendingUp, Shield, Lock, Settings } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 const Header = () => {
   return (
@@ -27,6 +28,13 @@ const Header = () => {
                 <Shield className="h-3 w-3" />
                 Bank-Grade Security
               </span>
+              <Link 
+                to="/admin/investors" 
+                className="text-gray-400 hover:text-gray-600 transition-colors"
+                title="Admin Access"
+              >
+                <Settings className="h-4 w-4" />
+              </Link>
             </div>
             <div className="flex items-center gap-4 text-xs text-gray-500">
               <div className="flex items-center gap-1">
@@ -59,6 +67,14 @@ const Header = () => {
             <Lock className="h-3 w-3" />
             <span>Confidential Process</span>
           </div>
+          <Link 
+            to="/admin/investors" 
+            className="flex items-center gap-1 text-gray-400 hover:text-gray-600 transition-colors"
+            title="Admin Access"
+          >
+            <Settings className="h-3 w-3" />
+            <span>Admin</span>
+          </Link>
         </div>
       </div>
     </div>

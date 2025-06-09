@@ -1,9 +1,11 @@
 
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Link } from 'react-router-dom';
 import Header from '@/components/layout/Header';
 import AdminAuth from '@/components/auth/AdminAuth';
-import { Database, Users, TrendingUp, BarChart3 } from 'lucide-react';
+import { Database, Users, TrendingUp, BarChart3, Home, ArrowLeft } from 'lucide-react';
 
 const AcceleratorAdmin = () => {
   return (
@@ -12,9 +14,53 @@ const AcceleratorAdmin = () => {
         <Header />
         
         <div className="max-w-7xl mx-auto px-4 py-6">
+          {/* Navigation Tabs */}
           <div className="mb-6">
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">Accelerator Admin Dashboard</h1>
-            <p className="text-gray-600">Manage accelerator programs and startup applications</p>
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center space-x-4">
+                <Link 
+                  to="/" 
+                  className="flex items-center text-gray-600 hover:text-gray-900 transition-colors"
+                >
+                  <ArrowLeft className="h-4 w-4 mr-2" />
+                  Back to Main Platform
+                </Link>
+                <div className="h-4 border-l border-gray-300"></div>
+                <h1 className="text-3xl font-bold text-gray-900">Accelerator Admin Dashboard</h1>
+              </div>
+              <Button 
+                onClick={() => localStorage.removeItem('leaderlink-admin-auth')} 
+                variant="outline"
+                size="sm"
+              >
+                Logout
+              </Button>
+            </div>
+            
+            {/* Admin Navigation */}
+            <div className="bg-white border border-gray-200 rounded-lg p-1 inline-flex">
+              <Link 
+                to="/admin/investors"
+                className="px-4 py-2 rounded-md text-gray-600 hover:text-gray-900 text-sm font-medium transition-colors"
+              >
+                Investor Admin
+              </Link>
+              <Link 
+                to="/admin/accelerators"
+                className="px-4 py-2 rounded-md bg-red-600 text-white text-sm font-medium"
+              >
+                Accelerator Admin
+              </Link>
+              <Link 
+                to="/"
+                className="px-4 py-2 rounded-md text-gray-600 hover:text-gray-900 text-sm font-medium transition-colors flex items-center"
+              >
+                <Home className="h-4 w-4 mr-2" />
+                Main Platform
+              </Link>
+            </div>
+            
+            <p className="text-gray-600 mt-2">Manage accelerator programs and startup applications</p>
           </div>
 
           {/* Stats Cards */}
