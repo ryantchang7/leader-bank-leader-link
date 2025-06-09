@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -17,13 +18,13 @@ const FinalSteps: React.FC<FinalStepsProps> = ({ formData, setFormData }) => {
 
   return (
     <div className="space-y-6">
-      <div className="bg-gradient-to-r from-red-50 to-red-100 border border-red-200 rounded-lg p-6">
+      <div className="bg-gradient-to-r from-red-50 to-red-100 border border-red-200 rounded-lg p-4 sm:p-6">
         <div className="flex items-center gap-3 mb-3">
           <Handshake className="h-6 w-6 text-red-600" />
           <h3 className="font-semibold text-red-800">Welcome to Your Funding Partnership!</h3>
         </div>
         <p className="text-sm text-red-700 mb-4">
-          You're just one step away from joining the Leader Bank Cap Connect community. Our dedicated team is excited to help you achieve your funding goals and scale your business.
+          You're just one step away from joining the Leader Bank Fund Finder community. Our dedicated team is excited to help you achieve your funding goals and scale your business.
         </p>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
           <div className="flex items-center gap-2 text-red-700">
@@ -81,10 +82,10 @@ const FinalSteps: React.FC<FinalStepsProps> = ({ formData, setFormData }) => {
               <RadioGroupItem value="yes" id="terms-yes" className="mt-1" />
               <div className="flex-1">
                 <Label htmlFor="terms-yes" className="cursor-pointer font-medium">
-                  Yes, I agree to partner with Leader Bank Cap Connect
+                  Yes, I agree to partner with Leader Bank Fund Finder
                 </Label>
                 <p className="text-xs text-gray-600 mt-1">
-                  I agree to Leader Bank's terms and conditions for the Capital Connect program, 
+                  I agree to Leader Bank's terms and conditions for the Fund Finder program, 
                   including potential advisory fees and service agreements. I understand that Leader Bank 
                   will work as my strategic partner to identify suitable funding opportunities.
                 </p>
@@ -123,10 +124,10 @@ const FinalSteps: React.FC<FinalStepsProps> = ({ formData, setFormData }) => {
         </div>
       </div>
 
-      <div className="bg-gradient-to-r from-green-50 to-blue-50 border border-green-200 rounded-lg p-6">
+      <div className="bg-gradient-to-r from-green-50 to-blue-50 border border-green-200 rounded-lg p-4 sm:p-6">
         <h3 className="font-semibold text-gray-800 mb-3 flex items-center gap-2">
           <TrendingUp className="h-5 w-5 text-green-600" />
-          Your Journey with Leader Bank Cap Connect
+          Your Journey with Leader Bank Fund Finder
         </h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-gray-700">
           <div className="space-y-2">
@@ -153,9 +154,9 @@ const FinalSteps: React.FC<FinalStepsProps> = ({ formData, setFormData }) => {
           💬 Questions? We're Here to Help
         </h4>
         <div className="text-sm text-blue-700 space-y-1">
-          <p>📧 Email: <a href="mailto:capconnect@leaderbank.com" className="underline">capconnect@leaderbank.com</a></p>
+          <p>📧 Email: <a href="mailto:fundfinder@leaderbank.com" className="underline">fundfinder@leaderbank.com</a></p>
           <p>📞 Direct line: (555) 123-4567</p>
-          <p>🌐 Resource hub: <a href="https://www.leaderbank.com/cap-connect-resources" className="underline">leaderbank.com/cap-connect-resources</a></p>
+          <p>🌐 Resource hub: <a href="https://www.leaderbank.com/fund-finder-resources" className="underline break-all">leaderbank.com/fund-finder-resources</a></p>
         </div>
       </div>
     </div>

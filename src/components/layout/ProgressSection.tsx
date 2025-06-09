@@ -18,17 +18,17 @@ const ProgressSection: React.FC<ProgressSectionProps> = ({
 }) => {
   return (
     <div className="bg-white border-b border-gray-200">
-      <div className="max-w-6xl mx-auto px-4 py-6">
-        <div className="flex items-center justify-between mb-4">
-          <div>
-            <h2 className="text-lg font-semibold text-gray-900">
+      <div className="max-w-6xl mx-auto px-4 py-4 sm:py-6">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 space-y-2 sm:space-y-0">
+          <div className="text-center sm:text-left">
+            <h2 className="text-base sm:text-lg font-semibold text-gray-900">
               Step {currentStepIndex + 1}: {stepTitle}
             </h2>
-            <p className="text-sm text-gray-600">
+            <p className="text-xs sm:text-sm text-gray-600">
               {stepDescription}
             </p>
           </div>
-          <div className="text-right">
+          <div className="text-center sm:text-right">
             <span className="text-sm font-medium text-gray-700">
               Step {currentStepIndex + 1} of 4
             </span>
@@ -38,11 +38,11 @@ const ProgressSection: React.FC<ProgressSectionProps> = ({
           </div>
         </div>
         
-        <Progress value={progressPercentage} className="h-3 mb-4" />
+        <Progress value={progressPercentage} className="h-2 sm:h-3 mb-3 sm:mb-4" />
         
         <div className="flex items-center justify-center text-xs text-gray-500 gap-2">
           <Shield className="h-3 w-3" />
-          <span>Your information is encrypted and protected by bank-grade security</span>
+          <span className="text-center">Your information is encrypted and protected by bank-grade security</span>
         </div>
       </div>
     </div>
