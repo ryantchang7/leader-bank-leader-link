@@ -1,164 +1,177 @@
 
 import React from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Shield, Users, CheckCircle, Award } from 'lucide-react';
 import { FormData } from '@/types/formData';
-import { Handshake, Clock, Users, TrendingUp } from 'lucide-react';
 
 interface FinalStepsProps {
   formData: FormData;
-  setFormData: React.Dispatch<React.SetStateAction<FormData>>;
+  setFormData: (data: FormData) => void;
 }
 
 const FinalSteps: React.FC<FinalStepsProps> = ({ formData, setFormData }) => {
   const handleInputChange = (field: keyof FormData, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+    setFormData({ ...formData, [field]: value });
   };
 
   return (
     <div className="space-y-6">
-      <div className="bg-gradient-to-r from-red-50 to-red-100 border border-red-200 rounded-lg p-4 sm:p-6">
-        <div className="flex items-center gap-3 mb-3">
-          <Handshake className="h-6 w-6 text-red-600" />
-          <h3 className="font-semibold text-red-800">Welcome to Your Funding Partnership!</h3>
-        </div>
-        <p className="text-sm text-red-700 mb-4">
-          You're just one step away from joining the Leader Bank Fund Finder community. Our dedicated team is excited to help you achieve your funding goals and scale your business.
-        </p>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
-          <div className="flex items-center gap-2 text-red-700">
-            <Clock className="h-4 w-4" />
-            <span>2-3 day response time</span>
+      {/* Welcome Section */}
+      <Card className="bg-gradient-to-r from-red-50 to-blue-50 border-red-200">
+        <CardHeader className="text-center">
+          <div className="flex justify-center mb-4">
+            <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center">
+              <Award className="h-8 w-8 text-red-600" />
+            </div>
           </div>
-          <div className="flex items-center gap-2 text-red-700">
-            <Users className="h-4 w-4" />
-            <span>Dedicated expert team</span>
+          <CardTitle className="text-2xl text-gray-900">
+            Welcome to Leader Bank Leader Link!
+          </CardTitle>
+          <p className="text-gray-600 mt-2">
+            You're one step away from connecting with our extensive network of {' '}
+            <span className="font-semibold text-red-600">150+ capital investors</span> and funding partners.
+          </p>
+        </CardHeader>
+      </Card>
+
+      {/* Contact Information */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Users className="h-5 w-5 text-red-600" />
+            Final Contact Information
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div>
+            <Label htmlFor="finalFullName" className="text-sm font-medium text-gray-700 mb-2 block">
+              Full Name <span className="text-red-500">*</span>
+            </Label>
+            <Input
+              id="finalFullName"
+              value={formData.finalFullName}
+              onChange={(e) => handleInputChange('finalFullName', e.target.value)}
+              placeholder="Enter your full legal name"
+              className="w-full"
+            />
           </div>
-          <div className="flex items-center gap-2 text-red-700">
-            <TrendingUp className="h-4 w-4" />
-            <span>Growth-focused solutions</span>
+          
+          <div>
+            <Label htmlFor="titleRole" className="text-sm font-medium text-gray-700 mb-2 block">
+              Title/Role <span className="text-red-500">*</span>
+            </Label>
+            <Input
+              id="titleRole"
+              value={formData.titleRole}
+              onChange={(e) => handleInputChange('titleRole', e.target.value)}
+              placeholder="e.g., CEO, Founder, CFO"
+              className="w-full"
+            />
           </div>
-        </div>
-      </div>
+        </CardContent>
+      </Card>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="space-y-2">
-          <Label htmlFor="finalFullName" className="text-sm font-medium text-gray-700">
-            Full legal name *
-          </Label>
-          <Input
-            id="finalFullName"
-            value={formData.finalFullName}
-            onChange={(e) => handleInputChange('finalFullName', e.target.value)}
-            placeholder="Enter your full legal name"
-            required
-            className="border-gray-300 focus:border-red-500 focus:ring-red-500"
-          />
-        </div>
+      {/* What Happens Next */}
+      <Card className="bg-blue-50 border-blue-200">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2 text-blue-900">
+            <CheckCircle className="h-5 w-5" />
+            What Happens Next
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+            <div className="text-center p-4">
+              <div className="w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center mx-auto mb-2 text-sm font-bold">1</div>
+              <p className="font-medium text-blue-900">Expert Review</p>
+              <p className="text-blue-700 text-xs mt-1">Our team reviews your submission within 2-3 business days</p>
+            </div>
+            <div className="text-center p-4">
+              <div className="w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center mx-auto mb-2 text-sm font-bold">2</div>
+              <p className="font-medium text-blue-900">Investor Matching</p>
+              <p className="text-blue-700 text-xs mt-1">We match you with relevant investors from our network</p>
+            </div>
+            <div className="text-center p-4">
+              <div className="w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center mx-auto mb-2 text-sm font-bold">3</div>
+              <p className="font-medium text-blue-900">Warm Introductions</p>
+              <p className="text-blue-700 text-xs mt-1">We facilitate direct connections with interested investors</p>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
 
-        <div className="space-y-2">
-          <Label htmlFor="titleRole" className="text-sm font-medium text-gray-700">
-            Title/role *
-          </Label>
-          <Input
-            id="titleRole"
-            value={formData.titleRole}
-            onChange={(e) => handleInputChange('titleRole', e.target.value)}
-            placeholder="e.g., CEO, Founder, CFO"
-            required
-            className="border-gray-300 focus:border-red-500 focus:ring-red-500"
-          />
-        </div>
-      </div>
-
-      <div className="space-y-6 pt-4 border-t border-gray-200">
-        <div className="space-y-4">
-          <Label className="text-sm font-medium text-gray-700">
-            Partnership Agreement - Terms & Conditions *
-          </Label>
-          <RadioGroup value={formData.agreeTerms} onValueChange={(value) => handleInputChange('agreeTerms', value)}>
-            <div className="flex items-start space-x-2">
-              <RadioGroupItem value="yes" id="terms-yes" className="mt-1" />
-              <div className="flex-1">
-                <Label htmlFor="terms-yes" className="cursor-pointer font-medium">
-                  Yes, I agree to partner with Leader Bank Fund Finder
-                </Label>
-                <p className="text-xs text-gray-600 mt-1">
-                  I agree to Leader Bank's terms and conditions for the Fund Finder program, 
-                  including potential advisory fees and service agreements. I understand that Leader Bank 
-                  will work as my strategic partner to identify suitable funding opportunities.
+      {/* Terms and Privacy */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Shield className="h-5 w-5 text-green-600" />
+            Terms & Privacy
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="flex items-start space-x-3">
+            <Checkbox
+              id="agreeTerms"
+              checked={formData.agreeTerms === 'yes'}
+              onCheckedChange={(checked) => 
+                handleInputChange('agreeTerms', checked ? 'yes' : '')
+              }
+              className="mt-1"
+            />
+            <div className="flex-1">
+              <Label 
+                htmlFor="agreeTerms" 
+                className="text-sm text-gray-700 cursor-pointer leading-relaxed"
+              >
+                I agree to Leader Bank's{' '}
+                <a href="#" className="text-red-600 hover:underline font-medium">
+                  Terms of Service
+                </a>{' '}
+                and understand that Leader Link will share my information with relevant investors in their network.
+              </Label>
+            </div>
+          </div>
+          
+          <div className="flex items-start space-x-3">
+            <Checkbox
+              id="agreePrivacy"
+              checked={formData.agreePrivacy === 'yes'}
+              onCheckedChange={(checked) => 
+                handleInputChange('agreePrivacy', checked ? 'yes' : '')
+              }
+              className="mt-1"
+            />
+            <div className="flex-1">
+              <Label 
+                htmlFor="agreePrivacy" 
+                className="text-sm text-gray-700 cursor-pointer leading-relaxed"
+              >
+                I acknowledge that I have read and agree to Leader Bank's{' '}
+                <a href="#" className="text-red-600 hover:underline font-medium">
+                  Privacy Policy
+                </a>{' '}
+                and consent to the processing of my personal and business information for funding purposes.
+              </Label>
+            </div>
+          </div>
+          
+          <div className="bg-green-50 border border-green-200 rounded-lg p-4 mt-4">
+            <div className="flex items-start gap-3">
+              <Shield className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
+              <div>
+                <p className="text-sm font-medium text-green-900 mb-1">Your Information is Protected</p>
+                <p className="text-xs text-green-800">
+                  All data is encrypted and stored with bank-grade security. We only share information with 
+                  pre-qualified investors who have signed confidentiality agreements.
                 </p>
               </div>
             </div>
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem value="no" id="terms-no" />
-              <Label htmlFor="terms-no" className="cursor-pointer">No, I need to review the terms first</Label>
-            </div>
-          </RadioGroup>
-        </div>
-
-        <div className="space-y-4">
-          <Label className="text-sm font-medium text-gray-700">
-            Information Sharing & Partnership Privacy *
-          </Label>
-          <RadioGroup value={formData.agreePrivacy} onValueChange={(value) => handleInputChange('agreePrivacy', value)}>
-            <div className="flex items-start space-x-2">
-              <RadioGroupItem value="yes" id="privacy-yes" className="mt-1" />
-              <div className="flex-1">
-                <Label htmlFor="privacy-yes" className="cursor-pointer font-medium">
-                  Yes, I consent to strategic information sharing
-                </Label>
-                <p className="text-xs text-gray-600 mt-1">
-                  I consent to Leader Bank collecting, processing, and strategically sharing my business information 
-                  with pre-vetted investors, lenders, and accelerator partners under appropriate confidentiality agreements. 
-                  This enables Leader Bank to effectively advocate for my business and identify the best funding matches.
-                </p>
-              </div>
-            </div>
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem value="no" id="privacy-no" />
-              <Label htmlFor="privacy-no" className="cursor-pointer">No, I prefer limited information sharing</Label>
-            </div>
-          </RadioGroup>
-        </div>
-      </div>
-
-      <div className="bg-gradient-to-r from-green-50 to-blue-50 border border-green-200 rounded-lg p-4 sm:p-6">
-        <h3 className="font-semibold text-gray-800 mb-3 flex items-center gap-2">
-          <TrendingUp className="h-5 w-5 text-green-600" />
-          Your Journey with Leader Bank Fund Finder
-        </h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-gray-700">
-          <div className="space-y-2">
-            <h4 className="font-medium text-gray-800">Next 48 Hours:</h4>
-            <ul className="space-y-1 text-xs">
-              <li>📧 Personalized welcome email with your dedicated contact</li>
-              <li>📞 Initial discovery call scheduled</li>
-              <li>📋 Customized funding strategy recommendations</li>
-            </ul>
           </div>
-          <div className="space-y-2">
-            <h4 className="font-medium text-gray-800">Ongoing Partnership:</h4>
-            <ul className="space-y-1 text-xs">
-              <li>🤝 Direct introductions to relevant funding sources</li>
-              <li>📈 Application guidance and pitch preparation</li>
-              <li>🎯 Deal negotiation support and closing assistance</li>
-            </ul>
-          </div>
-        </div>
-      </div>
-
-      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-        <h4 className="font-medium text-blue-800 mb-2 flex items-center gap-2">
-          💬 Questions? We're Here to Help
-        </h4>
-        <div className="text-sm text-blue-700 space-y-1">
-          <p>📧 Email: <a href="mailto:fundfinder@leaderbank.com" className="underline">fundfinder@leaderbank.com</a></p>
-          <p>📞 Direct line: (555) 123-4567</p>
-          <p>🌐 Resource hub: <a href="https://www.leaderbank.com/fund-finder-resources" className="underline break-all">leaderbank.com/fund-finder-resources</a></p>
-        </div>
-      </div>
+        </CardContent>
+      </Card>
     </div>
   );
 };

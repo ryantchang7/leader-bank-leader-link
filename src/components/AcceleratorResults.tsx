@@ -37,8 +37,8 @@ const AcceleratorResults: React.FC<AcceleratorResultsProps> = ({ formData }) => 
             className="bg-red-600 hover:bg-red-700 text-white"
             onClick={() => {
               const subject = `Custom Accelerator Matching Request`;
-              const body = `Dear Leader Bank Fund Finder Team,\n\nI need help finding accelerators that match my startup profile:\n\nCompany: ${formData.borrowerName}\nIndustry: ${formData.industry}\nVertical: ${formData.vertical}\nStage: ${formData.businessStage}\n\nPlease help me find suitable accelerator opportunities.\n\nBest regards,\n${formData.contactName}`;
-              window.location.href = `mailto:fundfinder@leaderbank.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+              const body = `Dear Leader Bank Leader Link Team,\n\nI need help finding accelerators that match my startup profile:\n\nCompany: ${formData.borrowerName}\nIndustry: ${formData.industry}\nVertical: ${formData.vertical}\nStage: ${formData.businessStage}\n\nPlease help me find suitable accelerator opportunities.\n\nBest regards,\n${formData.contactName}`;
+              window.location.href = `mailto:leaderlink@leaderbank.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
             }}
           >
             Get Personal Accelerator Matching
@@ -171,7 +171,7 @@ const AcceleratorResults: React.FC<AcceleratorResultsProps> = ({ formData }) => 
                     </div>
 
                     <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
-                      <h4 className="font-semibold text-blue-900 mb-2">🤝 How Leader Bank Fund Finder Can Help</h4>
+                      <h4 className="font-semibold text-blue-900 mb-2">🤝 How Leader Bank Leader Link Can Help</h4>
                       <ul className="space-y-1 text-sm text-blue-800">
                         <li>• Warm introduction to program directors</li>
                         <li>• Application guidance and review</li>
@@ -212,9 +212,9 @@ const AcceleratorResults: React.FC<AcceleratorResultsProps> = ({ formData }) => 
                       <Button 
                         className="flex-1 bg-red-600 hover:bg-red-700 text-sm"
                         onClick={() => {
-                          const subject = `Introduction Request via Leader Bank Fund Finder - ${accelerator.name}`;
-                          const body = `Dear Leader Bank Fund Finder Team,\n\nI would like to request an introduction to ${accelerator.name}. Based on my startup profile, this accelerator seems like a perfect fit.\n\nCompany: ${formData.borrowerName}\nContact: ${formData.contactName}\nEmail: ${formData.contactEmail}\nIndustry: ${formData.industry}\nVertical: ${formData.vertical}\nStage: ${formData.businessStage}\n\nPlease help facilitate this connection and explore any potential discounts or special terms.\n\nBest regards,\n${formData.contactName}`;
-                          window.location.href = `mailto:fundfinder@leaderbank.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+                          const subject = `Introduction Request via Leader Bank Leader Link - ${accelerator.name}`;
+                          const body = `Dear Leader Bank Leader Link Team,\n\nI would like to request an introduction to ${accelerator.name}. Based on my startup profile, this accelerator seems like a perfect fit.\n\nCompany: ${formData.borrowerName}\nContact: ${formData.contactName}\nEmail: ${formData.contactEmail}\nIndustry: ${formData.industry}\nVertical: ${formData.vertical}\nStage: ${formData.businessStage}\n\nPlease help facilitate this connection and explore any potential discounts or special terms.\n\nBest regards,\n${formData.contactName}`;
+                          window.location.href = `mailto:leaderlink@leaderbank.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
                         }}
                       >
                         Request Introduction
@@ -246,8 +246,8 @@ const AcceleratorResults: React.FC<AcceleratorResultsProps> = ({ formData }) => 
           className="bg-red-600 hover:bg-red-700 text-white px-6 sm:px-8 py-3 text-sm sm:text-base"
           onClick={() => {
             const subject = `Accelerator Introduction Package Request`;
-            const body = `Dear Leader Bank Fund Finder Team,\n\nI'm interested in getting introductions to the recommended accelerators from my Fund Finder assessment.\n\nCompany: ${formData.borrowerName}\nContact: ${formData.contactName}\nEmail: ${formData.contactEmail}\n\nRecommended Accelerators:\n${recommendedAccelerators.map(acc => `- ${acc.name}`).join('\n')}\n\nPlease contact me to discuss the next steps and introduction process.\n\nBest regards,\n${formData.contactName}`;
-            window.location.href = `mailto:fundfinder@leaderbank.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+            const body = `Dear Leader Bank Leader Link Team,\n\nI'm interested in getting introductions to the recommended accelerators from my Leader Link assessment.\n\nCompany: ${formData.borrowerName}\nContact: ${formData.contactName}\nEmail: ${formData.contactEmail}\n\nRecommended Accelerators:\n${recommendedAccelerators.map(acc => `- ${acc.name}`).join('\n')}\n\nPlease contact me to discuss the next steps and introduction process.\n\nBest regards,\n${formData.contactName}`;
+            window.location.href = `mailto:leaderlink@leaderbank.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
           }}
         >
           Get All Introductions Now

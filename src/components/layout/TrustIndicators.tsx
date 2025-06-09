@@ -9,7 +9,7 @@ const TrustIndicators = () => {
         <div className="bg-white rounded-lg p-4 sm:p-6 shadow-sm border border-gray-200 mb-6">
           <h3 className="text-lg font-semibold text-gray-900 mb-3 flex items-center justify-center gap-2">
             <Shield className="h-5 w-5 text-green-600" />
-            Why Choose Leader Bank Fund Finder?
+            Why Choose Leader Bank Leader Link?
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
             <div className="text-center p-3">
@@ -32,7 +32,7 @@ const TrustIndicators = () => {
         
         <div className="text-sm text-gray-600 text-center space-y-2">
           <p className="mb-2">🚀 <strong>Next Steps:</strong> Our expert team reviews submissions within 2-3 business days and provides personalized funding recommendations.</p>
-          <p>💡 <strong>Questions?</strong> Contact our Fund Finder team at <a href="mailto:fundfinder@leaderbank.com" className="text-red-600 hover:underline">fundfinder@leaderbank.com</a> or call (555) 123-4567</p>
+          <p>💡 <strong>Questions?</strong> Contact our Leader Link team at <a href="mailto:leaderlink@leaderbank.com" className="text-red-600 hover:underline">leaderlink@leaderbank.com</a> or call (555) 123-4567</p>
           <p className="text-xs text-gray-500 mt-2 flex items-center justify-center gap-1">
             <Lock className="h-3 w-3" />
             All communications are confidential and protected by banking privacy regulations

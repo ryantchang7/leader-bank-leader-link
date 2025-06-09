@@ -14,7 +14,7 @@ const Header = () => {
               className="h-12 sm:h-16 w-auto mx-auto sm:mx-0"
             />
             <div className="text-center sm:text-left sm:border-l sm:border-gray-300 sm:pl-4">
-              <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Fund Finder</h1>
+              <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Leader Link</h1>
               <p className="text-red-600 font-medium text-sm sm:text-base">
                 Your strategic partner in finding the right funding path
               </p>

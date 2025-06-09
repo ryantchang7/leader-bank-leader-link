@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import BasicInfo from '@/components/forms/BasicInfo';
 import FundingOptions from '@/components/forms/FundingOptions';
@@ -101,7 +102,7 @@ const Index = () => {
     if (formData.seekingType === 'accelerator') {
       setShowResults(true);
     } else {
-      const successMessage = `Thanks, ${formData.finalFullName}! 🎉\n\nOur expert team will review your information and reach out within 2-3 business days with personalized funding recommendations.\n\nIn the meantime, we'll send you some helpful resources based on your ${formData.seekingType} funding goals.\n\nWelcome to the Leader Bank Fund Finder family!`;
+      const successMessage = `Thanks, ${formData.finalFullName}! 🎉\n\nOur expert team will review your information and reach out within 2-3 business days with personalized funding recommendations.\n\nIn the meantime, we'll send you some helpful resources based on your ${formData.seekingType} funding goals.\n\nWelcome to the Leader Bank Leader Link family!`;
       alert(successMessage);
     }
   };
