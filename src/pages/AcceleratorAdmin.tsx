@@ -1,5 +1,4 @@
-
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -11,13 +10,55 @@ import Header from '@/components/layout/Header';
 import AdminAuth from '@/components/auth/AdminAuth';
 import { Database, Users, TrendingUp, BarChart3, Home, ArrowLeft, Search, Filter, ExternalLink, MapPin, Calendar, Award, Eye } from 'lucide-react';
 import { accelerators, Accelerator } from '@/data/accelerators';
+import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/hooks/useAuth';
+
+interface AcceleratorApplication {
+  id: string;
+  startup_name: string;
+  founder_name: string;
+  founder_email: string;
+  company_stage: string;
+  industry: string;
+  accelerator_id: string;
+  status: 'submitted' | 'reviewing' | 'accepted' | 'rejected';
+  submitted_at: string;
+}
 
 const AcceleratorAdmin = () => {
+  const { signOut } = useAuth();
   const [searchTerm, setSearchTerm] = useState('');
   const [filterLocation, setFilterLocation] = useState('all');
   const [filterEquity, setFilterEquity] = useState('all');
   const [filterStage, setFilterStage] = useState('all');
   const [selectedAccelerator, setSelectedAccelerator] = useState<Accelerator | null>(null);
+  const [applications, setApplications] = useState<AcceleratorApplication[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  // Fetch accelerator applications from Supabase
+  useEffect(() => {
+    const fetchApplications = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('accelerator_applications')
+          .select('*')
+          .order('submitted_at', { ascending: false });
+
+        if (error) throw error;
+        setApplications(data || []);
+      } catch (error) {
+        console.error('Error fetching applications:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchApplications();
+  }, []);
+
+  const handleLogout = async () => {
+    await signOut();
+  };
 
   // Get unique values for filters
   const uniqueLocations = [...new Set(accelerators.map(acc => acc.location))];
@@ -40,12 +81,12 @@ const AcceleratorAdmin = () => {
     });
   }, [searchTerm, filterLocation, filterEquity, filterStage]);
 
-  // Mock stats - these would come from your database in a real implementation
+  // Calculate stats from real data
   const stats = {
-    totalApplications: 0,
+    totalApplications: applications.length,
     activePrograms: accelerators.length,
-    acceptanceRate: 0,
-    successRate: 0
+    acceptanceRate: applications.length > 0 ? Math.round((applications.filter(app => app.status === 'accepted').length / applications.length) * 100) : 0,
+    successRate: applications.length > 0 ? Math.round((applications.filter(app => app.status === 'accepted').length / applications.length) * 100) : 0
   };
 
   return (
@@ -69,7 +110,7 @@ const AcceleratorAdmin = () => {
                 <h1 className="text-3xl font-bold text-gray-900">Accelerator Admin Dashboard</h1>
               </div>
               <Button 
-                onClick={() => localStorage.removeItem('leaderlink-admin-auth')} 
+                onClick={handleLogout}
                 variant="outline"
                 size="sm"
               >
