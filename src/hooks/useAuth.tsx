@@ -41,13 +41,22 @@ export const useAuth = () => {
 
   const checkAdminStatus = async (userId: string) => {
     try {
-      const { data, error } = await supabase
-        .from('admin_users')
-        .select('id')
-        .eq('user_id', userId)
-        .single();
+      console.log('Checking admin status for user:', userId);
       
-      setIsAdmin(!!data && !error);
+      // Use the is_admin function directly
+      const { data, error } = await supabase.rpc('is_admin', {
+        user_id: userId
+      });
+      
+      console.log('Admin check result:', { data, error });
+      
+      if (error) {
+        console.error('Error checking admin status:', error);
+        setIsAdmin(false);
+        return;
+      }
+      
+      setIsAdmin(!!data);
     } catch (error) {
       console.error('Error checking admin status:', error);
       setIsAdmin(false);
@@ -67,11 +76,26 @@ export const useAuth = () => {
     return { error };
   };
 
+  const addAdminUser = async (email: string) => {
+    try {
+      const { error } = await supabase.rpc('add_admin_user', {
+        user_email: email
+      });
+      
+      if (error) throw error;
+      return { success: true };
+    } catch (error) {
+      console.error('Error adding admin user:', error);
+      return { error };
+    }
+  };
+
   return {
     user,
     isAdmin,
     loading,
     signIn,
     signOut,
+    addAdminUser,
   };
 };

@@ -1,11 +1,13 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Lock, Loader2 } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
+import AdminSetup from './AdminSetup';
+import { supabase } from '@/integrations/supabase/client';
 
 interface AdminAuthProps {
   children: React.ReactNode;
@@ -17,6 +19,32 @@ const AdminAuth: React.FC<AdminAuthProps> = ({ children }) => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [isSigningIn, setIsSigningIn] = useState(false);
+  const [hasAdminUsers, setHasAdminUsers] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    // Check if any admin users exist
+    const checkAdminUsers = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('admin_users')
+          .select('id')
+          .limit(1);
+        
+        if (error) {
+          console.error('Error checking admin users:', error);
+          setHasAdminUsers(true); // Default to true if we can't check
+          return;
+        }
+        
+        setHasAdminUsers(data && data.length > 0);
+      } catch (error) {
+        console.error('Error checking admin users:', error);
+        setHasAdminUsers(true); // Default to true if we can't check
+      }
+    };
+
+    checkAdminUsers();
+  }, []);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -32,13 +60,18 @@ const AdminAuth: React.FC<AdminAuthProps> = ({ children }) => {
     setIsSigningIn(false);
   };
 
-  // Show loading spinner while checking auth
-  if (loading) {
+  // Show loading spinner while checking auth and admin users
+  if (loading || hasAdminUsers === null) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin text-red-600" />
       </div>
     );
+  }
+
+  // Show admin setup if no admin users exist
+  if (hasAdminUsers === false) {
+    return <AdminSetup />;
   }
 
   // Show login form if not authenticated
@@ -124,6 +157,9 @@ const AdminAuth: React.FC<AdminAuthProps> = ({ children }) => {
             <p className="text-sm text-gray-500 mb-4">
               Contact your system administrator to request admin access.
             </p>
+            <Button variant="outline" onClick={() => window.location.reload()}>
+              Refresh Page
+            </Button>
           </CardContent>
         </Card>
       </div>
