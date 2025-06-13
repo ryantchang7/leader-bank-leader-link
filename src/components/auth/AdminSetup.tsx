@@ -5,10 +5,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Shield, Loader2 } from 'lucide-react';
-import { useAuth } from '@/hooks/useAuth';
+import { supabase } from '@/integrations/supabase/client';
 
 const AdminSetup: React.FC = () => {
-  const { addAdminUser } = useAuth();
   const [email, setEmail] = useState('');
   const [isAdding, setIsAdding] = useState(false);
   const [message, setMessage] = useState('');
@@ -18,16 +17,68 @@ const AdminSetup: React.FC = () => {
     setIsAdding(true);
     setMessage('');
 
-    const result = await addAdminUser(email);
-    
-    if (result.success) {
-      setMessage('Admin user added successfully! Please refresh the page.');
+    try {
+      console.log('Adding admin user for email:', email);
+      
+      // First, try to call the add_admin_user function
+      const { data: functionResult, error: functionError } = await supabase.rpc('add_admin_user', {
+        user_email: email
+      });
+      
+      console.log('Function result:', { functionResult, functionError });
+      
+      if (functionError) {
+        console.error('Function error:', functionError);
+        // If the function fails, try direct insertion
+        console.log('Trying direct insertion...');
+        
+        // Get the current user
+        const { data: { user }, error: userError } = await supabase.auth.getUser();
+        
+        if (userError || !user) {
+          throw new Error('No authenticated user found. Please sign in first.');
+        }
+        
+        console.log('Current user:', user);
+        
+        // Check if user email matches
+        if (user.email !== email) {
+          throw new Error('Email must match your current account email.');
+        }
+        
+        // Try direct insertion
+        const { error: insertError } = await supabase
+          .from('admin_users')
+          .insert([{ user_id: user.id, role: 'admin' }]);
+        
+        if (insertError) {
+          console.error('Insert error:', insertError);
+          throw insertError;
+        }
+      }
+      
+      setMessage('Admin access added successfully! Please refresh the page to continue.');
       setEmail('');
-    } else {
-      setMessage('Error adding admin user. Please try again.');
+      
+      // Automatically refresh after 2 seconds
+      setTimeout(() => {
+        window.location.reload();
+      }, 2000);
+      
+    } catch (error: any) {
+      console.error('Error adding admin user:', error);
+      
+      if (error.message?.includes('duplicate key')) {
+        setMessage('You already have admin access. Please refresh the page.');
+        setTimeout(() => {
+          window.location.reload();
+        }, 2000);
+      } else {
+        setMessage(`Error: ${error.message || 'Failed to add admin access. Please try again.'}`);
+      }
+    } finally {
+      setIsAdding(false);
     }
-    
-    setIsAdding(false);
   };
 
   return (
@@ -56,11 +107,11 @@ const AdminSetup: React.FC = () => {
                 required
               />
               <p className="text-xs text-gray-500 mt-1">
-                This should match the email you used to sign up
+                This must match the email you used to sign up
               </p>
             </div>
             {message && (
-              <p className={`text-sm ${message.includes('success') ? 'text-green-600' : 'text-red-600'}`}>
+              <p className={`text-sm ${message.includes('success') || message.includes('already have admin') ? 'text-green-600' : 'text-red-600'}`}>
                 {message}
               </p>
             )}
@@ -79,6 +130,15 @@ const AdminSetup: React.FC = () => {
               )}
             </Button>
           </form>
+          
+          <div className="mt-6 p-4 bg-yellow-50 rounded-lg">
+            <h4 className="text-sm font-medium text-yellow-800 mb-2">Troubleshooting:</h4>
+            <ul className="text-xs text-yellow-700 space-y-1">
+              <li>• Make sure you're signed in with the email you want to make admin</li>
+              <li>• The email must exactly match your account email</li>
+              <li>• If you see "already have admin access", just refresh the page</li>
+            </ul>
+          </div>
         </CardContent>
       </Card>
     </div>

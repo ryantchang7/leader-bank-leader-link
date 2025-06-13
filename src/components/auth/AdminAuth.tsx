@@ -20,31 +20,54 @@ const AdminAuth: React.FC<AdminAuthProps> = ({ children }) => {
   const [error, setError] = useState('');
   const [isSigningIn, setIsSigningIn] = useState(false);
   const [hasAdminUsers, setHasAdminUsers] = useState<boolean | null>(null);
+  const [debugInfo, setDebugInfo] = useState('');
 
   useEffect(() => {
     // Check if any admin users exist
     const checkAdminUsers = async () => {
       try {
+        console.log('Checking if admin users exist...');
+        
         const { data, error } = await supabase
           .from('admin_users')
           .select('id')
           .limit(1);
         
+        console.log('Admin users check result:', { data, error });
+        
         if (error) {
           console.error('Error checking admin users:', error);
+          setDebugInfo(`Error checking admin users: ${error.message}`);
           setHasAdminUsers(true); // Default to true if we can't check
           return;
         }
         
-        setHasAdminUsers(data && data.length > 0);
-      } catch (error) {
+        const hasUsers = data && data.length > 0;
+        setHasAdminUsers(hasUsers);
+        setDebugInfo(`Found ${data?.length || 0} admin users`);
+        console.log('Admin users exist:', hasUsers);
+        
+      } catch (error: any) {
         console.error('Error checking admin users:', error);
+        setDebugInfo(`Exception checking admin users: ${error.message}`);
         setHasAdminUsers(true); // Default to true if we can't check
       }
     };
 
     checkAdminUsers();
   }, []);
+
+  // Add debug info about current state
+  useEffect(() => {
+    if (user) {
+      console.log('Current user:', {
+        id: user.id,
+        email: user.email,
+        isAdmin: isAdmin
+      });
+      setDebugInfo(prev => prev + ` | User: ${user.email} | Admin: ${isAdmin}`);
+    }
+  }, [user, isAdmin]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -64,7 +87,13 @@ const AdminAuth: React.FC<AdminAuthProps> = ({ children }) => {
   if (loading || hasAdminUsers === null) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-red-600" />
+        <div className="text-center">
+          <Loader2 className="h-8 w-8 animate-spin text-red-600 mx-auto mb-4" />
+          <p className="text-gray-600">Loading admin system...</p>
+          {debugInfo && (
+            <p className="text-xs text-gray-500 mt-2 max-w-md">{debugInfo}</p>
+          )}
+        </div>
       </div>
     );
   }
@@ -134,6 +163,9 @@ const AdminAuth: React.FC<AdminAuthProps> = ({ children }) => {
               <p className="text-xs text-gray-500">
                 Contact your system administrator for access
               </p>
+              {debugInfo && (
+                <p className="text-xs text-gray-400 mt-2">{debugInfo}</p>
+              )}
             </div>
           </CardContent>
         </Card>
@@ -157,9 +189,21 @@ const AdminAuth: React.FC<AdminAuthProps> = ({ children }) => {
             <p className="text-sm text-gray-500 mb-4">
               Contact your system administrator to request admin access.
             </p>
-            <Button variant="outline" onClick={() => window.location.reload()}>
-              Refresh Page
-            </Button>
+            <div className="space-y-2">
+              <Button variant="outline" onClick={() => window.location.reload()}>
+                Refresh Page
+              </Button>
+              <Button 
+                variant="outline" 
+                onClick={() => window.location.href = '/admin/investors'}
+                className="w-full"
+              >
+                Try Admin Setup
+              </Button>
+            </div>
+            {debugInfo && (
+              <p className="text-xs text-gray-400 mt-4">Debug: {debugInfo}</p>
+            )}
           </CardContent>
         </Card>
       </div>
