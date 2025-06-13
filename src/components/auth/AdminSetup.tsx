@@ -18,64 +18,66 @@ const AdminSetup: React.FC = () => {
     setMessage('');
 
     try {
-      console.log('Adding admin user for email:', email);
+      console.log('Starting admin setup for email:', email);
       
-      // First, try to call the add_admin_user function
-      const { data: functionResult, error: functionError } = await supabase.rpc('add_admin_user', {
-        user_email: email
-      });
+      // First, get the current authenticated user
+      const { data: { user }, error: userError } = await supabase.auth.getUser();
       
-      console.log('Function result:', { functionResult, functionError });
-      
-      if (functionError) {
-        console.error('Function error:', functionError);
-        // If the function fails, try direct insertion
-        console.log('Trying direct insertion...');
-        
-        // Get the current user
-        const { data: { user }, error: userError } = await supabase.auth.getUser();
-        
-        if (userError || !user) {
-          throw new Error('No authenticated user found. Please sign in first.');
-        }
-        
-        console.log('Current user:', user);
-        
-        // Check if user email matches
-        if (user.email !== email) {
-          throw new Error('Email must match your current account email.');
-        }
-        
-        // Try direct insertion
-        const { error: insertError } = await supabase
-          .from('admin_users')
-          .insert([{ user_id: user.id, role: 'admin' }]);
-        
-        if (insertError) {
-          console.error('Insert error:', insertError);
-          throw insertError;
-        }
+      if (userError) {
+        console.error('Error getting current user:', userError);
+        throw new Error('You must be signed in to add admin access.');
       }
       
-      setMessage('Admin access added successfully! Please refresh the page to continue.');
-      setEmail('');
+      if (!user) {
+        throw new Error('No authenticated user found. Please sign in first.');
+      }
       
-      // Automatically refresh after 2 seconds
-      setTimeout(() => {
-        window.location.reload();
-      }, 2000);
+      console.log('Current authenticated user:', user.email);
       
-    } catch (error: any) {
-      console.error('Error adding admin user:', error);
+      // Check if the email matches the current user
+      if (user.email !== email) {
+        throw new Error('Email must match your current signed-in account.');
+      }
       
-      if (error.message?.includes('duplicate key')) {
-        setMessage('You already have admin access. Please refresh the page.');
+      // Try to insert directly into admin_users table
+      console.log('Attempting direct insert into admin_users...');
+      const { data: insertData, error: insertError } = await supabase
+        .from('admin_users')
+        .insert([{ 
+          user_id: user.id, 
+          role: 'admin' 
+        }])
+        .select();
+      
+      console.log('Direct insert result:', { insertData, insertError });
+      
+      if (insertError) {
+        // Check if it's a duplicate key error
+        if (insertError.message?.includes('duplicate') || insertError.code === '23505') {
+          setMessage('You already have admin access! Refreshing the page...');
+          setTimeout(() => {
+            window.location.reload();
+          }, 1500);
+          return;
+        }
+        throw insertError;
+      }
+      
+      if (insertData && insertData.length > 0) {
+        setMessage('Admin access added successfully! Refreshing the page...');
+        setEmail('');
+        
+        // Refresh after 2 seconds
         setTimeout(() => {
           window.location.reload();
         }, 2000);
       } else {
-        setMessage(`Error: ${error.message || 'Failed to add admin access. Please try again.'}`);
+        throw new Error('Failed to add admin access - no data returned');
       }
+      
+    } catch (error: any) {
+      console.error('Error in admin setup:', error);
+      setMessage(`Error: ${error.message || 'Failed to add admin access. Please try again.'}`);
     } finally {
       setIsAdding(false);
     }
@@ -90,7 +92,7 @@ const AdminSetup: React.FC = () => {
           </div>
           <CardTitle>Admin Setup Required</CardTitle>
           <p className="text-sm text-gray-600">
-            No admin users found. Add yourself as an admin to access the dashboard.
+            Add yourself as an admin to access the dashboard.
           </p>
         </CardHeader>
         <CardContent>
@@ -102,12 +104,12 @@ const AdminSetup: React.FC = () => {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="Enter your email"
+                placeholder="Enter your current account email"
                 className="mt-1"
                 required
               />
               <p className="text-xs text-gray-500 mt-1">
-                This must match the email you used to sign up
+                Must match the email you're currently signed in with
               </p>
             </div>
             {message && (
@@ -123,7 +125,7 @@ const AdminSetup: React.FC = () => {
               {isAdding ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Adding Admin...
+                  Adding Admin Access...
                 </>
               ) : (
                 'Add Admin Access'
@@ -131,13 +133,14 @@ const AdminSetup: React.FC = () => {
             </Button>
           </form>
           
-          <div className="mt-6 p-4 bg-yellow-50 rounded-lg">
-            <h4 className="text-sm font-medium text-yellow-800 mb-2">Troubleshooting:</h4>
-            <ul className="text-xs text-yellow-700 space-y-1">
-              <li>• Make sure you're signed in with the email you want to make admin</li>
-              <li>• The email must exactly match your account email</li>
-              <li>• If you see "already have admin access", just refresh the page</li>
-            </ul>
+          <div className="mt-6 p-4 bg-blue-50 rounded-lg">
+            <h4 className="text-sm font-medium text-blue-800 mb-2">Steps to get admin access:</h4>
+            <ol className="text-xs text-blue-700 space-y-1 list-decimal list-inside">
+              <li>Make sure you're signed in to your account</li>
+              <li>Enter the exact email you used to sign up</li>
+              <li>Click "Add Admin Access"</li>
+              <li>The page will refresh automatically when done</li>
+            </ol>
           </div>
         </CardContent>
       </Card>

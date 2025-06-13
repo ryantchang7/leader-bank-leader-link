@@ -20,54 +20,37 @@ const AdminAuth: React.FC<AdminAuthProps> = ({ children }) => {
   const [error, setError] = useState('');
   const [isSigningIn, setIsSigningIn] = useState(false);
   const [hasAdminUsers, setHasAdminUsers] = useState<boolean | null>(null);
-  const [debugInfo, setDebugInfo] = useState('');
 
   useEffect(() => {
-    // Check if any admin users exist
     const checkAdminUsers = async () => {
       try {
-        console.log('Checking if admin users exist...');
+        console.log('Checking if any admin users exist...');
         
         const { data, error } = await supabase
           .from('admin_users')
           .select('id')
           .limit(1);
         
-        console.log('Admin users check result:', { data, error });
+        console.log('Admin users check result:', { data, error, count: data?.length });
         
         if (error) {
           console.error('Error checking admin users:', error);
-          setDebugInfo(`Error checking admin users: ${error.message}`);
           setHasAdminUsers(true); // Default to true if we can't check
           return;
         }
         
         const hasUsers = data && data.length > 0;
         setHasAdminUsers(hasUsers);
-        setDebugInfo(`Found ${data?.length || 0} admin users`);
         console.log('Admin users exist:', hasUsers);
         
       } catch (error: any) {
-        console.error('Error checking admin users:', error);
-        setDebugInfo(`Exception checking admin users: ${error.message}`);
+        console.error('Exception checking admin users:', error);
         setHasAdminUsers(true); // Default to true if we can't check
       }
     };
 
     checkAdminUsers();
   }, []);
-
-  // Add debug info about current state
-  useEffect(() => {
-    if (user) {
-      console.log('Current user:', {
-        id: user.id,
-        email: user.email,
-        isAdmin: isAdmin
-      });
-      setDebugInfo(prev => prev + ` | User: ${user.email} | Admin: ${isAdmin}`);
-    }
-  }, [user, isAdmin]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -90,9 +73,6 @@ const AdminAuth: React.FC<AdminAuthProps> = ({ children }) => {
         <div className="text-center">
           <Loader2 className="h-8 w-8 animate-spin text-red-600 mx-auto mb-4" />
           <p className="text-gray-600">Loading admin system...</p>
-          {debugInfo && (
-            <p className="text-xs text-gray-500 mt-2 max-w-md">{debugInfo}</p>
-          )}
         </div>
       </div>
     );
@@ -100,6 +80,7 @@ const AdminAuth: React.FC<AdminAuthProps> = ({ children }) => {
 
   // Show admin setup if no admin users exist
   if (hasAdminUsers === false) {
+    console.log('No admin users found, showing setup');
     return <AdminSetup />;
   }
 
@@ -163,9 +144,6 @@ const AdminAuth: React.FC<AdminAuthProps> = ({ children }) => {
               <p className="text-xs text-gray-500">
                 Contact your system administrator for access
               </p>
-              {debugInfo && (
-                <p className="text-xs text-gray-400 mt-2">{debugInfo}</p>
-              )}
             </div>
           </CardContent>
         </Card>
@@ -175,6 +153,7 @@ const AdminAuth: React.FC<AdminAuthProps> = ({ children }) => {
 
   // Show access denied if user is not admin
   if (!isAdmin) {
+    console.log('User is not admin, showing access denied');
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
         <Card className="w-full max-w-md">
@@ -182,28 +161,28 @@ const AdminAuth: React.FC<AdminAuthProps> = ({ children }) => {
             <div className="mx-auto w-12 h-12 bg-red-100 rounded-full flex items-center justify-center mb-4">
               <Lock className="h-6 w-6 text-red-600" />
             </div>
-            <CardTitle>Access Denied</CardTitle>
-            <p className="text-sm text-gray-600">You don't have admin privileges</p>
+            <CardTitle>Setup Admin Access</CardTitle>
+            <p className="text-sm text-gray-600">You need admin privileges to access this area</p>
           </CardHeader>
           <CardContent className="text-center">
             <p className="text-sm text-gray-500 mb-4">
-              Contact your system administrator to request admin access.
+              It looks like you're signed in but don't have admin access yet.
             </p>
             <div className="space-y-2">
-              <Button variant="outline" onClick={() => window.location.reload()}>
+              <Button 
+                onClick={() => window.location.reload()}
+                className="w-full"
+              >
                 Refresh Page
               </Button>
               <Button 
                 variant="outline" 
-                onClick={() => window.location.href = '/admin/investors'}
+                onClick={() => setHasAdminUsers(false)}
                 className="w-full"
               >
-                Try Admin Setup
+                Set Up Admin Access
               </Button>
             </div>
-            {debugInfo && (
-              <p className="text-xs text-gray-400 mt-4">Debug: {debugInfo}</p>
-            )}
           </CardContent>
         </Card>
       </div>
