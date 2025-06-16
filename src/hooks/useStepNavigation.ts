@@ -19,10 +19,13 @@ export const useStepNavigation = (formData: FormData) => {
   const visibleSteps = getVisibleSteps();
   const currentStepIndex = visibleSteps.indexOf(currentStep);
   const progressPercentage = ((currentStepIndex + 1) / 4) * 100;
+  const totalSteps = 4;
 
   const isStepComplete = (step: number) => {
     return completedSteps.includes(step);
   };
+
+  const isStepValid = validateStep(currentStep, formData);
 
   useEffect(() => {
     if (validateStep(currentStep, formData)) {
@@ -34,14 +37,14 @@ export const useStepNavigation = (formData: FormData) => {
     }
   }, [formData, currentStep]);
 
-  const handleNext = () => {
+  const nextStep = () => {
     const nextIndex = currentStepIndex + 1;
     if (nextIndex < visibleSteps.length) {
       setCurrentStep(visibleSteps[nextIndex]);
     }
   };
 
-  const handlePrevious = () => {
+  const prevStep = () => {
     const prevIndex = currentStepIndex - 1;
     if (prevIndex >= 0) {
       setCurrentStep(visibleSteps[prevIndex]);
@@ -53,8 +56,10 @@ export const useStepNavigation = (formData: FormData) => {
     currentStepIndex,
     progressPercentage,
     isStepComplete,
-    handleNext,
-    handlePrevious,
+    nextStep,
+    prevStep,
+    isStepValid,
+    totalSteps,
     visibleSteps
   };
 };

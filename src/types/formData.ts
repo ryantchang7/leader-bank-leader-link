@@ -1,13 +1,20 @@
 
 export interface FormData {
-  // Basic Info
+  // Basic Info - matching what Index.tsx initializes
+  companyName: string;
+  industry: string;
+  stage: string;
+  fundingAmount: string;
+  fundingType: string;
+  revenueStage: string;
+  
+  // Basic Info - what the actual form uses
   borrowerName: string;
   contactName: string;
   contactEmail: string;
   contactPhone: string;
   companyHQ: string;
   businessStage: string;
-  industry: string;
   vertical: string;
   
   // Funding Options
@@ -76,4 +83,19 @@ export interface FormData {
   titleRole: string;
   agreeTerms: string;
   agreePrivacy: string;
+  
+  // Legacy fields for compatibility
+  currentRevenue: string;
+  fundingHistory: string;
+  businessAge: string;
+  annualRevenue: string;
+  creditScore: string;
+  collateral: string;
+  loanPurpose: string;
+  acceleratorType: string;
+  programLength: string;
+  founderName: string;
+  email: string;
+  phone: string;
+  linkedinProfile: string;
 }
