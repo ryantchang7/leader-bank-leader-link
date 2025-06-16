@@ -1,5 +1,5 @@
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { ChevronLeft, ChevronRight, CheckCircle, Circle } from 'lucide-react';
@@ -31,10 +31,18 @@ const FormContainer: React.FC<FormContainerProps> = ({
   onPrevious,
   onSubmit
 }) => {
-  // Scroll to form content when step changes
+  const hasScrolledRef = useRef(false);
+  
+  // Only scroll to form content when step changes (but not on initial load of step 1)
   useEffect(() => {
+    if (currentStep === 1 && !hasScrolledRef.current) {
+      // Don't scroll on initial load of step 1
+      hasScrolledRef.current = true;
+      return;
+    }
+    
     const formContent = document.querySelector('.form-content-area');
-    if (formContent) {
+    if (formContent && currentStep > 1) {
       formContent.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
   }, [currentStep]);

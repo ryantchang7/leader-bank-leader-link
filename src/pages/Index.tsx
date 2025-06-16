@@ -15,6 +15,7 @@ import TrustIndicators from '@/components/layout/TrustIndicators';
 import { FormData } from '@/types/formData';
 import { useStepNavigation } from '@/hooks/useStepNavigation';
 import { getStepTitle, getStepDescription } from '@/utils/stepUtils';
+import { supabase } from '@/integrations/supabase/client';
 
 const Index = () => {
   const [formData, setFormData] = useState<FormData>({
@@ -96,14 +97,90 @@ const Index = () => {
     handlePrevious
   } = useStepNavigation(formData);
 
+  const saveSubmissionToDatabase = async (submissionData: FormData) => {
+    try {
+      console.log('Saving submission to database:', submissionData);
+      
+      // Prepare data for submissions table
+      const submissionPayload = {
+        borrower_name: submissionData.borrowerName,
+        contact_name: submissionData.contactName,
+        contact_email: submissionData.contactEmail,
+        contact_phone: submissionData.contactPhone || null,
+        company_hq: submissionData.companyHQ,
+        business_stage: submissionData.businessStage,
+        industry: submissionData.industry,
+        vertical: submissionData.vertical || null,
+        seeking_type: submissionData.seekingType,
+        raise_amount: submissionData.raiseAmount || null,
+        business_description: submissionData.productDescription || null,
+        funding_purpose: submissionData.useOfFunds || null,
+        current_revenue: submissionData.lastTwelveRevenue || null,
+        previous_funding: submissionData.totalEquityRaised || null
+      };
+
+      const { data: submissionResult, error: submissionError } = await supabase
+        .from('submissions')
+        .insert([submissionPayload])
+        .select();
+
+      if (submissionError) {
+        console.error('Error saving submission:', submissionError);
+        throw submissionError;
+      }
+
+      console.log('Submission saved successfully:', submissionResult);
+
+      // If it's an accelerator submission, also save to accelerator_applications
+      if (submissionData.seekingType === 'accelerator') {
+        const acceleratorPayload = {
+          startup_name: submissionData.borrowerName,
+          founder_name: submissionData.contactName,
+          founder_email: submissionData.contactEmail,
+          founder_phone: submissionData.contactPhone || null,
+          company_stage: submissionData.businessStage,
+          industry: submissionData.industry,
+          accelerator_id: 'general', // We can expand this later for specific accelerators
+          application_data: submissionData, // Store full form data as JSON
+          status: 'submitted'
+        };
+
+        const { data: acceleratorResult, error: acceleratorError } = await supabase
+          .from('accelerator_applications')
+          .insert([acceleratorPayload])
+          .select();
+
+        if (acceleratorError) {
+          console.error('Error saving accelerator application:', acceleratorError);
+          // Don't throw here as the main submission was saved
+        } else {
+          console.log('Accelerator application saved successfully:', acceleratorResult);
+        }
+      }
+
+      return submissionResult;
+    } catch (error) {
+      console.error('Error in saveSubmissionToDatabase:', error);
+      throw error;
+    }
+  };
+
   const handleSubmit = async () => {
     console.log('Form submitted:', formData);
     
-    if (formData.seekingType === 'accelerator') {
-      setShowResults(true);
-    } else {
-      const successMessage = `Thanks, ${formData.finalFullName}! 🎉\n\nOur expert team will review your information and reach out within 2-3 business days with personalized funding recommendations.\n\nIn the meantime, we'll send you some helpful resources based on your ${formData.seekingType} funding goals.\n\nWelcome to the Leader Bank Leader Link family!`;
-      alert(successMessage);
+    try {
+      // Save to database first
+      await saveSubmissionToDatabase(formData);
+      
+      if (formData.seekingType === 'accelerator') {
+        setShowResults(true);
+      } else {
+        const successMessage = `Thanks, ${formData.finalFullName}! 🎉\n\nOur expert team will review your information and reach out within 2-3 business days with personalized funding recommendations.\n\nIn the meantime, we'll send you some helpful resources based on your ${formData.seekingType} funding goals.\n\nWelcome to the Leader Bank Leader Link family!`;
+        alert(successMessage);
+      }
+    } catch (error) {
+      console.error('Submission failed:', error);
+      alert('There was an error submitting your application. Please try again or contact support.');
     }
   };
 
