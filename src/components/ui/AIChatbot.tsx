@@ -1,6 +1,6 @@
 
 import React, { useState, useRef, useEffect } from 'react';
-import { MessageCircle, X, Send, Bot, User, Sparkles } from 'lucide-react';
+import { MessageCircle, X, Send, Bot, User } from 'lucide-react';
 import { Button } from './button';
 import { supabase } from '@/integrations/supabase/client';
 
@@ -16,7 +16,7 @@ const AIChatbot = () => {
   const [messages, setMessages] = useState<Message[]>([
     {
       id: '1',
-      text: "🤖 Hi! I'm your AI-powered funding assistant. I'm here to help you learn about Leader Bank's funding options and find the perfect match for your business needs. Ask me anything about equity investment, debt financing, accelerator programs, or our application process!",
+      text: "Welcome to Leader Link! I'm your AI funding assistant, here to help you learn about Leader Bank's funding options and find the perfect match for your business needs. Ask me about equity investment, debt financing, accelerator programs, or our application process.",
       sender: 'bot',
       timestamp: new Date()
     }
@@ -103,31 +103,29 @@ const AIChatbot = () => {
       {!isOpen && (
         <Button
           onClick={() => setIsOpen(true)}
-          className="fixed bottom-6 right-6 z-50 h-16 w-16 rounded-full bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 shadow-xl transform transition-all duration-200 hover:scale-105 animate-pulse"
+          className="fixed bottom-6 right-6 z-50 h-16 w-16 rounded-full bg-red-600 hover:bg-red-700 shadow-lg transform transition-all duration-200 hover:scale-105"
           size="icon"
         >
-          <div className="relative">
-            <MessageCircle className="h-7 w-7 text-white" />
-            <Sparkles className="h-4 w-4 text-yellow-300 absolute -top-1 -right-1 animate-bounce" />
-          </div>
+          <MessageCircle className="h-7 w-7 text-white" />
         </Button>
       )}
 
       {/* AI Chat Window */}
       {isOpen && (
-        <div className="fixed bottom-6 right-6 z-50 w-96 h-[500px] bg-white rounded-lg shadow-2xl border border-gray-200 flex flex-col animate-scale-in">
-          {/* Enhanced Header */}
+        <div className="fixed bottom-6 right-6 z-50 w-96 h-[500px] bg-white rounded-lg shadow-xl border border-gray-200 flex flex-col">
+          {/* Professional Header with Logo */}
           <div className="bg-gradient-to-r from-red-600 to-red-700 text-white p-4 rounded-t-lg flex items-center justify-between">
             <div className="flex items-center space-x-3">
-              <div className="relative">
-                <Bot className="h-6 w-6" />
-                <Sparkles className="h-3 w-3 text-yellow-300 absolute -top-1 -right-1" />
-              </div>
+              <img 
+                src="/lovable-uploads/fcacb25e-0bef-4642-858d-4e15d98b07ef.png" 
+                alt="Leader Link Logo" 
+                className="h-8 w-8"
+              />
               <div>
                 <h3 className="font-bold text-lg">AI Funding Assistant</h3>
                 <p className="text-xs text-red-100 flex items-center space-x-1">
-                  <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
-                  <span>Live AI • Learn about funding options</span>
+                  <span className="w-2 h-2 bg-green-400 rounded-full"></span>
+                  <span>Live AI • Expert funding guidance</span>
                 </p>
               </div>
             </div>
@@ -142,25 +140,22 @@ const AIChatbot = () => {
           </div>
 
           {/* Messages */}
-          <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-gradient-to-b from-gray-50 to-white">
+          <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50">
             {messages.map((message) => (
               <div
                 key={message.id}
                 className={`flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'}`}
               >
                 <div
-                  className={`max-w-[85%] p-3 rounded-xl ${
+                  className={`max-w-[85%] p-3 rounded-lg ${
                     message.sender === 'user'
-                      ? 'bg-gradient-to-r from-red-600 to-red-700 text-white shadow-md'
-                      : 'bg-white text-gray-900 shadow-sm border border-gray-100'
+                      ? 'bg-red-600 text-white shadow-sm'
+                      : 'bg-white text-gray-900 shadow-sm border border-gray-200'
                   }`}
                 >
                   <div className="flex items-start space-x-2">
                     {message.sender === 'bot' && (
-                      <div className="relative">
-                        <Bot className="h-4 w-4 mt-0.5 text-red-600" />
-                        <Sparkles className="h-2 w-2 text-yellow-500 absolute -top-0.5 -right-0.5" />
-                      </div>
+                      <Bot className="h-4 w-4 mt-0.5 text-red-600" />
                     )}
                     {message.sender === 'user' && <User className="h-4 w-4 mt-0.5" />}
                     <p className="text-sm whitespace-pre-wrap leading-relaxed">{message.text}</p>
@@ -171,18 +166,15 @@ const AIChatbot = () => {
             
             {isTyping && (
               <div className="flex justify-start">
-                <div className="bg-white p-3 rounded-xl shadow-sm border border-gray-100">
+                <div className="bg-white p-3 rounded-lg shadow-sm border border-gray-200">
                   <div className="flex items-center space-x-2">
-                    <div className="relative">
-                      <Bot className="h-4 w-4 text-red-600" />
-                      <Sparkles className="h-2 w-2 text-yellow-500 absolute -top-0.5 -right-0.5" />
-                    </div>
+                    <Bot className="h-4 w-4 text-red-600" />
                     <div className="flex space-x-1">
-                      <div className="w-2 h-2 bg-red-400 rounded-full animate-bounce"></div>
-                      <div className="w-2 h-2 bg-red-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
-                      <div className="w-2 h-2 bg-red-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                      <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
+                      <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
+                      <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
                     </div>
-                    <span className="text-xs text-gray-500">AI is thinking...</span>
+                    <span className="text-xs text-gray-500">AI is typing...</span>
                   </div>
                 </div>
               </div>
@@ -190,21 +182,21 @@ const AIChatbot = () => {
             <div ref={messagesEndRef} />
           </div>
 
-          {/* Enhanced Input */}
-          <div className="p-4 border-t border-gray-200 bg-gray-50">
+          {/* Professional Input */}
+          <div className="p-4 border-t border-gray-200 bg-white">
             <div className="flex space-x-2">
               <input
                 type="text"
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}
                 onKeyPress={handleKeyPress}
-                placeholder="Ask me about funding options, requirements, process..."
-                className="flex-1 px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent text-sm bg-white shadow-sm"
+                placeholder="Ask about funding options, requirements, or process..."
+                className="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent text-sm bg-white"
                 disabled={isTyping}
               />
               <Button
                 onClick={handleSend}
-                className="bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 p-3 rounded-xl shadow-md"
+                className="bg-red-600 hover:bg-red-700 p-3 rounded-lg"
                 size="icon"
                 disabled={isTyping || !inputValue.trim()}
               >
@@ -212,7 +204,7 @@ const AIChatbot = () => {
               </Button>
             </div>
             <p className="text-xs text-gray-500 mt-2 text-center">
-              🤖 Powered by AI • Learn about equity, debt & accelerator funding
+              Powered by AI • Expert guidance on equity, debt & accelerator funding
             </p>
           </div>
         </div>
