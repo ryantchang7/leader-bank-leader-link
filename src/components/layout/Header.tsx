@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Users, TrendingUp, Shield, Lock, Settings } from 'lucide-react';
 import { Link } from 'react-router-dom';
@@ -15,9 +16,9 @@ const Header = () => {
             />
             <div className="text-center sm:text-left sm:border-l sm:border-gray-300 sm:pl-4">
               <img 
-                src="/lovable-uploads/fcacb25e-0bef-4642-858d-4e15d98b07ef.png" 
+                src="/lovable-uploads/e7d896f6-8766-4a91-8e4c-da34d1981945.png" 
                 alt="Leader Link" 
-                className="h-8 sm:h-10 w-auto mx-auto sm:mx-0 mb-2"
+                className="h-12 sm:h-16 w-auto mx-auto sm:mx-0 mb-2"
               />
               <p className="text-red-600 font-medium text-sm sm:text-base">
                 Your strategic partner in finding the right funding path
