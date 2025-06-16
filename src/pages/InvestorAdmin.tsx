@@ -16,8 +16,9 @@ import AdminAuth from '@/components/auth/AdminAuth';
 import SubmissionFilters from '@/components/admin/SubmissionFilters';
 import ExportModal from '@/components/admin/ExportModal';
 import InvestorMatchingModal from '@/components/admin/InvestorMatchingModal';
+import AddInvestorModal from '@/components/admin/AddInvestorModal';
 import { supabase } from '@/integrations/supabase/client';
-import { useAuth } from '@/hooks/useAuth';
+import { useToast } from "@/components/ui/use-toast";
 
 interface Submission {
   id: string;
@@ -67,6 +68,7 @@ interface FilterState {
 }
 
 const InvestorAdmin = () => {
+  const { toast } = useToast();
   const { signOut } = useAuth();
   const [submissions, setSubmissions] = useState<Submission[]>([]);
   const [investors, setInvestors] = useState<InvestorProfile[]>([]);
@@ -74,6 +76,7 @@ const InvestorAdmin = () => {
   const [selectedSubmissions, setSelectedSubmissions] = useState<string[]>([]);
   const [showExportModal, setShowExportModal] = useState(false);
   const [showMatchingModal, setShowMatchingModal] = useState(false);
+  const [showAddInvestorModal, setShowAddInvestorModal] = useState(false);
   const [loading, setLoading] = useState(true);
 
   const [filters, setFilters] = useState<FilterState>({
@@ -242,6 +245,25 @@ const InvestorAdmin = () => {
   const activeMatches = submissions.reduce((sum, sub) => sum + sub.investor_matches, 0);
   const capitalDistributed = 0; // Will be updated as deals close
   const successRate = totalSubmissions > 0 ? Math.round((submissions.filter(s => s.status === 'matched').length / totalSubmissions) * 100) : 0;
+
+  const handleInvestorAdded = () => {
+    // Refresh investors list
+    const fetchInvestors = async () => {
+      try {
+        const { data: investorsData, error: investorsError } = await supabase
+          .from('investor_profiles')
+          .select('*')
+          .order('created_at', { ascending: false });
+
+        if (investorsError) throw investorsError;
+        setInvestors(investorsData || []);
+      } catch (error) {
+        console.error('Error fetching investors:', error);
+      }
+    };
+    
+    fetchInvestors();
+  };
 
   return (
     <AdminAuth>
@@ -548,7 +570,10 @@ const InvestorAdmin = () => {
                 <CardHeader>
                   <div className="flex justify-between items-center">
                     <CardTitle>Investor Network Management ({investors.length})</CardTitle>
-                    <Button className="bg-red-600 hover:bg-red-700">
+                    <Button 
+                      className="bg-red-600 hover:bg-red-700"
+                      onClick={() => setShowAddInvestorModal(true)}
+                    >
                       <Plus className="h-4 w-4 mr-2" />
                       Add Investor
                     </Button>
@@ -565,7 +590,10 @@ const InvestorAdmin = () => {
                       <Users className="h-12 w-12 text-gray-400 mx-auto mb-4" />
                       <h3 className="text-lg font-medium text-gray-900 mb-2">Build Your Investor Network</h3>
                       <p className="text-gray-600 mb-4">Add investors and firms to your network to begin distributing deal flow.</p>
-                      <Button className="bg-red-600 hover:bg-red-700">
+                      <Button 
+                        className="bg-red-600 hover:bg-red-700"
+                        onClick={() => setShowAddInvestorModal(true)}
+                      >
                         <Plus className="h-4 w-4 mr-2" />
                         Add First Investor
                       </Button>
@@ -646,6 +674,13 @@ const InvestorAdmin = () => {
           onClose={() => setShowMatchingModal(false)}
           submissions={submissions}
           selectedSubmissions={selectedSubmissions}
+        />
+
+        {/* Add Investor Modal */}
+        <AddInvestorModal
+          isOpen={showAddInvestorModal}
+          onClose={() => setShowAddInvestorModal(false)}
+          onInvestorAdded={handleInvestorAdded}
         />
       </div>
     </AdminAuth>
