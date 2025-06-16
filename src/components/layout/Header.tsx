@@ -1,26 +1,15 @@
-
 import React from 'react';
 import { Users, TrendingUp, Shield, Lock, Settings } from 'lucide-react';
 import { Link } from 'react-router-dom';
-
 const Header = () => {
-  return (
-    <div className="bg-white border-b border-gray-200 shadow-sm">
+  return <div className="bg-white border-b border-gray-200 shadow-sm">
       <div className="max-w-6xl mx-auto px-4 py-4 lg:py-6">
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-4 lg:space-y-0">
           <div className="flex flex-col sm:flex-row sm:items-center space-y-3 sm:space-y-0 sm:space-x-6">
-            <img 
-              src="/lovable-uploads/07ef7a96-cef7-4f3f-9c3a-8c4104899ff0.png" 
-              alt="Leader Bank Logo" 
-              className="h-12 sm:h-16 w-auto mx-auto sm:mx-0"
-            />
+            <img src="/lovable-uploads/07ef7a96-cef7-4f3f-9c3a-8c4104899ff0.png" alt="Leader Bank Logo" className="h-12 sm:h-16 w-auto mx-auto sm:mx-0" />
             <div className="text-center sm:text-left sm:border-l sm:border-gray-300 sm:pl-6">
-              <img 
-                src="/lovable-uploads/d66f3156-562e-48ea-b880-89c0177f90b9.png" 
-                alt="Leader Link" 
-                className="h-16 sm:h-20 w-auto mx-auto sm:mx-0 mb-3"
-              />
-              <p className="text-red-600 font-medium text-sm sm:text-base">
+              <img src="/lovable-uploads/d66f3156-562e-48ea-b880-89c0177f90b9.png" alt="Leader Link" className="h-16 sm:h-20 w-auto mx-auto sm:mx-0 mb-3" />
+              <p className="text-red-600 font-medium text-sm sm:text-sm">
                 Your strategic partner in finding the right funding path
               </p>
               <p className="text-xs text-gray-600">FDIC-Insured - Member FDIC - Equal Housing Lender</p>
@@ -32,11 +21,7 @@ const Header = () => {
                 <Shield className="h-3 w-3" />
                 Bank-Grade Security
               </span>
-              <Link 
-                to="/admin/investors" 
-                className="text-gray-400 hover:text-gray-600 transition-colors"
-                title="Admin Access"
-              >
+              <Link to="/admin/investors" className="text-gray-400 hover:text-gray-600 transition-colors" title="Admin Access">
                 <Settings className="h-4 w-4" />
               </Link>
             </div>
@@ -71,18 +56,12 @@ const Header = () => {
             <Lock className="h-3 w-3" />
             <span>Confidential Process</span>
           </div>
-          <Link 
-            to="/admin/investors" 
-            className="flex items-center gap-1 text-gray-400 hover:text-gray-600 transition-colors"
-            title="Admin Access"
-          >
+          <Link to="/admin/investors" className="flex items-center gap-1 text-gray-400 hover:text-gray-600 transition-colors" title="Admin Access">
             <Settings className="h-3 w-3" />
             <span>Admin</span>
           </Link>
         </div>
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default Header;
