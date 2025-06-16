@@ -11,6 +11,7 @@ import ProcessOverview from '@/components/layout/ProcessOverview';
 import ProgressSection from '@/components/layout/ProgressSection';
 import FormContainer from '@/components/layout/FormContainer';
 import TrustIndicators from '@/components/layout/TrustIndicators';
+import AIChatbot from '@/components/ui/AIChatbot';
 import { FormData } from '@/types/formData';
 import { useStepNavigation } from '@/hooks/useStepNavigation';
 import { getStepTitle, getStepDescription } from '@/utils/stepUtils';
@@ -235,6 +236,7 @@ const Index = () => {
         <Header />
         <AcceleratorResults formData={formData} />
         <TrustIndicators />
+        <AIChatbot />
       </div>
     );
   }
@@ -287,6 +289,7 @@ const Index = () => {
         {renderCurrentStep()}
       </FormContainer>
       <TrustIndicators />
+      <AIChatbot />
     </div>
   );
 };
