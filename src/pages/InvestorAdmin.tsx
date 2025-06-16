@@ -19,6 +19,7 @@ import InvestorMatchingModal from '@/components/admin/InvestorMatchingModal';
 import AddInvestorModal from '@/components/admin/AddInvestorModal';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from "@/components/ui/use-toast";
+import { useAuth } from '@/hooks/useAuth';
 
 interface Submission {
   id: string;
