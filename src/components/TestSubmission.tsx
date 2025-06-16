@@ -31,7 +31,7 @@ const TestSubmission: React.FC = () => {
     setMessage('');
 
     try {
-      console.log('Submitting form data:', formData);
+      console.log('Test submission starting with data:', formData);
       
       // Make sure all required fields are filled
       if (!formData.borrower_name || !formData.contact_name || !formData.contact_email || 
@@ -39,21 +39,43 @@ const TestSubmission: React.FC = () => {
         throw new Error('Please fill in all required fields');
       }
 
+      const submissionPayload = {
+        ...formData,
+        submitted_at: new Date().toISOString(),
+        status: 'new',
+        priority: 'medium'
+      };
+
+      console.log('Sending payload to Supabase:', submissionPayload);
+
       const { data, error } = await supabase
         .from('submissions')
-        .insert([formData])
+        .insert([submissionPayload])
         .select();
 
       console.log('Supabase response:', { data, error });
 
       if (error) {
-        console.error('Supabase error:', error);
-        throw error;
+        console.error('Supabase error details:', {
+          message: error.message,
+          details: error.details,
+          hint: error.hint,
+          code: error.code
+        });
+        
+        // Log fallback data for manual processing
+        console.log('FALLBACK DATA FOR MANUAL PROCESSING:', {
+          timestamp: new Date().toISOString(),
+          submissionPayload,
+          errorDetails: error
+        });
+        
+        throw new Error(`Database error: ${error.message}`);
       }
 
       if (data && data.length > 0) {
         console.log('Successfully inserted:', data[0]);
-        setMessage('Submission created successfully! Check the admin panel to see it.');
+        setMessage('✅ Test submission created successfully! Check the admin panel to see it.');
         setFormData({
           borrower_name: '',
           contact_name: '',
@@ -71,8 +93,8 @@ const TestSubmission: React.FC = () => {
         throw new Error('No data returned from insert operation');
       }
     } catch (error: any) {
-      console.error('Error creating submission:', error);
-      setMessage(`Error creating submission: ${error.message || 'Please try again.'}`);
+      console.error('Error creating test submission:', error);
+      setMessage(`❌ Error creating submission: ${error.message || 'Please try again.'}`);
     } finally {
       setIsSubmitting(false);
     }
@@ -90,7 +112,7 @@ const TestSubmission: React.FC = () => {
       <CardHeader>
         <CardTitle>Test Submission Form</CardTitle>
         <p className="text-sm text-gray-600">
-          Use this form to test that submissions are working properly
+          Use this form to test that submissions are working properly and appearing in the admin panel
         </p>
       </CardHeader>
       <CardContent>
@@ -194,7 +216,7 @@ const TestSubmission: React.FC = () => {
                 <SelectContent>
                   <SelectItem value="equity">Equity Investment</SelectItem>
                   <SelectItem value="debt">Debt Financing</SelectItem>
-                  <SelectItem value="grant">Grant</SelectItem>
+                  <SelectItem value="accelerator">Accelerator Program</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -233,14 +255,14 @@ const TestSubmission: React.FC = () => {
           </div>
 
           {message && (
-            <p className={`text-sm ${message.includes('success') ? 'text-green-600' : 'text-red-600'}`}>
+            <div className={`p-3 rounded-md text-sm ${message.includes('success') || message.includes('✅') ? 'bg-green-50 text-green-800 border border-green-200' : 'bg-red-50 text-red-800 border border-red-200'}`}>
               {message}
-            </p>
+            </div>
           )}
 
           <Button 
             type="submit" 
-            className="w-full bg-blue-600 hover:bg-blue-700"
+            className="w-full bg-red-600 hover:bg-red-700"
             disabled={isSubmitting}
           >
             {isSubmitting ? 'Submitting...' : 'Test Submission'}

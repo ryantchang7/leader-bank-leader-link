@@ -98,66 +98,72 @@ const Index = () => {
 
   const saveSubmissionToDatabase = async (submissionData: FormData) => {
     try {
-      console.log('Saving submission to database:', submissionData);
+      console.log('Starting submission save process with data:', submissionData);
       
-      // Prepare data for submissions table with current timestamp
+      // Prepare data for submissions table
       const submissionPayload = {
-        borrower_name: submissionData.borrowerName,
-        contact_name: submissionData.contactName,
-        contact_email: submissionData.contactEmail,
+        borrower_name: submissionData.borrowerName || '',
+        contact_name: submissionData.contactName || '',
+        contact_email: submissionData.contactEmail || '',
         contact_phone: submissionData.contactPhone || null,
-        company_hq: submissionData.companyHQ,
-        business_stage: submissionData.businessStage,
-        industry: submissionData.industry,
+        company_hq: submissionData.companyHQ || '',
+        business_stage: submissionData.businessStage || '',
+        industry: submissionData.industry || '',
         vertical: submissionData.vertical || null,
-        seeking_type: submissionData.seekingType,
+        seeking_type: submissionData.seekingType || '',
         raise_amount: submissionData.raiseAmount || null,
         business_description: submissionData.productDescription || null,
         funding_purpose: submissionData.useOfFunds || null,
         current_revenue: submissionData.lastTwelveRevenue || null,
         previous_funding: submissionData.totalEquityRaised || null,
         submitted_at: new Date().toISOString(),
-        status: 'new'
+        status: 'new',
+        priority: 'medium'
       };
 
-      // Use the service role client to bypass RLS temporarily
+      console.log('Prepared submission payload:', submissionPayload);
+
+      // Insert into submissions table without RLS bypassing
       const { data: submissionResult, error: submissionError } = await supabase
         .from('submissions')
         .insert([submissionPayload])
         .select();
 
       if (submissionError) {
-        console.error('Error saving submission:', submissionError);
-        // Try alternative approach if RLS fails
-        console.log('Attempting alternative submission approach...');
-        
-        // Log the submission data for manual review
-        console.log('Full submission data for manual processing:', {
-          timestamp: new Date().toISOString(),
-          formData: submissionData,
-          payload: submissionPayload
+        console.error('Supabase submission error details:', {
+          message: submissionError.message,
+          details: submissionError.details,
+          hint: submissionError.hint,
+          code: submissionError.code
         });
         
-        // Continue with the flow even if database save fails
-        console.log('Proceeding with user flow despite database save issue');
+        // Create a fallback record for manual processing
+        console.log('FALLBACK DATA FOR MANUAL PROCESSING:', {
+          timestamp: new Date().toISOString(),
+          submissionPayload,
+          fullFormData: submissionData,
+          errorDetails: submissionError
+        });
       } else {
-        console.log('Submission saved successfully:', submissionResult);
+        console.log('Submission saved successfully to submissions table:', submissionResult);
       }
 
       // If it's an accelerator submission, also save to accelerator_applications
       if (submissionData.seekingType === 'accelerator') {
         const acceleratorPayload = {
-          startup_name: submissionData.borrowerName,
-          founder_name: submissionData.contactName,
-          founder_email: submissionData.contactEmail,
+          startup_name: submissionData.borrowerName || '',
+          founder_name: submissionData.contactName || '',
+          founder_email: submissionData.contactEmail || '',
           founder_phone: submissionData.contactPhone || null,
-          company_stage: submissionData.businessStage,
-          industry: submissionData.industry,
+          company_stage: submissionData.businessStage || '',
+          industry: submissionData.industry || '',
           accelerator_id: 'general',
           application_data: submissionData,
           status: 'submitted',
           submitted_at: new Date().toISOString()
         };
+
+        console.log('Prepared accelerator payload:', acceleratorPayload);
 
         const { data: acceleratorResult, error: acceleratorError } = await supabase
           .from('accelerator_applications')
@@ -165,34 +171,47 @@ const Index = () => {
           .select();
 
         if (acceleratorError) {
-          console.error('Error saving accelerator application:', acceleratorError);
-          console.log('Accelerator application data for manual processing:', {
+          console.error('Accelerator application error:', acceleratorError);
+          console.log('ACCELERATOR FALLBACK DATA:', {
             timestamp: new Date().toISOString(),
-            payload: acceleratorPayload
+            acceleratorPayload,
+            errorDetails: acceleratorError
           });
         } else {
           console.log('Accelerator application saved successfully:', acceleratorResult);
         }
       }
 
-      // Return success regardless of database save status for now
       return { success: true };
     } catch (error) {
-      console.error('Error in saveSubmissionToDatabase:', error);
-      // Don't throw error - continue with user flow
-      console.log('Continuing with user flow despite database error');
-      return { success: true };
+      console.error('Unexpected error in saveSubmissionToDatabase:', error);
+      console.log('CRITICAL FALLBACK DATA FOR MANUAL PROCESSING:', {
+        timestamp: new Date().toISOString(),
+        fullFormData: submissionData,
+        unexpectedError: error
+      });
+      return { success: false, error };
     }
   };
 
   const handleSubmit = async () => {
-    console.log('Form submitted:', formData);
+    console.log('Form submission started with final data:', formData);
+    
+    // Validate required fields
+    if (!formData.borrowerName || !formData.contactName || !formData.contactEmail || 
+        !formData.companyHQ || !formData.businessStage || !formData.industry || !formData.seekingType) {
+      console.error('Missing required fields for submission');
+      alert('Please ensure all required fields are filled out.');
+      return;
+    }
     
     try {
-      // Save to database first (but don't fail if it doesn't work)
-      await saveSubmissionToDatabase(formData);
+      // Always attempt to save to database
+      const saveResult = await saveSubmissionToDatabase(formData);
+      console.log('Database save result:', saveResult);
       
       if (formData.seekingType === 'accelerator') {
+        console.log('Showing accelerator results page');
         setShowResults(true);
       } else {
         const successMessage = `Thanks, ${formData.finalFullName}! 🎉\n\nOur expert team will review your information and reach out within 2-3 business days with personalized funding recommendations.\n\nIn the meantime, we'll send you some helpful resources based on your ${formData.seekingType} funding goals.\n\nWelcome to the Leader Bank Leader Link family!`;
