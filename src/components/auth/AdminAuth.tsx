@@ -6,7 +6,6 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Lock, Loader2 } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
-import AdminSetup from './AdminSetup';
 import { supabase } from '@/integrations/supabase/client';
 
 interface AdminAuthProps {
@@ -19,38 +18,6 @@ const AdminAuth: React.FC<AdminAuthProps> = ({ children }) => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [isSigningIn, setIsSigningIn] = useState(false);
-  const [hasAdminUsers, setHasAdminUsers] = useState<boolean | null>(null);
-
-  useEffect(() => {
-    const checkAdminUsers = async () => {
-      try {
-        console.log('Checking if any admin users exist...');
-        
-        const { data, error } = await supabase
-          .from('admin_users')
-          .select('id')
-          .limit(1);
-        
-        console.log('Admin users check result:', { data, error, count: data?.length });
-        
-        if (error) {
-          console.error('Error checking admin users:', error);
-          setHasAdminUsers(true); // Default to true if we can't check
-          return;
-        }
-        
-        const hasUsers = data && data.length > 0;
-        setHasAdminUsers(hasUsers);
-        console.log('Admin users exist:', hasUsers);
-        
-      } catch (error: any) {
-        console.error('Exception checking admin users:', error);
-        setHasAdminUsers(true); // Default to true if we can't check
-      }
-    };
-
-    checkAdminUsers();
-  }, []);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -66,8 +33,8 @@ const AdminAuth: React.FC<AdminAuthProps> = ({ children }) => {
     setIsSigningIn(false);
   };
 
-  // Show loading spinner while checking auth and admin users
-  if (loading || hasAdminUsers === null) {
+  // Show loading spinner while checking auth
+  if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
@@ -76,12 +43,6 @@ const AdminAuth: React.FC<AdminAuthProps> = ({ children }) => {
         </div>
       </div>
     );
-  }
-
-  // Show admin setup if no admin users exist
-  if (hasAdminUsers === false) {
-    console.log('No admin users found, showing setup');
-    return <AdminSetup />;
   }
 
   // Show login form if not authenticated
@@ -94,7 +55,7 @@ const AdminAuth: React.FC<AdminAuthProps> = ({ children }) => {
               <Lock className="h-6 w-6 text-red-600" />
             </div>
             <CardTitle>Leader Link Admin Access</CardTitle>
-            <p className="text-sm text-gray-600">Sign in to access the admin dashboard</p>
+            <p className="text-sm text-gray-600">Sign in with your @leaderbank.com email to access the admin dashboard</p>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleLogin} className="space-y-4">
@@ -105,7 +66,7 @@ const AdminAuth: React.FC<AdminAuthProps> = ({ children }) => {
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="admin@example.com"
+                  placeholder="your.email@leaderbank.com"
                   className="mt-1"
                   required
                 />
@@ -142,7 +103,7 @@ const AdminAuth: React.FC<AdminAuthProps> = ({ children }) => {
             </form>
             <div className="mt-4 text-center">
               <p className="text-xs text-gray-500">
-                Contact your system administrator for access
+                Use your @leaderbank.com email address for admin access
               </p>
             </div>
           </CardContent>
@@ -161,28 +122,23 @@ const AdminAuth: React.FC<AdminAuthProps> = ({ children }) => {
             <div className="mx-auto w-12 h-12 bg-red-100 rounded-full flex items-center justify-center mb-4">
               <Lock className="h-6 w-6 text-red-600" />
             </div>
-            <CardTitle>Setup Admin Access</CardTitle>
-            <p className="text-sm text-gray-600">You need admin privileges to access this area</p>
+            <CardTitle>Access Denied</CardTitle>
+            <p className="text-sm text-gray-600">You need a @leaderbank.com email address to access this area</p>
           </CardHeader>
           <CardContent className="text-center">
             <p className="text-sm text-gray-500 mb-4">
-              It looks like you're signed in but don't have admin access yet.
+              Currently signed in as: {user.email}
             </p>
-            <div className="space-y-2">
-              <Button 
-                onClick={() => window.location.reload()}
-                className="w-full"
-              >
-                Refresh Page
-              </Button>
-              <Button 
-                variant="outline" 
-                onClick={() => setHasAdminUsers(false)}
-                className="w-full"
-              >
-                Set Up Admin Access
-              </Button>
-            </div>
+            <p className="text-sm text-gray-500 mb-4">
+              Please contact your administrator or sign in with a @leaderbank.com email address.
+            </p>
+            <Button 
+              onClick={() => supabase.auth.signOut()}
+              variant="outline"
+              className="w-full"
+            >
+              Sign Out
+            </Button>
           </CardContent>
         </Card>
       </div>

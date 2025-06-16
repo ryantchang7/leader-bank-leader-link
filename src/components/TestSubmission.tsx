@@ -31,29 +31,48 @@ const TestSubmission: React.FC = () => {
     setMessage('');
 
     try {
-      const { error } = await supabase
+      console.log('Submitting form data:', formData);
+      
+      // Make sure all required fields are filled
+      if (!formData.borrower_name || !formData.contact_name || !formData.contact_email || 
+          !formData.company_hq || !formData.business_stage || !formData.industry || !formData.seeking_type) {
+        throw new Error('Please fill in all required fields');
+      }
+
+      const { data, error } = await supabase
         .from('submissions')
-        .insert([formData]);
+        .insert([formData])
+        .select();
 
-      if (error) throw error;
+      console.log('Supabase response:', { data, error });
 
-      setMessage('Submission created successfully!');
-      setFormData({
-        borrower_name: '',
-        contact_name: '',
-        contact_email: '',
-        contact_phone: '',
-        company_hq: '',
-        business_stage: '',
-        industry: '',
-        seeking_type: '',
-        raise_amount: '',
-        business_description: '',
-        funding_purpose: ''
-      });
-    } catch (error) {
+      if (error) {
+        console.error('Supabase error:', error);
+        throw error;
+      }
+
+      if (data && data.length > 0) {
+        console.log('Successfully inserted:', data[0]);
+        setMessage('Submission created successfully! Check the admin panel to see it.');
+        setFormData({
+          borrower_name: '',
+          contact_name: '',
+          contact_email: '',
+          contact_phone: '',
+          company_hq: '',
+          business_stage: '',
+          industry: '',
+          seeking_type: '',
+          raise_amount: '',
+          business_description: '',
+          funding_purpose: ''
+        });
+      } else {
+        throw new Error('No data returned from insert operation');
+      }
+    } catch (error: any) {
       console.error('Error creating submission:', error);
-      setMessage('Error creating submission. Please try again.');
+      setMessage(`Error creating submission: ${error.message || 'Please try again.'}`);
     } finally {
       setIsSubmitting(false);
     }
@@ -78,7 +97,7 @@ const TestSubmission: React.FC = () => {
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <Label htmlFor="borrower_name">Company Name</Label>
+              <Label htmlFor="borrower_name">Company Name *</Label>
               <Input
                 id="borrower_name"
                 value={formData.borrower_name}
@@ -88,7 +107,7 @@ const TestSubmission: React.FC = () => {
               />
             </div>
             <div>
-              <Label htmlFor="contact_name">Contact Name</Label>
+              <Label htmlFor="contact_name">Contact Name *</Label>
               <Input
                 id="contact_name"
                 value={formData.contact_name}
@@ -101,7 +120,7 @@ const TestSubmission: React.FC = () => {
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <Label htmlFor="contact_email">Email</Label>
+              <Label htmlFor="contact_email">Email *</Label>
               <Input
                 id="contact_email"
                 type="email"
@@ -124,7 +143,7 @@ const TestSubmission: React.FC = () => {
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <Label htmlFor="company_hq">Company HQ</Label>
+              <Label htmlFor="company_hq">Company HQ *</Label>
               <Input
                 id="company_hq"
                 value={formData.company_hq}
@@ -134,7 +153,7 @@ const TestSubmission: React.FC = () => {
               />
             </div>
             <div>
-              <Label htmlFor="business_stage">Business Stage</Label>
+              <Label htmlFor="business_stage">Business Stage *</Label>
               <Select value={formData.business_stage} onValueChange={(value) => handleInputChange('business_stage', value)}>
                 <SelectTrigger>
                   <SelectValue placeholder="Select stage" />
@@ -152,7 +171,7 @@ const TestSubmission: React.FC = () => {
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <Label htmlFor="industry">Industry</Label>
+              <Label htmlFor="industry">Industry *</Label>
               <Select value={formData.industry} onValueChange={(value) => handleInputChange('industry', value)}>
                 <SelectTrigger>
                   <SelectValue placeholder="Select industry" />
@@ -167,7 +186,7 @@ const TestSubmission: React.FC = () => {
               </Select>
             </div>
             <div>
-              <Label htmlFor="seeking_type">Seeking Type</Label>
+              <Label htmlFor="seeking_type">Seeking Type *</Label>
               <Select value={formData.seeking_type} onValueChange={(value) => handleInputChange('seeking_type', value)}>
                 <SelectTrigger>
                   <SelectValue placeholder="Select type" />

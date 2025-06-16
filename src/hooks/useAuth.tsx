@@ -15,7 +15,7 @@ export const useAuth = () => {
       setUser(session?.user ?? null);
       
       if (session?.user) {
-        await checkAdminStatus(session.user.id);
+        await checkAdminStatus(session.user);
       }
       setLoading(false);
     };
@@ -29,7 +29,7 @@ export const useAuth = () => {
         setUser(session?.user ?? null);
         
         if (session?.user) {
-          await checkAdminStatus(session.user.id);
+          await checkAdminStatus(session.user);
         } else {
           setIsAdmin(false);
         }
@@ -40,28 +40,23 @@ export const useAuth = () => {
     return () => subscription.unsubscribe();
   }, []);
 
-  const checkAdminStatus = async (userId: string) => {
+  const checkAdminStatus = async (user: User) => {
     try {
-      console.log('Checking admin status for user:', userId);
+      console.log('Checking admin status for user:', user.email);
       
-      // First try the RPC function
-      const { data: rpcData, error: rpcError } = await supabase.rpc('is_admin', {
-        user_id: userId
-      });
-      
-      console.log('RPC admin check result:', { rpcData, rpcError });
-      
-      if (!rpcError && rpcData !== null) {
-        setIsAdmin(!!rpcData);
+      // Check if user has @leaderbank.com email
+      if (user.email && user.email.endsWith('@leaderbank.com')) {
+        console.log('User has leaderbank.com email, granting admin access');
+        setIsAdmin(true);
         return;
       }
       
-      // If RPC fails, try direct query
-      console.log('RPC failed, trying direct query...');
+      // Fall back to checking admin_users table
+      console.log('Checking admin_users table...');
       const { data: directData, error: directError } = await supabase
         .from('admin_users')
         .select('id')
-        .eq('user_id', userId)
+        .eq('user_id', user.id)
         .limit(1);
       
       console.log('Direct admin check result:', { directData, directError });
@@ -73,7 +68,7 @@ export const useAuth = () => {
       }
       
       const isUserAdmin = directData && directData.length > 0;
-      console.log('User is admin:', isUserAdmin);
+      console.log('User is admin via table:', isUserAdmin);
       setIsAdmin(isUserAdmin);
       
     } catch (error) {
