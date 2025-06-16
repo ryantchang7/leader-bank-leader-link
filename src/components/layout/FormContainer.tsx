@@ -33,7 +33,7 @@ const FormContainer: React.FC<FormContainerProps> = ({
 }) => {
   const hasScrolledRef = useRef(false);
   
-  // Only scroll to form content when step changes (but not on initial load of step 1)
+  // Scroll to step header when step changes (but not on initial load of step 1)
   useEffect(() => {
     if (currentStep === 1 && !hasScrolledRef.current) {
       // Don't scroll on initial load of step 1
@@ -41,9 +41,9 @@ const FormContainer: React.FC<FormContainerProps> = ({
       return;
     }
     
-    const formContent = document.querySelector('.form-content-area');
-    if (formContent && currentStep > 1) {
-      formContent.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    const stepHeader = document.querySelector('.step-header');
+    if (stepHeader && currentStep > 1) {
+      stepHeader.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
   }, [currentStep]);
 
@@ -62,7 +62,7 @@ const FormContainer: React.FC<FormContainerProps> = ({
   return (
     <div className="max-w-4xl mx-auto px-4 py-4 sm:py-8">
       <Card className="shadow-lg border-0 bg-white">
-        <CardHeader className="bg-gradient-to-r from-red-50 to-red-100 border-b p-4 sm:p-6">
+        <CardHeader className="bg-gradient-to-r from-red-50 to-red-100 border-b p-4 sm:p-6 step-header">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-3 sm:space-y-0">
             <div className="text-center sm:text-left">
               <CardTitle className="text-lg sm:text-xl text-gray-900 flex items-center justify-center sm:justify-start">
@@ -78,7 +78,7 @@ const FormContainer: React.FC<FormContainerProps> = ({
             )}
           </div>
         </CardHeader>
-        <CardContent className="p-4 sm:p-8 form-content-area">
+        <CardContent className="p-4 sm:p-8">
           <div className="transition-all duration-300 ease-in-out">
             {children}
           </div>
