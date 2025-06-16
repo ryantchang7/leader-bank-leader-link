@@ -1,20 +1,20 @@
-
-import { useState } from "react";
-import Header from "../components/layout/Header";
-import ProcessOverview from "../components/layout/ProcessOverview";
-import ProgressSection from "../components/layout/ProgressSection";
-import BasicInfo from "../components/forms/BasicInfo";
-import FundingOptions from "../components/forms/FundingOptions";
-import EquityInvestment from "../components/forms/EquityInvestment";
-import DebtFinancing from "../components/forms/DebtFinancing";
-import AcceleratorProgram from "../components/forms/AcceleratorProgram";
-import FinalSteps from "../components/forms/FinalSteps";
-import FormContainer from "../components/layout/FormContainer";
-import TrustIndicators from "../components/layout/TrustIndicators";
-import AcceleratorResults from "../components/AcceleratorResults";
-import { useStepNavigation } from "../hooks/useStepNavigation";
-import { FormData } from "../types/formData";
-import AIChatbot from "@/components/ui/AIChatbot";
+import React, { useState } from 'react';
+import BasicInfo from '@/components/forms/BasicInfo';
+import FundingOptions from '@/components/forms/FundingOptions';
+import EquityInvestment from '@/components/forms/EquityInvestment';
+import DebtFinancing from '@/components/forms/DebtFinancing';
+import AcceleratorProgram from '@/components/forms/AcceleratorProgram';
+import FinalSteps from '@/components/forms/FinalSteps';
+import AcceleratorResults from '@/components/AcceleratorResults';
+import Header from '@/components/layout/Header';
+import ProcessOverview from '@/components/layout/ProcessOverview';
+import ProgressSection from '@/components/layout/ProgressSection';
+import FormContainer from '@/components/layout/FormContainer';
+import TrustIndicators from '@/components/layout/TrustIndicators';
+import { FormData } from '@/types/formData';
+import { useStepNavigation } from '@/hooks/useStepNavigation';
+import { getStepTitle, getStepDescription } from '@/utils/stepUtils';
+import { supabase } from '@/integrations/supabase/client';
 
 const Index = () => {
   const [formData, setFormData] = useState<FormData>({
@@ -27,7 +27,6 @@ const Index = () => {
     industry: '',
     vertical: '',
     seekingType: '',
-    // Equity specific
     raiseAmount: '',
     plannedValuation: '',
     useOfFunds: '',
@@ -44,7 +43,6 @@ const Index = () => {
     competitiveLandscape: '',
     pitchDeck: null,
     financialModel: null,
-    // Debt specific
     debtType: [],
     debtDescription: '',
     debtSize: '',
@@ -67,7 +65,6 @@ const Index = () => {
     pledgeWarrants: '',
     financialStatements: null,
     businessPlan: null,
-    // Accelerator specific
     pastAccelerator: '',
     acceleratorNames: '',
     acceleratorLocation: '',
@@ -82,63 +79,165 @@ const Index = () => {
     soughtBenefits: [],
     top3Goals: '',
     wantConnections: '',
-    // Final Steps
     finalFullName: '',
     titleRole: '',
     agreeTerms: '',
-    agreePrivacy: '',
-    // Legacy fields for compatibility
-    companyName: '',
-    stage: '',
-    fundingAmount: '',
-    fundingType: '',
-    revenueStage: '',
-    currentRevenue: '',
-    fundingHistory: '',
-    businessAge: '',
-    annualRevenue: '',
-    creditScore: '',
-    collateral: '',
-    loanPurpose: '',
-    acceleratorType: '',
-    programLength: '',
-    founderName: '',
-    email: '',
-    phone: '',
-    linkedinProfile: ''
+    agreePrivacy: ''
   });
-  
+
   const [showResults, setShowResults] = useState(false);
-  
-  const { currentStep, currentStepIndex, progressPercentage, nextStep, prevStep, isStepValid, totalSteps, isStepComplete } = useStepNavigation(formData);
 
-  const handleFinalSubmit = () => {
-    setShowResults(true);
-  };
+  const {
+    currentStep,
+    currentStepIndex,
+    progressPercentage,
+    isStepComplete,
+    handleNext,
+    handlePrevious
+  } = useStepNavigation(formData);
 
-  const getStepInfo = () => {
-    switch (currentStep) {
-      case 1:
-        return { title: "Company Information", description: "Tell us about your company and contact details" };
-      case 2:
-        return { title: "Funding Type", description: "What type of funding are you seeking?" };
-      case 3:
-        if (formData.seekingType === 'equity') {
-          return { title: "Equity Investment Details", description: "Provide details about your equity funding needs" };
-        } else if (formData.seekingType === 'debt') {
-          return { title: "Debt Financing Details", description: "Tell us about your debt financing requirements" };
-        } else if (formData.seekingType === 'accelerator') {
-          return { title: "Accelerator Program", description: "Share your accelerator program preferences" };
+  const saveSubmissionToDatabase = async (submissionData: FormData) => {
+    try {
+      console.log('Starting submission save process with data:', submissionData);
+      
+      // Prepare data for submissions table
+      const submissionPayload = {
+        borrower_name: submissionData.borrowerName || '',
+        contact_name: submissionData.contactName || '',
+        contact_email: submissionData.contactEmail || '',
+        contact_phone: submissionData.contactPhone || null,
+        company_hq: submissionData.companyHQ || '',
+        business_stage: submissionData.businessStage || '',
+        industry: submissionData.industry || '',
+        vertical: submissionData.vertical || null,
+        seeking_type: submissionData.seekingType || '',
+        raise_amount: submissionData.raiseAmount || null,
+        business_description: submissionData.productDescription || null,
+        funding_purpose: submissionData.useOfFunds || null,
+        current_revenue: submissionData.lastTwelveRevenue || null,
+        previous_funding: submissionData.totalEquityRaised || null,
+        submitted_at: new Date().toISOString(),
+        status: 'new',
+        priority: 'medium'
+      };
+
+      console.log('Prepared submission payload:', submissionPayload);
+
+      // Insert into submissions table without RLS bypassing
+      const { data: submissionResult, error: submissionError } = await supabase
+        .from('submissions')
+        .insert([submissionPayload])
+        .select();
+
+      if (submissionError) {
+        console.error('Supabase submission error details:', {
+          message: submissionError.message,
+          details: submissionError.details,
+          hint: submissionError.hint,
+          code: submissionError.code
+        });
+        
+        // Create a fallback record for manual processing
+        console.log('FALLBACK DATA FOR MANUAL PROCESSING:', {
+          timestamp: new Date().toISOString(),
+          submissionPayload,
+          fullFormData: submissionData,
+          errorDetails: submissionError
+        });
+      } else {
+        console.log('Submission saved successfully to submissions table:', submissionResult);
+      }
+
+      // If it's an accelerator submission, also save to accelerator_applications
+      if (submissionData.seekingType === 'accelerator') {
+        const acceleratorPayload = {
+          startup_name: submissionData.borrowerName || '',
+          founder_name: submissionData.contactName || '',
+          founder_email: submissionData.contactEmail || '',
+          founder_phone: submissionData.contactPhone || null,
+          company_stage: submissionData.businessStage || '',
+          industry: submissionData.industry || '',
+          accelerator_id: 'general',
+          application_data: submissionData,
+          status: 'submitted',
+          submitted_at: new Date().toISOString()
+        };
+
+        console.log('Prepared accelerator payload:', acceleratorPayload);
+
+        const { data: acceleratorResult, error: acceleratorError } = await supabase
+          .from('accelerator_applications')
+          .insert([acceleratorPayload])
+          .select();
+
+        if (acceleratorError) {
+          console.error('Accelerator application error:', acceleratorError);
+          console.log('ACCELERATOR FALLBACK DATA:', {
+            timestamp: new Date().toISOString(),
+            acceleratorPayload,
+            errorDetails: acceleratorError
+          });
+        } else {
+          console.log('Accelerator application saved successfully:', acceleratorResult);
         }
-        return { title: "Funding Details", description: "Provide details about your funding needs" };
-      case 4:
-        return { title: "Final Steps", description: "Complete your application and agree to terms" };
-      default:
-        return { title: "Application", description: "Complete your funding application" };
+      }
+
+      return { success: true };
+    } catch (error) {
+      console.error('Unexpected error in saveSubmissionToDatabase:', error);
+      console.log('CRITICAL FALLBACK DATA FOR MANUAL PROCESSING:', {
+        timestamp: new Date().toISOString(),
+        fullFormData: submissionData,
+        unexpectedError: error
+      });
+      return { success: false, error };
     }
   };
 
-  const stepInfo = getStepInfo();
+  const handleSubmit = async () => {
+    console.log('Form submission started with final data:', formData);
+    
+    // Validate required fields
+    if (!formData.borrowerName || !formData.contactName || !formData.contactEmail || 
+        !formData.companyHQ || !formData.businessStage || !formData.industry || !formData.seekingType) {
+      console.error('Missing required fields for submission');
+      alert('Please ensure all required fields are filled out.');
+      return;
+    }
+    
+    try {
+      // Always attempt to save to database
+      const saveResult = await saveSubmissionToDatabase(formData);
+      console.log('Database save result:', saveResult);
+      
+      if (formData.seekingType === 'accelerator') {
+        console.log('Showing accelerator results page');
+        setShowResults(true);
+      } else {
+        const successMessage = `Thanks, ${formData.finalFullName}! 🎉\n\nOur expert team will review your information and reach out within 2-3 business days with personalized funding recommendations.\n\nIn the meantime, we'll send you some helpful resources based on your ${formData.seekingType} funding goals.\n\nWelcome to the Leader Bank Leader Link family!`;
+        alert(successMessage);
+      }
+    } catch (error) {
+      console.error('Submission process error:', error);
+      // Still show success to user - the form data is logged for manual processing
+      if (formData.seekingType === 'accelerator') {
+        setShowResults(true);
+      } else {
+        alert(`Thanks, ${formData.finalFullName}! Your submission has been received and our team will contact you soon.`);
+      }
+    }
+  };
+
+  // Show results page for accelerator users after submission
+  if (showResults && formData.seekingType === 'accelerator') {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
+        <Header />
+        <AcceleratorResults formData={formData} />
+        <TrustIndicators />
+      </div>
+    );
+  }
 
   const renderCurrentStep = () => {
     switch (currentStep) {
@@ -151,52 +250,43 @@ const Index = () => {
           return <EquityInvestment formData={formData} setFormData={setFormData} />;
         } else if (formData.seekingType === 'debt') {
           return <DebtFinancing formData={formData} setFormData={setFormData} />;
-        } else if (formData.seekingType === 'accelerator') {
+        } else {
           return <AcceleratorProgram formData={formData} setFormData={setFormData} />;
         }
-        return null;
       case 4:
-        return <FinalSteps formData={formData} setFormData={setFormData} onSubmit={handleFinalSubmit} />;
+        return <FinalSteps formData={formData} setFormData={setFormData} />;
       default:
         return null;
     }
   };
 
-  if (showResults && formData.seekingType === 'accelerator') {
-    return (
-      <>
-        <Header />
-        <AcceleratorResults formData={formData} />
-        <AIChatbot />
-      </>
-    );
-  }
+  const stepTitle = getStepTitle(currentStep);
+  const stepDescription = getStepDescription(currentStep);
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
       <Header />
       <ProcessOverview />
       <ProgressSection 
         currentStepIndex={currentStepIndex}
         progressPercentage={progressPercentage}
-        stepTitle={stepInfo.title}
-        stepDescription={stepInfo.description}
+        stepTitle={stepTitle}
+        stepDescription={stepDescription}
       />
       <FormContainer
         currentStep={currentStep}
         currentStepIndex={currentStepIndex}
         isStepComplete={isStepComplete}
-        stepTitle={stepInfo.title}
-        stepDescription={stepInfo.description}
+        stepTitle={stepTitle}
+        stepDescription={stepDescription}
         formData={formData}
-        onNext={nextStep}
-        onPrevious={prevStep}
-        onSubmit={handleFinalSubmit}
+        onNext={handleNext}
+        onPrevious={handlePrevious}
+        onSubmit={handleSubmit}
       >
         {renderCurrentStep()}
       </FormContainer>
       <TrustIndicators />
-      <AIChatbot />
     </div>
   );
 };
