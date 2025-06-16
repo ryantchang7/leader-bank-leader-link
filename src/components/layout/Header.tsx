@@ -2,6 +2,7 @@
 import React from 'react';
 import { Users, TrendingUp, Shield, Lock, Settings } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import Logo from '@/components/ui/Logo';
 
 const Header = () => {
   return (
@@ -9,13 +10,8 @@ const Header = () => {
       <div className="max-w-6xl mx-auto px-4 py-4 lg:py-6">
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-4 lg:space-y-0">
           <div className="flex flex-col sm:flex-row sm:items-center space-y-3 sm:space-y-0 sm:space-x-4">
-            <img 
-              src="/lovable-uploads/07ef7a96-cef7-4f3f-9c3a-8c4104899ff0.png" 
-              alt="Leader Bank Logo" 
-              className="h-12 sm:h-16 w-auto mx-auto sm:mx-0"
-            />
+            <Logo />
             <div className="text-center sm:text-left sm:border-l sm:border-gray-300 sm:pl-4">
-              <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Leader Link</h1>
               <p className="text-red-600 font-medium text-sm sm:text-base">
                 Your strategic partner in finding the right funding path
               </p>
