@@ -8,17 +8,17 @@ const Header = () => {
     <div className="bg-white border-b border-gray-200 shadow-sm">
       <div className="max-w-6xl mx-auto px-4 py-4 lg:py-6">
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-4 lg:space-y-0">
-          <div className="flex flex-col sm:flex-row sm:items-center space-y-3 sm:space-y-0 sm:space-x-4">
+          <div className="flex flex-col sm:flex-row sm:items-center space-y-3 sm:space-y-0 sm:space-x-6">
             <img 
               src="/lovable-uploads/07ef7a96-cef7-4f3f-9c3a-8c4104899ff0.png" 
               alt="Leader Bank Logo" 
               className="h-12 sm:h-16 w-auto mx-auto sm:mx-0"
             />
-            <div className="text-center sm:text-left sm:border-l sm:border-gray-300 sm:pl-4">
+            <div className="text-center sm:text-left sm:border-l sm:border-gray-300 sm:pl-6">
               <img 
-                src="/lovable-uploads/e7d896f6-8766-4a91-8e4c-da34d1981945.png" 
+                src="/lovable-uploads/d66f3156-562e-48ea-b880-89c0177f90b9.png" 
                 alt="Leader Link" 
-                className="h-12 sm:h-16 w-auto mx-auto sm:mx-0 mb-2"
+                className="h-16 sm:h-20 w-auto mx-auto sm:mx-0 mb-3"
               />
               <p className="text-red-600 font-medium text-sm sm:text-base">
                 Your strategic partner in finding the right funding path
