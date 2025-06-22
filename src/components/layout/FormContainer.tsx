@@ -2,7 +2,7 @@
 import React, { useEffect, useRef } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { ChevronLeft, ChevronRight, CheckCircle, Circle } from 'lucide-react';
+import { ChevronLeft, ChevronRight, CheckCircle, Circle, AlertCircle } from 'lucide-react';
 import { FormData } from '@/types/formData';
 import { validateStep } from '@/utils/formValidation';
 
@@ -32,6 +32,7 @@ const FormContainer: React.FC<FormContainerProps> = ({
   onSubmit
 }) => {
   const hasScrolledRef = useRef(false);
+  const isCurrentStepValid = validateStep(currentStep, formData);
   
   // Scroll to step header when step changes (but not on initial load of step 1)
   useEffect(() => {
@@ -59,63 +60,92 @@ const FormContainer: React.FC<FormContainerProps> = ({
     onSubmit();
   };
 
+  const isLastStep = currentStepIndex === 3;
+  const canProceed = isLastStep ? (formData.agreeTerms && formData.agreePrivacy) : isCurrentStepValid;
+
   return (
-    <div className="max-w-4xl mx-auto px-4 py-4 sm:py-8">
-      <Card className="shadow-lg border-0 bg-white">
-        <CardHeader className="bg-gradient-to-r from-red-50 to-red-100 border-b p-4 sm:p-6 step-header">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-3 sm:space-y-0">
+    <div className="max-w-5xl mx-auto px-4 py-8">
+      <Card className="shadow-xl border-0 bg-white overflow-hidden">
+        <CardHeader className="bg-gradient-to-r from-red-50 via-orange-50 to-red-50 border-b p-8 step-header">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-4 sm:space-y-0">
             <div className="text-center sm:text-left">
-              <CardTitle className="text-lg sm:text-xl text-gray-900 flex items-center justify-center sm:justify-start">
-                <Circle className="w-3 h-3 fill-red-600 text-red-600 mr-2" />
+              <CardTitle className="text-2xl text-gray-900 flex items-center justify-center sm:justify-start gap-3 mb-2">
+                <div className="relative">
+                  <Circle className="w-8 h-8 text-red-600" />
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <span className="text-red-600 font-bold text-sm">{currentStep}</span>
+                  </div>
+                </div>
                 {stepTitle}
               </CardTitle>
-              <CardDescription className="mt-1 text-sm">
+              <CardDescription className="text-base text-gray-600">
                 {stepDescription}
               </CardDescription>
             </div>
-            {isStepComplete(currentStep) && (
-              <CheckCircle className="w-6 h-6 text-green-600 mx-auto sm:mx-0" />
-            )}
+            
+            <div className="flex items-center gap-4">
+              {isStepComplete(currentStep) ? (
+                <div className="flex items-center gap-2 bg-green-100 text-green-800 px-4 py-2 rounded-full">
+                  <CheckCircle className="w-5 h-5" />
+                  <span className="font-semibold text-sm">Complete</span>
+                </div>
+              ) : !isCurrentStepValid && currentStep > 1 ? (
+                <div className="flex items-center gap-2 bg-amber-100 text-amber-800 px-4 py-2 rounded-full">
+                  <AlertCircle className="w-5 h-5" />
+                  <span className="font-semibold text-sm">In Progress</span>
+                </div>
+              ) : null}
+            </div>
           </div>
         </CardHeader>
-        <CardContent className="p-4 sm:p-8">
+        
+        <CardContent className="p-8">
           <div className="transition-all duration-300 ease-in-out">
             {children}
           </div>
           
-          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center pt-6 sm:pt-8 border-t border-gray-200 mt-6 sm:mt-8 space-y-4 sm:space-y-0">
+          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center pt-8 border-t border-gray-200 mt-8 space-y-4 sm:space-y-0">
             <Button
               variant="outline"
               onClick={handlePrevious}
               disabled={currentStepIndex === 0}
-              className="w-full sm:w-auto flex items-center justify-center space-x-2 border-gray-300 hover:border-red-300 hover:text-red-600 disabled:opacity-50 order-2 sm:order-1"
+              className="w-full sm:w-auto flex items-center justify-center space-x-2 border-gray-300 hover:border-red-300 hover:text-red-600 disabled:opacity-50 order-2 sm:order-1 h-12 px-6"
             >
-              <ChevronLeft className="w-4 h-4" />
-              <span>Previous</span>
+              <ChevronLeft className="w-5 h-5" />
+              <span className="font-medium">Previous Step</span>
             </Button>
             
             <div className="flex items-center justify-center space-x-3 order-1 sm:order-2">
-              {currentStepIndex === 3 ? (
+              {isLastStep ? (
                 <Button
                   onClick={handleSubmit}
-                  className="w-full sm:w-auto bg-red-600 hover:bg-red-700 text-white flex items-center justify-center space-x-2 px-6 sm:px-8 py-3 font-medium shadow-lg hover:shadow-xl transition-all duration-200"
-                  disabled={!formData.agreeTerms || !formData.agreePrivacy}
+                  className="w-full sm:w-auto bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white flex items-center justify-center space-x-2 px-8 py-3 h-12 font-semibold shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105"
+                  disabled={!canProceed}
                 >
-                  <span>Start Partnership</span>
-                  <CheckCircle className="w-4 h-4" />
+                  <span>Begin Strategic Partnership</span>
+                  <CheckCircle className="w-5 h-5" />
                 </Button>
               ) : (
                 <Button
                   onClick={handleNext}
-                  className="w-full sm:w-auto bg-red-600 hover:bg-red-700 text-white flex items-center justify-center space-x-2 px-6 sm:px-8 py-3 font-medium shadow-lg hover:shadow-xl transition-all duration-200"
-                  disabled={!validateStep(currentStep, formData)}
+                  className="w-full sm:w-auto bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white flex items-center justify-center space-x-2 px-8 py-3 h-12 font-semibold shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105"
+                  disabled={!canProceed}
                 >
                   <span>Continue to Step {currentStepIndex + 2}</span>
-                  <ChevronRight className="w-4 h-4" />
+                  <ChevronRight className="w-5 h-5" />
                 </Button>
               )}
             </div>
           </div>
+          
+          {!canProceed && !isLastStep && (
+            <div className="mt-4 p-4 bg-amber-50 rounded-lg border border-amber-200">
+              <p className="text-sm text-amber-800 text-center flex items-center justify-center gap-2">
+                <AlertCircle className="h-4 w-4" />
+                Please complete all required fields to continue
+              </p>
+            </div>
+          )}
         </CardContent>
       </Card>
     </div>
