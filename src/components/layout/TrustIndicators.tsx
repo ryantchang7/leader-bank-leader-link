@@ -8,13 +8,13 @@ const TrustIndicators = () => {
       <div className="max-w-6xl mx-auto">
         <div className="bg-white rounded-xl p-8 shadow-lg border border-gray-200 mb-8">
           <h3 className="text-2xl font-bold text-gray-900 mb-6 flex items-center justify-center gap-3">
-            <Shield className="h-6 w-6 text-green-600" />
+            <Shield className="h-6 w-6 text-gray-700" />
             Why Choose Leader Bank Leader Link?
           </h3>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="text-center p-6 bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg">
-              <div className="w-16 h-16 bg-blue-600 rounded-full mx-auto mb-4 flex items-center justify-center">
+            <div className="text-center p-6 bg-gradient-to-br from-gray-50 to-gray-100 rounded-lg border border-gray-200">
+              <div className="w-16 h-16 bg-red-600 rounded-full mx-auto mb-4 flex items-center justify-center">
                 <Award className="h-8 w-8 text-white" />
               </div>
               <h4 className="font-bold text-gray-900 text-lg mb-2">Strategic Partnership</h4>
@@ -23,8 +23,8 @@ const TrustIndicators = () => {
               </p>
             </div>
             
-            <div className="text-center p-6 bg-gradient-to-br from-green-50 to-green-100 rounded-lg">
-              <div className="w-16 h-16 bg-green-600 rounded-full mx-auto mb-4 flex items-center justify-center">
+            <div className="text-center p-6 bg-gradient-to-br from-gray-50 to-gray-100 rounded-lg border border-gray-200">
+              <div className="w-16 h-16 bg-gray-800 rounded-full mx-auto mb-4 flex items-center justify-center">
                 <Shield className="h-8 w-8 text-white" />
               </div>
               <h4 className="font-bold text-gray-900 text-lg mb-2">Bank-Grade Security</h4>
@@ -33,8 +33,8 @@ const TrustIndicators = () => {
               </p>
             </div>
             
-            <div className="text-center p-6 bg-gradient-to-br from-red-50 to-red-100 rounded-lg">
-              <div className="w-16 h-16 bg-red-600 rounded-full mx-auto mb-4 flex items-center justify-center">
+            <div className="text-center p-6 bg-gradient-to-br from-gray-50 to-gray-100 rounded-lg border border-gray-200">
+              <div className="w-16 h-16 bg-red-700 rounded-full mx-auto mb-4 flex items-center justify-center">
                 <Lock className="h-8 w-8 text-white" />
               </div>
               <h4 className="font-bold text-gray-900 text-lg mb-2">Comprehensive Network</h4>
@@ -45,7 +45,7 @@ const TrustIndicators = () => {
           </div>
         </div>
         
-        <div className="bg-gradient-to-r from-gray-50 to-gray-100 rounded-xl p-8 text-center space-y-6">
+        <div className="bg-gradient-to-r from-gray-50 to-gray-100 rounded-xl p-8 text-center space-y-6 border border-gray-200">
           <div className="flex items-center justify-center gap-3 mb-4">
             <Clock className="h-6 w-6 text-red-600" />
             <h4 className="text-xl font-bold text-gray-900">Next Steps</h4>
@@ -85,9 +85,9 @@ const TrustIndicators = () => {
             </div>
           </div>
           
-          <div className="mt-8 p-4 bg-blue-50 rounded-lg border border-blue-200">
+          <div className="mt-8 p-4 bg-gray-100 rounded-lg border border-gray-300">
             <p className="text-sm text-gray-700 flex items-center justify-center gap-2">
-              <Lock className="h-4 w-4 text-blue-600" />
+              <Lock className="h-4 w-4 text-gray-600" />
               <span className="font-medium">
                 All communications are confidential and protected by federal banking privacy regulations
               </span>

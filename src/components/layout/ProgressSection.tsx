@@ -35,7 +35,7 @@ const ProgressSection: React.FC<ProgressSectionProps> = ({
                   <div className={`
                     w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold
                     ${index < currentStepIndex 
-                      ? 'bg-green-600 text-white' 
+                      ? 'bg-gray-800 text-white' 
                       : index === currentStepIndex 
                         ? 'bg-red-600 text-white' 
                         : 'bg-gray-200 text-gray-600'
@@ -57,7 +57,7 @@ const ProgressSection: React.FC<ProgressSectionProps> = ({
                 {index < steps.length - 1 && (
                   <div className={`
                     w-8 h-0.5 hidden sm:block
-                    ${index < currentStepIndex ? 'bg-green-600' : 'bg-gray-200'}
+                    ${index < currentStepIndex ? 'bg-gray-800' : 'bg-gray-200'}
                   `} />
                 )}
               </React.Fragment>
@@ -86,8 +86,8 @@ const ProgressSection: React.FC<ProgressSectionProps> = ({
         
         <Progress value={progressPercentage} className="h-3 mb-4" />
         
-        <div className="flex items-center justify-center text-sm text-gray-600 gap-2 bg-green-50 py-3 px-4 rounded-lg border border-green-200">
-          <Shield className="h-4 w-4 text-green-600" />
+        <div className="flex items-center justify-center text-sm text-gray-600 gap-2 bg-gray-50 py-3 px-4 rounded-lg border border-gray-200">
+          <Shield className="h-4 w-4 text-gray-700" />
           <span className="text-center font-medium">
             Your information is encrypted and protected by enterprise-grade banking security
           </span>

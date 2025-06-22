@@ -9,33 +9,33 @@ const ProcessOverview = () => {
       title: "Company Information",
       description: "Basic business details & contact info",
       icon: FileText,
-      color: "bg-blue-600"
+      color: "bg-red-600"
     },
     {
       number: 2,
       title: "Funding Strategy",
       description: "Choose your optimal funding path",
       icon: Target,
-      color: "bg-green-600"
+      color: "bg-gray-800"
     },
     {
       number: 3,
       title: "Detailed Requirements",
       description: "Specific funding needs & metrics",
       icon: Settings,
-      color: "bg-purple-600"
+      color: "bg-red-700"
     },
     {
       number: 4,
       title: "Strategic Partnership",
       description: "Begin expert-guided collaboration",
       icon: Handshake,
-      color: "bg-red-600"
+      color: "bg-gray-900"
     }
   ];
 
   return (
-    <div className="bg-gradient-to-r from-red-50 to-orange-50 border-b border-red-100">
+    <div className="bg-gradient-to-r from-gray-50 to-gray-100 border-b border-gray-200">
       <div className="max-w-7xl mx-auto px-4 py-8">
         <div className="text-center mb-8">
           <h2 className="text-2xl font-bold text-gray-900 mb-3">
@@ -55,7 +55,7 @@ const ProcessOverview = () => {
                   <div className={`w-12 h-12 ${step.color} text-white rounded-full flex items-center justify-center font-bold text-lg mb-4 mx-auto`}>
                     {step.number}
                   </div>
-                  <IconComponent className="h-8 w-8 text-gray-600 mx-auto mb-3" />
+                  <IconComponent className="h-8 w-8 text-gray-700 mx-auto mb-3" />
                   <h3 className="font-semibold text-gray-900 mb-2 text-lg">
                     {step.title}
                   </h3>
@@ -67,8 +67,8 @@ const ProcessOverview = () => {
                 {/* Connection arrow */}
                 {index < steps.length - 1 && (
                   <div className="hidden lg:block absolute top-1/2 -right-3 transform -translate-y-1/2 z-10">
-                    <div className="w-6 h-0.5 bg-gray-300"></div>
-                    <div className="absolute right-0 top-1/2 transform -translate-y-1/2 w-0 h-0 border-l-4 border-l-gray-300 border-t-2 border-b-2 border-t-transparent border-b-transparent"></div>
+                    <div className="w-6 h-0.5 bg-gray-400"></div>
+                    <div className="absolute right-0 top-1/2 transform -translate-y-1/2 w-0 h-0 border-l-4 border-l-gray-400 border-t-2 border-b-2 border-t-transparent border-b-transparent"></div>
                   </div>
                 )}
               </div>

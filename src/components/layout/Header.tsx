@@ -35,7 +35,7 @@ const Header = () => {
           
           <div className="hidden lg:flex flex-col items-end space-y-3">
             <div className="flex items-center space-x-3">
-              <span className="bg-green-100 text-green-800 px-4 py-2 rounded-full text-sm font-semibold flex items-center gap-2">
+              <span className="bg-gray-100 text-gray-800 px-4 py-2 rounded-full text-sm font-semibold flex items-center gap-2 border border-gray-300">
                 <Shield className="h-4 w-4" />
                 Bank-Grade Security
               </span>
@@ -49,11 +49,11 @@ const Header = () => {
             </div>
             <div className="flex items-center gap-6 text-sm text-gray-600">
               <div className="flex items-center gap-2">
-                <Users className="h-4 w-4 text-blue-600" />
+                <Users className="h-4 w-4 text-gray-700" />
                 <span className="font-medium">Expert Team</span>
               </div>
               <div className="flex items-center gap-2">
-                <TrendingUp className="h-4 w-4 text-green-600" />
+                <TrendingUp className="h-4 w-4 text-gray-700" />
                 <span className="font-medium">Growth Partners</span>
               </div>
               <div className="flex items-center gap-2">
@@ -66,21 +66,21 @@ const Header = () => {
         
         {/* Mobile trust indicators */}
         <div className="lg:hidden mt-6 flex flex-wrap justify-center gap-4 text-sm">
-          <div className="flex items-center gap-2 bg-gray-50 px-3 py-2 rounded-lg">
-            <Users className="h-4 w-4 text-blue-600" />
+          <div className="flex items-center gap-2 bg-gray-50 px-3 py-2 rounded-lg border border-gray-200">
+            <Users className="h-4 w-4 text-gray-700" />
             <span className="font-medium text-gray-700">Expert Team</span>
           </div>
-          <div className="flex items-center gap-2 bg-gray-50 px-3 py-2 rounded-lg">
-            <TrendingUp className="h-4 w-4 text-green-600" />
+          <div className="flex items-center gap-2 bg-gray-50 px-3 py-2 rounded-lg border border-gray-200">
+            <TrendingUp className="h-4 w-4 text-gray-700" />
             <span className="font-medium text-gray-700">Growth Partners</span>
           </div>
-          <div className="flex items-center gap-2 bg-gray-50 px-3 py-2 rounded-lg">
+          <div className="flex items-center gap-2 bg-gray-50 px-3 py-2 rounded-lg border border-gray-200">
             <Lock className="h-4 w-4 text-red-600" />
             <span className="font-medium text-gray-700">Confidential Process</span>
           </div>
           <Link 
             to="/admin/investors" 
-            className="flex items-center gap-2 bg-gray-50 px-3 py-2 rounded-lg text-gray-400 hover:text-gray-600 transition-colors" 
+            className="flex items-center gap-2 bg-gray-50 px-3 py-2 rounded-lg text-gray-400 hover:text-gray-600 transition-colors border border-gray-200" 
             title="Admin Access"
           >
             <Settings className="h-4 w-4" />
