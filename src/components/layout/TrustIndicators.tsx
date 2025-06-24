@@ -63,10 +63,10 @@ const TrustIndicators = () => {
               </div>
               <p className="text-gray-600 mb-2">For questions about the application process:</p>
               <a 
-                href="mailto:leaderlink@leaderbank.com" 
+                href="mailto:techandvc@leaderbank.com" 
                 className="text-red-600 font-semibold hover:text-red-700 transition-colors"
               >
-                leaderlink@leaderbank.com
+                techandvc@leaderbank.com
               </a>
             </div>
             
@@ -77,10 +77,10 @@ const TrustIndicators = () => {
               </div>
               <p className="text-gray-600 mb-2">Speak directly with our funding specialists:</p>
               <a 
-                href="tel:+15551234567" 
+                href="tel:+17816418686" 
                 className="text-red-600 font-semibold hover:text-red-700 transition-colors"
               >
-                (555) 123-4567
+                (781) 641-8686
               </a>
             </div>
           </div>
