@@ -1,5 +1,4 @@
-
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { CheckCircle, Mail, Clock, Users, ArrowRight } from 'lucide-react';
 import { FormData } from '@/types/formData';
@@ -9,6 +8,11 @@ interface ThankYouPageProps {
 }
 
 const ThankYouPage: React.FC<ThankYouPageProps> = ({ formData }) => {
+  // Scroll to top when component mounts
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   const getFundingTypeDisplay = () => {
     switch (formData.seekingType) {
       case 'equity':

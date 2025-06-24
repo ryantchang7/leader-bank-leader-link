@@ -11,7 +11,7 @@ interface FinancialTooltipProps {
 
 const FinancialTooltip: React.FC<FinancialTooltipProps> = ({ term, definition, children }) => {
   return (
-    <TooltipProvider>
+    <TooltipProvider delayDuration={200}>
       <Tooltip>
         <TooltipTrigger asChild>
           <span className="inline-flex items-center gap-1 cursor-help">
@@ -19,10 +19,10 @@ const FinancialTooltip: React.FC<FinancialTooltipProps> = ({ term, definition, c
             <HelpCircle className="h-4 w-4 text-gray-400 hover:text-red-600 transition-colors" />
           </span>
         </TooltipTrigger>
-        <TooltipContent className="max-w-xs p-3 bg-white border border-gray-200 shadow-lg">
-          <div className="space-y-1">
-            <p className="font-medium text-gray-900">{term}</p>
-            <p className="text-sm text-gray-700">{definition}</p>
+        <TooltipContent side="top" className="max-w-xs p-4 bg-white border border-gray-200 shadow-lg z-50">
+          <div className="space-y-2">
+            <p className="font-semibold text-gray-900 text-sm">{term}</p>
+            <p className="text-sm text-gray-700 leading-relaxed">{definition}</p>
           </div>
         </TooltipContent>
       </Tooltip>
