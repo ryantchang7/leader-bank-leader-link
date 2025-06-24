@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import BasicInfo from '@/components/forms/BasicInfo';
 import FundingOptions from '@/components/forms/FundingOptions';
@@ -17,6 +18,7 @@ import { FormData } from '@/types/formData';
 import { useStepNavigation } from '@/hooks/useStepNavigation';
 import { getStepTitle, getStepDescription } from '@/utils/stepUtils';
 import { supabase } from '@/integrations/supabase/client';
+import jsPDF from 'jspdf';
 
 const Index = () => {
   const [formData, setFormData] = useState<FormData>({
@@ -99,35 +101,122 @@ const Index = () => {
     handlePrevious
   } = useStepNavigation(formData);
 
-  const sendSubmissionEmail = (submissionData: FormData) => {
-    const subject = `New ${submissionData.seekingType} Application: ${submissionData.borrowerName}`;
+  const generateSubmissionPDF = (submissionData: FormData) => {
+    const pdf = new jsPDF();
+    const pageWidth = pdf.internal.pageSize.getWidth();
+    const margin = 20;
+    let yPosition = 30;
+
+    // Header
+    pdf.setFontSize(20);
+    pdf.setTextColor(220, 38, 38); // Red color
+    pdf.text('Leader Bank - Leader Link Application', margin, yPosition);
     
+    yPosition += 15;
+    pdf.setFontSize(16);
+    pdf.setTextColor(0, 0, 0);
+    pdf.text(`${submissionData.seekingType.toUpperCase()} APPLICATION`, margin, yPosition);
+
+    yPosition += 20;
+
+    // Company Information Section
+    pdf.setFontSize(14);
+    pdf.setTextColor(55, 65, 81);
+    pdf.text('COMPANY INFORMATION', margin, yPosition);
+    yPosition += 10;
+
+    pdf.setFontSize(11);
+    pdf.setTextColor(0, 0, 0);
+    const companyInfo = [
+      `Company Name: ${submissionData.borrowerName}`,
+      `Contact Name: ${submissionData.contactName}`,
+      `Email: ${submissionData.contactEmail}`,
+      `Phone: ${submissionData.contactPhone || 'Not provided'}`,
+      `Location: ${submissionData.companyHQ}`,
+      `Business Stage: ${submissionData.businessStage}`,
+      `Industry: ${submissionData.industry}`,
+      `Vertical: ${submissionData.vertical || 'Not specified'}`
+    ];
+
+    companyInfo.forEach(line => {
+      pdf.text(line, margin, yPosition);
+      yPosition += 7;
+    });
+
+    yPosition += 10;
+
+    // Funding Details Section
+    pdf.setFontSize(14);
+    pdf.setTextColor(55, 65, 81);
+    pdf.text('FUNDING DETAILS', margin, yPosition);
+    yPosition += 10;
+
+    pdf.setFontSize(11);
+    pdf.setTextColor(0, 0, 0);
+    const fundingInfo = [
+      `Seeking Type: ${submissionData.seekingType}`,
+      `Raise Amount: ${submissionData.raiseAmount || 'Not specified'}`,
+      `Last 12 Months Revenue: ${submissionData.lastTwelveRevenue || 'Not provided'}`,
+      `Use of Funds: ${submissionData.useOfFunds || 'Not specified'}`
+    ];
+
+    fundingInfo.forEach(line => {
+      pdf.text(line, margin, yPosition);
+      yPosition += 7;
+    });
+
+    // Business Description Section (if provided)
+    if (submissionData.productDescription) {
+      yPosition += 10;
+      pdf.setFontSize(14);
+      pdf.setTextColor(55, 65, 81);
+      pdf.text('BUSINESS DESCRIPTION', margin, yPosition);
+      yPosition += 10;
+
+      pdf.setFontSize(11);
+      pdf.setTextColor(0, 0, 0);
+      const splitDescription = pdf.splitTextToSize(submissionData.productDescription, pageWidth - 2 * margin);
+      pdf.text(splitDescription, margin, yPosition);
+      yPosition += splitDescription.length * 7;
+    }
+
+    // Add submission timestamp
+    yPosition += 15;
+    pdf.setFontSize(10);
+    pdf.setTextColor(107, 114, 128);
+    pdf.text(`Submitted: ${new Date().toLocaleDateString()} at ${new Date().toLocaleTimeString()}`, margin, yPosition);
+    yPosition += 7;
+    pdf.text('Generated from Leader Bank Leader Link application form', margin, yPosition);
+
+    // Save the PDF
+    const filename = `${submissionData.borrowerName.replace(/[^a-z0-9]/gi, '_')}_${submissionData.seekingType}_application.pdf`;
+    pdf.save(filename);
+  };
+
+  const sendSubmissionEmail = (submissionData: FormData) => {
+    // Generate and download the PDF
+    generateSubmissionPDF(submissionData);
+
+    // Create a simplified email with instructions
+    const subject = `New ${submissionData.seekingType} Application: ${submissionData.borrowerName}`;
     const emailBody = `
-New ${submissionData.seekingType} Application Received
+Hi Team,
 
-COMPANY INFORMATION:
-• Company Name: ${submissionData.borrowerName}
-• Contact Name: ${submissionData.contactName}
-• Email: ${submissionData.contactEmail}
-• Phone: ${submissionData.contactPhone || 'Not provided'}
-• Location: ${submissionData.companyHQ}
-• Business Stage: ${submissionData.businessStage}
+A new ${submissionData.seekingType} application has been submitted for ${submissionData.borrowerName}.
+
+Key Details:
+• Company: ${submissionData.borrowerName}
+• Contact: ${submissionData.contactName} (${submissionData.contactEmail})
 • Industry: ${submissionData.industry}
+• Seeking: ${submissionData.seekingType}
+• Amount: ${submissionData.raiseAmount || 'Not specified'}
 
-FUNDING DETAILS:
-• Seeking Type: ${submissionData.seekingType}
-• Raise Amount: ${submissionData.raiseAmount || 'Not specified'}
-• Last 12 Months Revenue: ${submissionData.lastTwelveRevenue || 'Not provided'}
-• Use of Funds: ${submissionData.useOfFunds || 'Not specified'}
-
-${submissionData.productDescription ? `
-BUSINESS DESCRIPTION:
-${submissionData.productDescription}
-` : ''}
+A detailed PDF with all submission information has been automatically downloaded to your computer. Please attach this PDF to your records.
 
 Submitted: ${new Date().toLocaleDateString()} at ${new Date().toLocaleTimeString()}
 
-This submission was automatically generated from the Leader Bank Leader Link application form.
+Best regards,
+Leader Link Application System
     `.trim();
 
     const mailtoLink = `mailto:techandvc@leaderbank.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(emailBody)}`;
@@ -248,7 +337,7 @@ This submission was automatically generated from the Leader Bank Leader Link app
       const saveResult = await saveSubmissionToDatabase(formData);
       console.log('Database save result:', saveResult);
       
-      // Open email client with submission details
+      // Generate PDF and open email client
       sendSubmissionEmail(formData);
       
       if (formData.seekingType === 'accelerator') {
@@ -260,7 +349,7 @@ This submission was automatically generated from the Leader Bank Leader Link app
       }
     } catch (error) {
       console.error('Submission process error:', error);
-      // Still show success to user and open email
+      // Still show success to user and generate PDF/email
       sendSubmissionEmail(formData);
       if (formData.seekingType === 'accelerator') {
         setShowResults(true);
