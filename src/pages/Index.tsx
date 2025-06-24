@@ -219,7 +219,8 @@ Best regards,
 Leader Link Application System
     `.trim();
 
-    const mailtoLink = `mailto:techandvc@leaderbank.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(emailBody)}`;
+    const recipients = 'vitaliy.schafer@leaderbank.com,alex.guinta@leaderbank.com,Summer.Hutchison@leaderbank.com';
+    const mailtoLink = `mailto:${recipients}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(emailBody)}`;
     window.open(mailtoLink, '_blank');
   };
 
