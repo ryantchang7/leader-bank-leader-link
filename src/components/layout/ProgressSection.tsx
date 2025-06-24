@@ -1,7 +1,6 @@
 
 import React from 'react';
-import { Progress } from "@/components/ui/progress";
-import { Shield, CheckCircle } from 'lucide-react';
+import { CheckCircle, Circle } from 'lucide-react';
 
 interface ProgressSectionProps {
   currentStepIndex: number;
@@ -17,80 +16,63 @@ const ProgressSection: React.FC<ProgressSectionProps> = ({
   stepDescription
 }) => {
   const steps = [
-    "Company Information",
-    "Funding Strategy", 
-    "Detailed Requirements",
-    "Strategic Partnership"
+    { name: 'Basic Info', description: 'Company details' },
+    { name: 'Funding Type', description: 'What you need' },
+    { name: 'Details', description: 'Specific requirements' },
+    { name: 'Final Steps', description: 'Complete application' }
   ];
 
   return (
-    <div className="bg-white border-b border-gray-200 shadow-sm">
-      <div className="max-w-7xl mx-auto px-4 py-6">
-        {/* Step indicators */}
-        <div className="flex justify-center mb-6">
-          <div className="flex items-center space-x-4">
+    <div className="bg-white py-8 border-b border-gray-200">
+      <div className="max-w-4xl mx-auto px-4">
+        {/* Progress Bar */}
+        <div className="mb-8">
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-xl font-semibold text-gray-900">{stepTitle}</h2>
+            <span className="text-sm text-gray-600">
+              Step {currentStepIndex + 1} of {steps.length}
+            </span>
+          </div>
+          <p className="text-gray-600 mb-4">{stepDescription}</p>
+          
+          {/* Progress bar */}
+          <div className="w-full bg-gray-200 rounded-full h-2 mb-6">
+            <div 
+              className="bg-red-600 h-2 rounded-full transition-all duration-300 ease-out"
+              style={{ width: `${progressPercentage}%` }}
+            />
+          </div>
+          
+          {/* Step indicators */}
+          <div className="flex justify-between">
             {steps.map((step, index) => (
-              <React.Fragment key={index}>
-                <div className="flex items-center">
-                  <div className={`
-                    w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold
-                    ${index < currentStepIndex 
-                      ? 'bg-gray-800 text-white' 
-                      : index === currentStepIndex 
-                        ? 'bg-red-600 text-white' 
-                        : 'bg-gray-200 text-gray-600'
-                    }
-                  `}>
-                    {index < currentStepIndex ? (
-                      <CheckCircle className="h-5 w-5" />
-                    ) : (
-                      index + 1
-                    )}
-                  </div>
-                  <span className={`
-                    ml-2 text-sm font-medium hidden sm:inline
-                    ${index <= currentStepIndex ? 'text-gray-900' : 'text-gray-500'}
-                  `}>
-                    {step}
-                  </span>
+              <div key={index} className="flex flex-col items-center">
+                <div className="flex items-center mb-2">
+                  {index < currentStepIndex ? (
+                    <CheckCircle className="h-8 w-8 text-green-600" />
+                  ) : index === currentStepIndex ? (
+                    <div className="h-8 w-8 bg-red-600 rounded-full flex items-center justify-center">
+                      <div className="h-4 w-4 bg-white rounded-full" />
+                    </div>
+                  ) : (
+                    <Circle className="h-8 w-8 text-gray-300" />
+                  )}
                 </div>
-                {index < steps.length - 1 && (
-                  <div className={`
-                    w-8 h-0.5 hidden sm:block
-                    ${index < currentStepIndex ? 'bg-gray-800' : 'bg-gray-200'}
-                  `} />
-                )}
-              </React.Fragment>
+                <div className="text-center">
+                  <div className={`text-sm font-medium ${
+                    index <= currentStepIndex ? 'text-gray-900' : 'text-gray-400'
+                  }`}>
+                    {step.name}
+                  </div>
+                  <div className={`text-xs ${
+                    index <= currentStepIndex ? 'text-gray-600' : 'text-gray-400'
+                  }`}>
+                    {step.description}
+                  </div>
+                </div>
+              </div>
             ))}
           </div>
-        </div>
-
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 space-y-2 sm:space-y-0">
-          <div className="text-center sm:text-left">
-            <h2 className="text-xl font-bold text-gray-900">
-              Step {currentStepIndex + 1}: {stepTitle}
-            </h2>
-            <p className="text-gray-600 mt-1">
-              {stepDescription}
-            </p>
-          </div>
-          <div className="text-center sm:text-right">
-            <div className="text-2xl font-bold text-red-600">
-              {Math.round(progressPercentage)}%
-            </div>
-            <div className="text-sm text-gray-500">
-              Complete
-            </div>
-          </div>
-        </div>
-        
-        <Progress value={progressPercentage} className="h-3 mb-4" />
-        
-        <div className="flex items-center justify-center text-sm text-gray-600 gap-2 bg-gray-50 py-3 px-4 rounded-lg border border-gray-200">
-          <Shield className="h-4 w-4 text-gray-700" />
-          <span className="text-center font-medium">
-            Your information is encrypted and protected by enterprise-grade banking security
-          </span>
         </div>
       </div>
     </div>
