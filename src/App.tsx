@@ -5,8 +5,6 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
-import AcceleratorAdmin from "./pages/AcceleratorAdmin";
-import InvestorAdmin from "./pages/InvestorAdmin";
 import NotFound from "./pages/NotFound";
 import TestSubmission from "./components/TestSubmission";
 
@@ -20,8 +18,6 @@ const App = () => (
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Index />} />
-          <Route path="/admin/accelerators" element={<AcceleratorAdmin />} />
-          <Route path="/admin/investors" element={<InvestorAdmin />} />
           <Route path="/test-submission" element={<div className="min-h-screen bg-gray-50 p-8"><TestSubmission /></div>} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />

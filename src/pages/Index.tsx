@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import BasicInfo from '@/components/forms/BasicInfo';
 import FundingOptions from '@/components/forms/FundingOptions';
@@ -97,6 +98,26 @@ const Index = () => {
     handlePrevious
   } = useStepNavigation(formData);
 
+  const sendSubmissionEmail = async (submissionData: FormData) => {
+    try {
+      console.log('Sending submission email...');
+      
+      const { data, error } = await supabase.functions.invoke('send-submission-email', {
+        body: submissionData
+      });
+
+      if (error) {
+        console.error('Error sending submission email:', error);
+        // Don't throw error - we still want to show success to user
+      } else {
+        console.log('Submission email sent successfully:', data);
+      }
+    } catch (error) {
+      console.error('Failed to send submission email:', error);
+      // Log error but don't fail the submission
+    }
+  };
+
   const saveSubmissionToDatabase = async (submissionData: FormData) => {
     try {
       console.log('Starting submission save process with data:', submissionData);
@@ -124,7 +145,7 @@ const Index = () => {
 
       console.log('Prepared submission payload:', submissionPayload);
 
-      // Insert into submissions table without RLS bypassing
+      // Insert into submissions table
       const { data: submissionResult, error: submissionError } = await supabase
         .from('submissions')
         .insert([submissionPayload])
@@ -207,15 +228,18 @@ const Index = () => {
     }
     
     try {
-      // Always attempt to save to database
+      // Save to database
       const saveResult = await saveSubmissionToDatabase(formData);
       console.log('Database save result:', saveResult);
+      
+      // Send email notification to your team
+      await sendSubmissionEmail(formData);
       
       if (formData.seekingType === 'accelerator') {
         console.log('Showing accelerator results page');
         setShowResults(true);
       } else {
-        const successMessage = `Thanks, ${formData.finalFullName}! 🎉\n\nOur expert team will review your information and reach out within 2-3 business days with personalized funding recommendations.\n\nIn the meantime, we'll send you some helpful resources based on your ${formData.seekingType} funding goals.\n\nWelcome to the Leader Bank Leader Link family!`;
+        const successMessage = `Thanks, ${formData.finalFullName}! 🎉\n\nOur expert team has received your application and will review your information. We'll reach out within 2-3 business days with personalized funding recommendations.\n\nIn the meantime, we'll send you some helpful resources based on your ${formData.seekingType} funding goals.\n\nWelcome to the Leader Bank Leader Link family!`;
         alert(successMessage);
       }
     } catch (error) {
