@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import BasicInfo from '@/components/forms/BasicInfo';
 import FundingOptions from '@/components/forms/FundingOptions';
@@ -7,6 +6,7 @@ import DebtFinancing from '@/components/forms/DebtFinancing';
 import AcceleratorProgram from '@/components/forms/AcceleratorProgram';
 import FinalSteps from '@/components/forms/FinalSteps';
 import AcceleratorResults from '@/components/AcceleratorResults';
+import ThankYouPage from '@/components/ThankYouPage';
 import Header from '@/components/layout/Header';
 import ProcessOverview from '@/components/layout/ProcessOverview';
 import ProgressSection from '@/components/layout/ProgressSection';
@@ -88,6 +88,7 @@ const Index = () => {
   });
 
   const [showResults, setShowResults] = useState(false);
+  const [showThankYou, setShowThankYou] = useState(false);
 
   const {
     currentStep,
@@ -239,8 +240,8 @@ const Index = () => {
         console.log('Showing accelerator results page');
         setShowResults(true);
       } else {
-        const successMessage = `Thanks, ${formData.finalFullName}! 🎉\n\nOur expert team has received your application and will review your information. We'll reach out within 2-3 business days with personalized funding recommendations.\n\nIn the meantime, we'll send you some helpful resources based on your ${formData.seekingType} funding goals.\n\nWelcome to the Leader Bank Leader Link family!`;
-        alert(successMessage);
+        console.log('Showing professional thank you page');
+        setShowThankYou(true);
       }
     } catch (error) {
       console.error('Submission process error:', error);
@@ -248,7 +249,7 @@ const Index = () => {
       if (formData.seekingType === 'accelerator') {
         setShowResults(true);
       } else {
-        alert(`Thanks, ${formData.finalFullName}! Your submission has been received and our team will contact you soon.`);
+        setShowThankYou(true);
       }
     }
   };
@@ -259,6 +260,17 @@ const Index = () => {
       <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
         <Header />
         <AcceleratorResults formData={formData} />
+        <TrustIndicators />
+        <AIChatbot />
+      </div>
+    );
+  }
+
+  // Show professional thank you page for non-accelerator users after submission
+  if (showThankYou) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
+        <ThankYouPage formData={formData} />
         <TrustIndicators />
         <AIChatbot />
       </div>
