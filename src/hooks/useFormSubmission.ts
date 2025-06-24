@@ -146,6 +146,7 @@ export const useFormSubmission = () => {
       const emailResult = await sendSubmissionEmail(formData);
       console.log('Email send result:', emailResult);
       
+      // Show appropriate success page regardless of email status
       if (formData.seekingType === 'accelerator') {
         console.log('Showing accelerator results page');
         setShowResults(true);
@@ -153,14 +154,14 @@ export const useFormSubmission = () => {
         console.log('Showing professional thank you page');
         setShowThankYou(true);
       }
+
+      // Alert user about email status
+      if (!emailResult.success) {
+        alert('Your submission was saved successfully, but there was an issue sending the notification email. We have your information and will contact you soon.');
+      }
     } catch (error) {
       console.error('Submission process error:', error);
-      // Still show success to user even if email fails
-      if (formData.seekingType === 'accelerator') {
-        setShowResults(true);
-      } else {
-        setShowThankYou(true);
-      }
+      alert('There was an error processing your submission. Please try again or contact us directly.');
     }
   };
 

@@ -2,8 +2,6 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { Resend } from "npm:resend@2.0.0";
 
-const resend = new Resend(Deno.env.get("RESEND_API_KEY"));
-
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
@@ -80,9 +78,20 @@ const handler = async (req: Request): Promise<Response> => {
   }
 
   try {
-    const submissionData: SubmissionData = await req.json();
+    console.log("Edge function invoked - checking environment variables");
     
+    const resendApiKey = Deno.env.get("RESEND_API_KEY");
+    if (!resendApiKey) {
+      console.error("RESEND_API_KEY environment variable is not set");
+      throw new Error("RESEND_API_KEY is not configured");
+    }
+    console.log("RESEND_API_KEY found:", resendApiKey.substring(0, 10) + "...");
+
+    const resend = new Resend(resendApiKey);
+    
+    const submissionData: SubmissionData = await req.json();
     console.log("Processing comprehensive submission email for:", submissionData.borrowerName);
+    console.log("Submission data received:", JSON.stringify(submissionData, null, 2));
 
     const addField = (label: string, value: string | string[] | null | undefined) => {
       if (Array.isArray(value)) {
@@ -250,6 +259,9 @@ const handler = async (req: Request): Promise<Response> => {
       </div>
     `;
 
+    console.log("Attempting to send email with Resend...");
+    console.log("Email recipients: vitaliy.schafer@leaderbank.com, alex.guinta@leaderbank.com, Summer.Hutchison@leaderbank.com");
+
     const emailResponse = await resend.emails.send({
       from: "Leader Link Submissions <onboarding@resend.dev>",
       to: ["vitaliy.schafer@leaderbank.com", "alex.guinta@leaderbank.com", "Summer.Hutchison@leaderbank.com"],
@@ -257,9 +269,20 @@ const handler = async (req: Request): Promise<Response> => {
       html: emailHTML,
     });
 
-    console.log("Comprehensive email sent successfully:", emailResponse);
+    console.log("Resend API response:", emailResponse);
 
-    return new Response(JSON.stringify({ success: true, emailId: emailResponse.data?.id }), {
+    if (emailResponse.error) {
+      console.error("Resend API error:", emailResponse.error);
+      throw new Error(`Resend API error: ${emailResponse.error.message}`);
+    }
+
+    console.log("Email sent successfully with ID:", emailResponse.data?.id);
+
+    return new Response(JSON.stringify({ 
+      success: true, 
+      emailId: emailResponse.data?.id,
+      message: "Email sent successfully"
+    }), {
       status: 200,
       headers: {
         "Content-Type": "application/json",
@@ -267,9 +290,15 @@ const handler = async (req: Request): Promise<Response> => {
       },
     });
   } catch (error: any) {
-    console.error("Error sending comprehensive submission email:", error);
+    console.error("Error in send-submission-email function:", error);
+    console.error("Error stack:", error.stack);
+    
     return new Response(
-      JSON.stringify({ error: error.message }),
+      JSON.stringify({ 
+        error: error.message,
+        stack: error.stack,
+        timestamp: new Date().toISOString()
+      }),
       {
         status: 500,
         headers: { "Content-Type": "application/json", ...corsHeaders },
