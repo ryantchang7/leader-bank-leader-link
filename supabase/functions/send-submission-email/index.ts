@@ -120,7 +120,7 @@ const handler = async (req: Request): Promise<Response> => {
     `;
 
     const emailResponse = await resend.emails.send({
-      from: "Leader Link <submissions@leaderbank.com>",
+      from: "Leader Link Submissions <onboarding@resend.dev>",
       to: ["techandvc@leaderbank.com"],
       subject: `New ${submissionData.seekingType} Application: ${submissionData.borrowerName}`,
       html: emailHTML,
