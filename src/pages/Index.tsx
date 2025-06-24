@@ -99,24 +99,39 @@ const Index = () => {
     handlePrevious
   } = useStepNavigation(formData);
 
-  const sendSubmissionEmail = async (submissionData: FormData) => {
-    try {
-      console.log('Sending submission email...');
-      
-      const { data, error } = await supabase.functions.invoke('send-submission-email', {
-        body: submissionData
-      });
+  const sendSubmissionEmail = (submissionData: FormData) => {
+    const subject = `New ${submissionData.seekingType} Application: ${submissionData.borrowerName}`;
+    
+    const emailBody = `
+New ${submissionData.seekingType} Application Received
 
-      if (error) {
-        console.error('Error sending submission email:', error);
-        // Don't throw error - we still want to show success to user
-      } else {
-        console.log('Submission email sent successfully:', data);
-      }
-    } catch (error) {
-      console.error('Failed to send submission email:', error);
-      // Log error but don't fail the submission
-    }
+COMPANY INFORMATION:
+• Company Name: ${submissionData.borrowerName}
+• Contact Name: ${submissionData.contactName}
+• Email: ${submissionData.contactEmail}
+• Phone: ${submissionData.contactPhone || 'Not provided'}
+• Location: ${submissionData.companyHQ}
+• Business Stage: ${submissionData.businessStage}
+• Industry: ${submissionData.industry}
+
+FUNDING DETAILS:
+• Seeking Type: ${submissionData.seekingType}
+• Raise Amount: ${submissionData.raiseAmount || 'Not specified'}
+• Last 12 Months Revenue: ${submissionData.lastTwelveRevenue || 'Not provided'}
+• Use of Funds: ${submissionData.useOfFunds || 'Not specified'}
+
+${submissionData.productDescription ? `
+BUSINESS DESCRIPTION:
+${submissionData.productDescription}
+` : ''}
+
+Submitted: ${new Date().toLocaleDateString()} at ${new Date().toLocaleTimeString()}
+
+This submission was automatically generated from the Leader Bank Leader Link application form.
+    `.trim();
+
+    const mailtoLink = `mailto:techandvc@leaderbank.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(emailBody)}`;
+    window.open(mailtoLink, '_blank');
   };
 
   const saveSubmissionToDatabase = async (submissionData: FormData) => {
@@ -233,8 +248,8 @@ const Index = () => {
       const saveResult = await saveSubmissionToDatabase(formData);
       console.log('Database save result:', saveResult);
       
-      // Send email notification to your team
-      await sendSubmissionEmail(formData);
+      // Open email client with submission details
+      sendSubmissionEmail(formData);
       
       if (formData.seekingType === 'accelerator') {
         console.log('Showing accelerator results page');
@@ -245,7 +260,8 @@ const Index = () => {
       }
     } catch (error) {
       console.error('Submission process error:', error);
-      // Still show success to user - the form data is logged for manual processing
+      // Still show success to user and open email
+      sendSubmissionEmail(formData);
       if (formData.seekingType === 'accelerator') {
         setShowResults(true);
       } else {
