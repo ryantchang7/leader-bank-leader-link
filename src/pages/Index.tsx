@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import BasicInfo from '@/components/forms/BasicInfo';
 import FundingOptions from '@/components/forms/FundingOptions';
@@ -18,7 +17,6 @@ import { FormData } from '@/types/formData';
 import { useStepNavigation } from '@/hooks/useStepNavigation';
 import { getStepTitle, getStepDescription } from '@/utils/stepUtils';
 import { supabase } from '@/integrations/supabase/client';
-import jsPDF from 'jspdf';
 
 const Index = () => {
   const [formData, setFormData] = useState<FormData>({
@@ -101,199 +99,25 @@ const Index = () => {
     handlePrevious
   } = useStepNavigation(formData);
 
-  const generateSubmissionPDF = (submissionData: FormData) => {
-    const pdf = new jsPDF();
-    const pageWidth = pdf.internal.pageSize.getWidth();
-    const pageHeight = pdf.internal.pageSize.getHeight();
-    const margin = 20;
-    let yPosition = 30;
-
-    const addNewPageIfNeeded = () => {
-      if (yPosition > pageHeight - 40) {
-        pdf.addPage();
-        yPosition = 30;
-      }
-    };
-
-    const addSectionHeader = (title: string) => {
-      addNewPageIfNeeded();
-      pdf.setFontSize(14);
-      pdf.setTextColor(220, 38, 38);
-      pdf.text(title, margin, yPosition);
-      yPosition += 15;
-    };
-
-    const addField = (label: string, value: string | string[] | null) => {
-      addNewPageIfNeeded();
-      pdf.setFontSize(10);
-      pdf.setTextColor(0, 0, 0);
+  const sendSubmissionEmail = async (submissionData: FormData) => {
+    try {
+      console.log('Sending comprehensive submission email via edge function');
       
-      // Label
-      pdf.setFont(undefined, 'bold');
-      pdf.text(`${label}:`, margin, yPosition);
-      yPosition += 6;
-      
-      // Value
-      pdf.setFont(undefined, 'normal');
-      if (Array.isArray(value)) {
-        const arrayText = value.length > 0 ? value.join(', ') : 'None selected';
-        const splitText = pdf.splitTextToSize(arrayText, pageWidth - 2 * margin - 10);
-        pdf.text(splitText, margin + 10, yPosition);
-        yPosition += splitText.length * 5;
-      } else if (value) {
-        const splitText = pdf.splitTextToSize(value, pageWidth - 2 * margin - 10);
-        pdf.text(splitText, margin + 10, yPosition);
-        yPosition += splitText.length * 5;
-      } else {
-        pdf.setTextColor(128, 128, 128);
-        pdf.text('Not provided', margin + 10, yPosition);
-        pdf.setTextColor(0, 0, 0);
-        yPosition += 5;
+      const { data, error } = await supabase.functions.invoke('send-submission-email', {
+        body: submissionData
+      });
+
+      if (error) {
+        console.error('Error sending submission email:', error);
+        throw error;
       }
-      yPosition += 8;
-    };
 
-    // Header
-    pdf.setFontSize(20);
-    pdf.setTextColor(220, 38, 38);
-    pdf.text('Leader Bank - Leader Link Application', margin, yPosition);
-    
-    yPosition += 15;
-    pdf.setFontSize(16);
-    pdf.setTextColor(0, 0, 0);
-    pdf.text(`${submissionData.seekingType.toUpperCase()} APPLICATION - COMPREHENSIVE REPORT`, margin, yPosition);
-
-    yPosition += 20;
-
-    // Basic Information Section
-    addSectionHeader('BASIC INFORMATION');
-    addField('Company Name', submissionData.borrowerName);
-    addField('Contact Name', submissionData.contactName);
-    addField('Contact Email', submissionData.contactEmail);
-    addField('Contact Phone', submissionData.contactPhone);
-    addField('Company Headquarters', submissionData.companyHQ);
-    addField('Business Stage', submissionData.businessStage);
-    addField('Industry', submissionData.industry);
-    addField('Vertical', submissionData.vertical);
-
-    // Funding Options Section
-    addSectionHeader('FUNDING INFORMATION');
-    addField('Seeking Type', submissionData.seekingType);
-
-    // Equity Investment Section (if applicable)
-    if (submissionData.seekingType === 'equity') {
-      addSectionHeader('EQUITY INVESTMENT DETAILS');
-      addField('Raise Amount', submissionData.raiseAmount);
-      addField('Planned Valuation', submissionData.plannedValuation);
-      addField('Use of Funds', submissionData.useOfFunds);
-      addField('Last 12 Months Revenue', submissionData.lastTwelveRevenue);
-      addField('Growth Rate', submissionData.growthRate);
-      addField('Customers/Users', submissionData.customersUsers);
-      addField('Gross Margin', submissionData.grossMargin);
-      addField('Burn Rate', submissionData.burnRate);
-      addField('Founders Information', submissionData.foundersInfo);
-      addField('Headcount', submissionData.headcount);
-      addField('Existing Investors', submissionData.existingInvestors);
-      addField('Total Equity Raised', submissionData.totalEquityRaised);
-      addField('Product Description', submissionData.productDescription);
-      addField('Competitive Landscape', submissionData.competitiveLandscape);
-      addField('Pitch Deck', submissionData.pitchDeck ? 'File uploaded' : null);
-      addField('Financial Model', submissionData.financialModel ? 'File uploaded' : null);
+      console.log('Submission email sent successfully:', data);
+      return { success: true };
+    } catch (error) {
+      console.error('Failed to send submission email:', error);
+      return { success: false, error };
     }
-
-    // Debt Financing Section (if applicable)
-    if (submissionData.seekingType === 'debt') {
-      addSectionHeader('DEBT FINANCING DETAILS');
-      addField('Debt Type', submissionData.debtType);
-      addField('Debt Description', submissionData.debtDescription);
-      addField('Debt Size', submissionData.debtSize);
-      addField('Use of Funds', submissionData.debtUseOfFunds);
-      addField('Months in Business', submissionData.monthsInBusiness);
-      addField('Prior Year Revenue', submissionData.priorYearRevenue);
-      addField('Projected Revenue', submissionData.projectedRevenue);
-      addField('Has Recurring Revenue', submissionData.hasRecurringRevenue);
-      addField('Annual Recurring Revenue', submissionData.annualRecurringRevenue);
-      addField('Is EBITDA Positive', submissionData.isEbitdaPositive);
-      addField('Months to EBITDA', submissionData.monthsToEbitda);
-      addField('Venture Backed', submissionData.ventureBacked);
-      addField('Total PE/VC Funding', submissionData.totalPEVCFunding);
-      addField('Has VC Board', submissionData.hasVCBoard);
-      addField('Cash Runway', submissionData.cashRunway);
-      addField('Has Collateral', submissionData.hasCollateral);
-      addField('Collateral Type', submissionData.collateralType);
-      addField('Personal Guarantee', submissionData.personalGuarantee);
-      addField('Accept Covenants', submissionData.acceptCovenants);
-      addField('Pledge Warrants', submissionData.pledgeWarrants);
-      addField('Financial Statements', submissionData.financialStatements ? `${submissionData.financialStatements.length} file(s) uploaded` : null);
-      addField('Business Plan', submissionData.businessPlan ? 'File uploaded' : null);
-    }
-
-    // Accelerator Program Section (if applicable)
-    if (submissionData.seekingType === 'accelerator') {
-      addSectionHeader('ACCELERATOR PROGRAM DETAILS');
-      addField('Past Accelerator Experience', submissionData.pastAccelerator);
-      addField('Accelerator Names', submissionData.acceleratorNames);
-      addField('Accelerator Location', submissionData.acceleratorLocation);
-      addField('Program/Cohort', submissionData.programCohort);
-      addField('Program Dates', submissionData.programDates);
-      addField('Accelerator Funding', submissionData.acceleratorFunding);
-      addField('Equity Stake Given', submissionData.equityStake);
-      addField('Key Resources/Benefits', submissionData.keyResources);
-      addField('Currently Applying', submissionData.currentlyApplying);
-      addField('Applying To', submissionData.applyingTo);
-      addField('Application Deadlines', submissionData.applicationDeadlines);
-      addField('Sought Benefits', submissionData.soughtBenefits);
-      addField('Top 3 Goals', submissionData.top3Goals);
-      addField('Want Connections', submissionData.wantConnections);
-    }
-
-    // Final Steps Section
-    addSectionHeader('FINAL STEPS & AGREEMENTS');
-    addField('Full Name', submissionData.finalFullName);
-    addField('Title/Role', submissionData.titleRole);
-    addField('Agree to Terms', submissionData.agreeTerms);
-    addField('Agree to Privacy', submissionData.agreePrivacy);
-
-    // Submission Details
-    addSectionHeader('SUBMISSION DETAILS');
-    addField('Submission Date', new Date().toLocaleDateString());
-    addField('Submission Time', new Date().toLocaleTimeString());
-    addField('Form Type', `${submissionData.seekingType} Application`);
-
-    // Save the PDF
-    const filename = `${submissionData.borrowerName.replace(/[^a-z0-9]/gi, '_')}_${submissionData.seekingType}_comprehensive_application.pdf`;
-    pdf.save(filename);
-  };
-
-  const sendSubmissionEmail = (submissionData: FormData) => {
-    // Generate and download the PDF
-    generateSubmissionPDF(submissionData);
-
-    // Create a simplified email with instructions
-    const subject = `New ${submissionData.seekingType} Application: ${submissionData.borrowerName}`;
-    const emailBody = `
-Hi Team,
-
-A new ${submissionData.seekingType} application has been submitted for ${submissionData.borrowerName}.
-
-Key Details:
-• Company: ${submissionData.borrowerName}
-• Contact: ${submissionData.contactName} (${submissionData.contactEmail})
-• Industry: ${submissionData.industry}
-• Seeking: ${submissionData.seekingType}
-• Amount: ${submissionData.raiseAmount || 'Not specified'}
-
-A detailed PDF with all submission information has been automatically downloaded to your computer. Please attach this PDF to your records.
-
-Submitted: ${new Date().toLocaleDateString()} at ${new Date().toLocaleTimeString()}
-
-Best regards,
-Leader Link Application System
-    `.trim();
-
-    const recipients = 'vitaliy.schafer@leaderbank.com,alex.guinta@leaderbank.com,Summer.Hutchison@leaderbank.com';
-    const mailtoLink = `mailto:${recipients}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(emailBody)}`;
-    window.open(mailtoLink, '_blank');
   };
 
   const saveSubmissionToDatabase = async (submissionData: FormData) => {
@@ -410,8 +234,9 @@ Leader Link Application System
       const saveResult = await saveSubmissionToDatabase(formData);
       console.log('Database save result:', saveResult);
       
-      // Generate PDF and open email client
-      sendSubmissionEmail(formData);
+      // Send comprehensive email automatically
+      const emailResult = await sendSubmissionEmail(formData);
+      console.log('Email send result:', emailResult);
       
       if (formData.seekingType === 'accelerator') {
         console.log('Showing accelerator results page');
@@ -422,8 +247,7 @@ Leader Link Application System
       }
     } catch (error) {
       console.error('Submission process error:', error);
-      // Still show success to user and generate PDF/email
-      sendSubmissionEmail(formData);
+      // Still show success to user even if email fails
       if (formData.seekingType === 'accelerator') {
         setShowResults(true);
       } else {
