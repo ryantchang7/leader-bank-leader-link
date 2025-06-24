@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -10,6 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { X, Plus, Loader2 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from "@/components/ui/use-toast";
+import { useAuth } from '@/hooks/useAuth';
 
 interface AddInvestorModalProps {
   isOpen: boolean;
@@ -19,6 +19,7 @@ interface AddInvestorModalProps {
 
 const AddInvestorModal: React.FC<AddInvestorModalProps> = ({ isOpen, onClose, onInvestorAdded }) => {
   const { toast } = useToast();
+  const { user, isAdmin } = useAuth();
   const [isSubmitting, setIsSubmitting] = useState(false);
   
   const [formData, setFormData] = useState({
@@ -44,6 +45,26 @@ const AddInvestorModal: React.FC<AddInvestorModalProps> = ({ isOpen, onClose, on
     setIsSubmitting(true);
 
     try {
+      console.log('Current user:', user?.email);
+      console.log('Is admin:', isAdmin);
+      console.log('User ID:', user?.id);
+      
+      // Check admin status before attempting insert
+      const { data: adminCheck, error: adminError } = await supabase
+        .rpc('is_admin', { user_id: user?.id });
+      
+      console.log('Admin check result:', adminCheck);
+      console.log('Admin check error:', adminError);
+      
+      // Also check admin_users table directly
+      const { data: adminUsers, error: adminUsersError } = await supabase
+        .from('admin_users')
+        .select('*')
+        .eq('user_id', user?.id);
+      
+      console.log('Admin users table check:', adminUsers);
+      console.log('Admin users error:', adminUsersError);
+
       const { error } = await supabase
         .from('investor_profiles')
         .insert([{
@@ -117,6 +138,13 @@ const AddInvestorModal: React.FC<AddInvestorModalProps> = ({ isOpen, onClose, on
         <DialogHeader>
           <DialogTitle>Add New Investor</DialogTitle>
         </DialogHeader>
+        
+        <div className="bg-gray-100 p-3 rounded text-sm mb-4">
+          <p>Debug Info:</p>
+          <p>User: {user?.email}</p>
+          <p>Is Admin: {isAdmin ? 'Yes' : 'No'}</p>
+          <p>User ID: {user?.id}</p>
+        </div>
         
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
