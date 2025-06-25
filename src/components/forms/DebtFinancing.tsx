@@ -1,5 +1,3 @@
-
-
 import React from 'react';
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -507,7 +505,6 @@ const DebtFinancing: React.FC<DebtFinancingProps> = ({ formData, setFormData }) 
         <ul className="text-sm text-yellow-700 space-y-1">
           <li>• Include 2-3 years of financial statements if available</li>
           <li>• Business plan should highlight your competitive advantages</li>
-          <li>• Our loan officers can help you prepare missing documentation</li>
         </ul>
       </div>
     </div>
