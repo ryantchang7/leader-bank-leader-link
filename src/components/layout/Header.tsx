@@ -35,16 +35,16 @@ const Header = () => {
           <div className="hidden lg:flex flex-col items-end space-y-3">
             <div className="flex items-center gap-6 text-sm text-gray-600">
               <div className="flex items-center gap-2">
-                <Users className="h-4 w-4 text-gray-700" />
+                <Users className="h-4 w-4 text-black" />
                 <span className="font-medium">Expert Team</span>
               </div>
               <div className="flex items-center gap-2">
-                <TrendingUp className="h-4 w-4 text-gray-700" />
+                <TrendingUp className="h-4 w-4 text-red-600" />
                 <span className="font-medium">Growth Partners</span>
               </div>
               <div className="flex items-center gap-2">
-                <Lock className="h-4 w-4 text-red-600" />
-                <span className="font-medium">Confidential Process</span>
+                <Lock className="h-4 w-4 text-black" />
+                <span className="font-medium">Efficient Process</span>
               </div>
             </div>
           </div>
@@ -53,16 +53,16 @@ const Header = () => {
         {/* Mobile trust indicators */}
         <div className="lg:hidden mt-6 flex flex-wrap justify-center gap-4 text-sm">
           <div className="flex items-center gap-2 bg-gray-50 px-3 py-2 rounded-lg border border-gray-200">
-            <Users className="h-4 w-4 text-gray-700" />
+            <Users className="h-4 w-4 text-black" />
             <span className="font-medium text-gray-700">Expert Team</span>
           </div>
           <div className="flex items-center gap-2 bg-gray-50 px-3 py-2 rounded-lg border border-gray-200">
-            <TrendingUp className="h-4 w-4 text-gray-700" />
+            <TrendingUp className="h-4 w-4 text-red-600" />
             <span className="font-medium text-gray-700">Growth Partners</span>
           </div>
           <div className="flex items-center gap-2 bg-gray-50 px-3 py-2 rounded-lg border border-gray-200">
-            <Lock className="h-4 w-4 text-red-600" />
-            <span className="font-medium text-gray-700">Confidential Process</span>
+            <Lock className="h-4 w-4 text-black" />
+            <span className="font-medium text-gray-700">Efficient Process</span>
           </div>
         </div>
       </div>
