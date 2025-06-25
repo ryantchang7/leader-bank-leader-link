@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -48,27 +49,27 @@ const AcceleratorProgram: React.FC<AcceleratorProgramProps> = ({ formData, setFo
       <div className="bg-gradient-to-r from-red-50 to-red-100 border border-red-200 rounded-lg p-6">
         <div className="flex items-center gap-3 mb-3">
           <Award className="h-6 w-6 text-red-600" />
-          <h3 className="font-semibold text-red-800">Exclusive Accelerator Matching Coming Up!</h3>
+          <h3 className="font-semibold text-red-800">Accelerator Matching Available</h3>
         </div>
         <p className="text-sm text-red-700 mb-4">
-          Complete this form and agree to partner with Leader Bank Cap Connect in the final step, and we'll provide you with:
+          Complete this form and partner with Leader Bank Leader Link in the final step, and we'll work to provide you with:
         </p>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
           <div className="flex items-center gap-2 text-red-700">
             <Star className="h-4 w-4" />
-            <span>Top 3 personalized accelerator matches</span>
+            <span>Personalized accelerator recommendations</span>
           </div>
           <div className="flex items-center gap-2 text-red-700">
             <Handshake className="h-4 w-4" />
-            <span>Direct introductions to program directors</span>
+            <span>Introductions to program directors where possible</span>
           </div>
           <div className="flex items-center gap-2 text-red-700">
             <Target className="h-4 w-4" />
-            <span>Application guidance and prep support</span>
+            <span>Application guidance and resources</span>
           </div>
           <div className="flex items-center gap-2 text-red-700">
             <Building2 className="h-4 w-4" />
-            <span>Exclusive partnership benefits & discounts</span>
+            <span>Partnership opportunities where available</span>
           </div>
         </div>
       </div>
