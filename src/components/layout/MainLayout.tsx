@@ -5,7 +5,6 @@ import ProcessOverview from '@/components/layout/ProcessOverview';
 import ProgressSection from '@/components/layout/ProgressSection';
 import FormContainer from '@/components/layout/FormContainer';
 import TrustIndicators from '@/components/layout/TrustIndicators';
-import AIChatbot from '@/components/ui/AIChatbot';
 import AcceleratorResults from '@/components/AcceleratorResults';
 import ThankYouPage from '@/components/ThankYouPage';
 import { FormData } from '@/types/formData';
@@ -48,7 +47,6 @@ const MainLayout: React.FC<MainLayoutProps> = ({
         <Header />
         <AcceleratorResults formData={formData} />
         <TrustIndicators />
-        <AIChatbot />
       </div>
     );
   }
@@ -59,7 +57,6 @@ const MainLayout: React.FC<MainLayoutProps> = ({
       <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
         <ThankYouPage formData={formData} />
         <TrustIndicators />
-        <AIChatbot />
       </div>
     );
   }
@@ -93,7 +90,6 @@ const MainLayout: React.FC<MainLayoutProps> = ({
         </FormContainer>
       )}
       <TrustIndicators />
-      <AIChatbot />
     </div>
   );
 };
