@@ -2,17 +2,16 @@ import React, { useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { CheckCircle, Mail, Clock, Users, ArrowRight } from 'lucide-react';
 import { FormData } from '@/types/formData';
-
 interface ThankYouPageProps {
   formData: FormData;
 }
-
-const ThankYouPage: React.FC<ThankYouPageProps> = ({ formData }) => {
+const ThankYouPage: React.FC<ThankYouPageProps> = ({
+  formData
+}) => {
   // Scroll to top when component mounts
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
-
   const getFundingTypeDisplay = () => {
     switch (formData.seekingType) {
       case 'equity':
@@ -25,9 +24,7 @@ const ThankYouPage: React.FC<ThankYouPageProps> = ({ formData }) => {
         return 'Funding';
     }
   };
-
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-12">
+  return <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-12">
       <div className="max-w-4xl mx-auto px-4">
         {/* Header Section */}
         <div className="text-center mb-8">
@@ -104,12 +101,10 @@ const ThankYouPage: React.FC<ThankYouPageProps> = ({ formData }) => {
                   <label className="text-sm font-medium text-gray-700">Seeking</label>
                   <p className="text-gray-900">{getFundingTypeDisplay()}</p>
                 </div>
-                {formData.raiseAmount && (
-                  <div>
+                {formData.raiseAmount && <div>
                     <label className="text-sm font-medium text-gray-700">Amount</label>
                     <p className="text-gray-900">{formData.raiseAmount}</p>
-                  </div>
-                )}
+                  </div>}
               </div>
             </CardContent>
           </Card>
@@ -124,13 +119,13 @@ const ThankYouPage: React.FC<ThankYouPageProps> = ({ formData }) => {
                 Welcome to Our Network
               </h3>
               <p className="text-gray-700 mb-6 max-w-3xl mx-auto">
-                You now have access to our extensive network of <span className="font-semibold text-red-600">150+ capital investors</span>, 
+                You now have access to our extensive network of <span className="font-semibold text-red-600">capital investors</span>, 
                 strategic partners, and funding sources. Our expert team will personally guide you through the process 
                 to find the perfect match for your business goals.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
                 <div className="bg-white px-6 py-3 rounded-lg border border-red-200 shadow-sm">
-                  <div className="text-2xl font-bold text-red-600">150+</div>
+                  <div className="text-2xl font-bold text-red-600">50+</div>
                   <div className="text-sm text-gray-600">Capital Partners</div>
                 </div>
                 <ArrowRight className="h-5 w-5 text-gray-400 rotate-90 sm:rotate-0" />
@@ -140,8 +135,8 @@ const ThankYouPage: React.FC<ThankYouPageProps> = ({ formData }) => {
                 </div>
                 <ArrowRight className="h-5 w-5 text-gray-400 rotate-90 sm:rotate-0" />
                 <div className="bg-white px-6 py-3 rounded-lg border border-green-200 shadow-sm">
-                  <div className="text-2xl font-bold text-green-600">Success</div>
-                  <div className="text-sm text-gray-600">Partnership</div>
+                  <div className="text-2xl font-bold text-green-600">Potential</div>
+                  <div className="text-sm text-gray-600">Partnerships</div>
                 </div>
               </div>
             </div>
@@ -155,18 +150,13 @@ const ThankYouPage: React.FC<ThankYouPageProps> = ({ formData }) => {
             Our team is here to help you every step of the way.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <a 
-              href="mailto:techandvc@leaderbank.com" 
-              className="inline-flex items-center gap-2 bg-red-600 text-white px-6 py-3 rounded-lg hover:bg-red-700 transition-colors"
-            >
+            <a href="mailto:techandvc@leaderbank.com" className="inline-flex items-center gap-2 bg-red-600 text-white px-6 py-3 rounded-lg hover:bg-red-700 transition-colors">
               <Mail className="h-4 w-4" />
               Contact Our Team
             </a>
           </div>
         </div>
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default ThankYouPage;
