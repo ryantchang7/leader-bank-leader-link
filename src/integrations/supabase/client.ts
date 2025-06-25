@@ -1,7 +1,33 @@
 
-import { createClient } from '@supabase/supabase-js'
+// Legacy Supabase client - DEPRECATED
+// This file is kept for compatibility but all functionality has been moved to internal bank APIs
+// File: src/lib/internalApi.ts
 
-const supabaseUrl = 'https://cuxzynvfoedkzjhcsxfp.supabase.co'
-const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN1eHp5bnZmb2Vka3pqaGNzeGZwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDk3NTYwMDksImV4cCI6MjA2NTMzMjAwOX0.uh6Dzt-NC11RKewc1V09gEf_OEZih1Qb1ivSZMrCHwk'
+import { internalApi } from '@/lib/internalApi';
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey)
+// Export a compatibility object to prevent import errors
+// All actual functionality now goes through internalApi
+export const supabase = {
+  // Deprecated - use internalApi instead
+  auth: {
+    getSession: () => Promise.resolve({ data: { session: null }, error: null }),
+    onAuthStateChange: () => ({ data: { subscription: { unsubscribe: () => {} } } }),
+    signInWithPassword: () => Promise.resolve({ error: 'Auth disabled - use internal bank systems' }),
+    signOut: () => Promise.resolve({ error: null }),
+  },
+  from: () => ({
+    insert: () => Promise.resolve({ data: null, error: 'Database disabled - use internal bank APIs' }),
+    select: () => Promise.resolve({ data: [], error: 'Database disabled - use internal bank APIs' }),
+    update: () => Promise.resolve({ data: null, error: 'Database disabled - use internal bank APIs' }),
+    delete: () => Promise.resolve({ data: null, error: 'Database disabled - use internal bank APIs' }),
+  }),
+  functions: {
+    invoke: () => Promise.resolve({ data: null, error: 'Functions disabled - use internal bank APIs' }),
+  },
+  rpc: () => Promise.resolve({ data: null, error: 'RPC disabled - use internal bank APIs' }),
+};
+
+// Re-export internal API for new code
+export { internalApi };
+
+console.warn('Supabase client is deprecated. Use internalApi from @/lib/internalApi instead.');

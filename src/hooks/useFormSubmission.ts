@@ -1,7 +1,7 @@
 
 import { useState } from 'react';
 import { FormData } from '@/types/formData';
-import { supabase } from '@/integrations/supabase/client';
+import { internalApi } from '@/lib/internalApi';
 
 export const useFormSubmission = () => {
   const [showResults, setShowResults] = useState(false);
@@ -9,18 +9,16 @@ export const useFormSubmission = () => {
 
   const sendSubmissionEmail = async (submissionData: FormData) => {
     try {
-      console.log('Sending comprehensive submission email via edge function');
+      console.log('Sending comprehensive submission email via internal bank API');
       
-      const { data, error } = await supabase.functions.invoke('send-submission-email', {
-        body: submissionData
-      });
+      const result = await internalApi.sendSubmissionEmail(submissionData);
 
-      if (error) {
-        console.error('Error sending submission email:', error);
-        throw error;
+      if (!result.success) {
+        console.error('Error sending submission email:', result.error);
+        throw new Error(result.error || 'Failed to send email');
       }
 
-      console.log('Submission email sent successfully:', data);
+      console.log('Submission email sent successfully:', result.data);
       return { success: true };
     } catch (error) {
       console.error('Failed to send submission email:', error);
@@ -30,87 +28,39 @@ export const useFormSubmission = () => {
 
   const saveSubmissionToDatabase = async (submissionData: FormData) => {
     try {
-      console.log('Starting submission save process with data:', submissionData);
+      console.log('Starting submission save process with internal bank API:', submissionData);
       
-      // Prepare data for submissions table
-      const submissionPayload = {
-        borrower_name: submissionData.borrowerName || '',
-        contact_name: submissionData.contactName || '',
-        contact_email: submissionData.contactEmail || '',
-        contact_phone: submissionData.contactPhone || null,
-        company_hq: submissionData.companyHQ || '',
-        business_stage: submissionData.businessStage || '',
-        industry: submissionData.industry || '',
-        vertical: submissionData.vertical || null,
-        seeking_type: submissionData.seekingType || '',
-        raise_amount: submissionData.raiseAmount || null,
-        business_description: submissionData.productDescription || null,
-        funding_purpose: submissionData.useOfFunds || null,
-        current_revenue: submissionData.lastTwelveRevenue || null,
-        previous_funding: submissionData.totalEquityRaised || null,
-        submitted_at: new Date().toISOString(),
-        status: 'new',
-        priority: 'medium'
-      };
+      // Save main submission to internal database
+      const submissionResult = await internalApi.submitApplication(submissionData);
 
-      console.log('Prepared submission payload:', submissionPayload);
-
-      // Insert into submissions table
-      const { data: submissionResult, error: submissionError } = await supabase
-        .from('submissions')
-        .insert([submissionPayload])
-        .select();
-
-      if (submissionError) {
-        console.error('Supabase submission error details:', {
-          message: submissionError.message,
-          details: submissionError.details,
-          hint: submissionError.hint,
-          code: submissionError.code
-        });
+      if (!submissionResult.success) {
+        console.error('Internal API submission error:', submissionResult.error);
         
         // Create a fallback record for manual processing
         console.log('FALLBACK DATA FOR MANUAL PROCESSING:', {
           timestamp: new Date().toISOString(),
-          submissionPayload,
-          fullFormData: submissionData,
-          errorDetails: submissionError
+          submissionData,
+          errorDetails: submissionResult.error
         });
       } else {
-        console.log('Submission saved successfully to submissions table:', submissionResult);
+        console.log('Submission saved successfully to internal database:', submissionResult.data);
       }
 
-      // If it's an accelerator submission, also save to accelerator_applications
+      // If it's an accelerator submission, also save to accelerator applications
       if (submissionData.seekingType === 'accelerator') {
-        const acceleratorPayload = {
-          startup_name: submissionData.borrowerName || '',
-          founder_name: submissionData.contactName || '',
-          founder_email: submissionData.contactEmail || '',
-          founder_phone: submissionData.contactPhone || null,
-          company_stage: submissionData.businessStage || '',
-          industry: submissionData.industry || '',
-          accelerator_id: 'general',
-          application_data: submissionData,
-          status: 'submitted',
-          submitted_at: new Date().toISOString()
-        };
+        console.log('Processing accelerator application...');
 
-        console.log('Prepared accelerator payload:', acceleratorPayload);
+        const acceleratorResult = await internalApi.submitAcceleratorApplication(submissionData);
 
-        const { data: acceleratorResult, error: acceleratorError } = await supabase
-          .from('accelerator_applications')
-          .insert([acceleratorPayload])
-          .select();
-
-        if (acceleratorError) {
-          console.error('Accelerator application error:', acceleratorError);
+        if (!acceleratorResult.success) {
+          console.error('Accelerator application error:', acceleratorResult.error);
           console.log('ACCELERATOR FALLBACK DATA:', {
             timestamp: new Date().toISOString(),
-            acceleratorPayload,
-            errorDetails: acceleratorError
+            submissionData,
+            errorDetails: acceleratorResult.error
           });
         } else {
-          console.log('Accelerator application saved successfully:', acceleratorResult);
+          console.log('Accelerator application saved successfully:', acceleratorResult.data);
         }
       }
 
@@ -138,11 +88,11 @@ export const useFormSubmission = () => {
     }
     
     try {
-      // Save to database
+      // Save to internal database
       const saveResult = await saveSubmissionToDatabase(formData);
       console.log('Database save result:', saveResult);
       
-      // Send comprehensive email automatically
+      // Send comprehensive email via internal email service
       const emailResult = await sendSubmissionEmail(formData);
       console.log('Email send result:', emailResult);
       
