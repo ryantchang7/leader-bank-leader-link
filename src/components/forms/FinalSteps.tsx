@@ -162,10 +162,9 @@ const FinalSteps: React.FC<FinalStepsProps> = ({ formData, setFormData }) => {
             <div className="flex items-start gap-3">
               <Shield className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
               <div>
-                <p className="text-sm font-medium text-green-900 mb-1">Your Information is Protected</p>
+                <p className="text-sm font-medium text-green-900 mb-1">Professional Review Process</p>
                 <p className="text-xs text-green-800">
-                  All data is encrypted and stored with bank-grade security. We only share information with 
-                  pre-qualified investors who have signed confidentiality agreements.
+                  Our team will carefully review your application and connect you with relevant funding partners from our network.
                 </p>
               </div>
             </div>

@@ -27,9 +27,9 @@ const TrustIndicators = () => {
               <div className="w-16 h-16 bg-gray-800 rounded-full mx-auto mb-4 flex items-center justify-center">
                 <Shield className="h-8 w-8 text-white" />
               </div>
-              <h4 className="font-bold text-gray-900 text-lg mb-2">Bank-Grade Security</h4>
+              <h4 className="font-bold text-gray-900 text-lg mb-2">Experienced Team</h4>
               <p className="text-gray-700 text-sm">
-                FDIC insured with enterprise-level encryption and regulatory compliance standards
+                Professional funding specialists with extensive industry knowledge and expertise
               </p>
             </div>
             
@@ -89,7 +89,7 @@ const TrustIndicators = () => {
             <p className="text-sm text-gray-700 flex items-center justify-center gap-2">
               <Lock className="h-4 w-4 text-gray-600" />
               <span className="font-medium">
-                All communications are confidential and protected by federal banking privacy regulations
+                Professional application review process with dedicated funding specialists
               </span>
             </p>
           </div>
