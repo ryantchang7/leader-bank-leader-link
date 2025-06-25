@@ -14,7 +14,7 @@ export const getStepDescription = (step: number): string => {
     case 1: return "Tell us about your business - we're here to support your growth";
     case 2: return "Select your funding goal so we can match you with the right opportunities";
     case 3: return "Share specific details to help us find the perfect funding partners for you";
-    case 4: return "Complete your partnership with Leader Bank Cap Connect";
+    case 4: return "Complete your partnership with Leader Bank Leader Link";
     default: return "";
   }
 };
