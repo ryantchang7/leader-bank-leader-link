@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Shield, Lock, Phone, Mail, Clock, Award } from 'lucide-react';
 const TrustIndicators = () => {
@@ -36,7 +37,7 @@ const TrustIndicators = () => {
               </div>
               <h4 className="font-bold text-gray-900 text-lg mb-2">Comprehensive Network</h4>
               <p className="text-gray-700 text-sm">
-                Direct access to vetted investors, lenders, and accelerator programs nationwide
+                Direct access to investors/vc firms and accelerator programs nationwide
               </p>
             </div>
           </div>

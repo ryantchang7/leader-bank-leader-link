@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -36,7 +37,7 @@ const EquityInvestment: React.FC<EquityInvestmentProps> = ({ formData, setFormDa
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
           <div className="flex items-center gap-2 text-blue-700">
             <Star className="h-4 w-4" />
-            <span>Pre-vetted investors in your industry</span>
+            <span>Investors/vc firms in your industry</span>
           </div>
           <div className="flex items-center gap-2 text-blue-700">
             <Target className="h-4 w-4" />
