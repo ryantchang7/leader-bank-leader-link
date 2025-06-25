@@ -1,10 +1,7 @@
-
 import React from 'react';
 import { Shield, Lock, Phone, Mail, Clock, Award } from 'lucide-react';
-
 const TrustIndicators = () => {
-  return (
-    <div className="mt-12 px-4">
+  return <div className="mt-12 px-4">
       <div className="max-w-6xl mx-auto">
         <div className="bg-white rounded-xl p-8 shadow-lg border border-gray-200 mb-8">
           <h3 className="text-2xl font-bold text-gray-900 mb-6 flex items-center justify-center gap-3">
@@ -62,10 +59,7 @@ const TrustIndicators = () => {
                 <h5 className="font-semibold text-gray-900">Email Contact</h5>
               </div>
               <p className="text-gray-600 mb-2">For questions about the application process:</p>
-              <a 
-                href="mailto:techandvc@leaderbank.com" 
-                className="text-red-600 font-semibold hover:text-red-700 transition-colors"
-              >
+              <a href="mailto:techandvc@leaderbank.com" className="text-red-600 font-semibold hover:text-red-700 transition-colors">
                 techandvc@leaderbank.com
               </a>
             </div>
@@ -75,11 +69,8 @@ const TrustIndicators = () => {
                 <Phone className="h-5 w-5 text-red-600" />
                 <h5 className="font-semibold text-gray-900">Phone Support</h5>
               </div>
-              <p className="text-gray-600 mb-2">Speak directly with our funding specialists:</p>
-              <a 
-                href="tel:+17816418686" 
-                className="text-red-600 font-semibold hover:text-red-700 transition-colors"
-              >
+              <p className="text-gray-600 mb-2">Speak directly with our banking specialists:</p>
+              <a href="tel:+17816418686" className="text-red-600 font-semibold hover:text-red-700 transition-colors">
                 (781) 641-8686
               </a>
             </div>
@@ -95,8 +86,6 @@ const TrustIndicators = () => {
           </div>
         </div>
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default TrustIndicators;
