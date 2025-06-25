@@ -7,7 +7,6 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Textarea } from "@/components/ui/textarea";
 import { Users, Send, Target, Building2 } from 'lucide-react';
-import { supabase } from '@/integrations/supabase/client';
 
 interface Submission {
   id: string;
@@ -40,6 +39,43 @@ interface InvestorMatchingModalProps {
   selectedSubmissions: string[];
 }
 
+// Mock investor data for demonstration
+const mockInvestors: InvestorProfile[] = [
+  {
+    id: '1',
+    name: 'Sarah Chen',
+    firm: 'TechVentures Capital',
+    email: 'sarah@techventures.com',
+    focus_areas: ['Technology', 'FinTech', 'B2B SaaS'],
+    investment_range: '$500K - $5M',
+    preferred_stages: ['Seed', 'Series A'],
+    location: 'San Francisco, CA',
+    status: 'active'
+  },
+  {
+    id: '2',
+    name: 'Michael Rodriguez',
+    firm: 'Growth Partners',
+    email: 'michael@growthpartners.com',
+    focus_areas: ['Healthcare', 'Biotech', 'MedTech'],
+    investment_range: '$1M - $10M',
+    preferred_stages: ['Series A', 'Series B'],
+    location: 'Boston, MA',
+    status: 'active'
+  },
+  {
+    id: '3',
+    name: 'Jennifer Kim',
+    firm: 'Early Stage Fund',
+    email: 'jennifer@earlystage.com',
+    focus_areas: ['Technology', 'AI/ML', 'Retail'],
+    investment_range: '$100K - $2M',
+    preferred_stages: ['Pre-Seed', 'Seed'],
+    location: 'New York, NY',
+    status: 'active'
+  }
+];
+
 const InvestorMatchingModal: React.FC<InvestorMatchingModalProps> = ({
   isOpen,
   onClose,
@@ -61,14 +97,9 @@ const InvestorMatchingModal: React.FC<InvestorMatchingModalProps> = ({
 
   const fetchInvestors = async () => {
     try {
-      const { data, error } = await supabase
-        .from('investor_profiles')
-        .select('*')
-        .eq('status', 'active')
-        .order('name');
-
-      if (error) throw error;
-      setInvestors(data || []);
+      // Use mock data for now - in production this would call internal API
+      console.log('Loading investors from mock data (backend integration pending)');
+      setInvestors(mockInvestors);
     } catch (error) {
       console.error('Error fetching investors:', error);
     }
@@ -111,25 +142,17 @@ const InvestorMatchingModal: React.FC<InvestorMatchingModalProps> = ({
   const distributeToInvestors = async () => {
     setLoading(true);
     try {
-      // Here you would implement the actual distribution logic
-      // For now, we'll just update the submission status
-      const { error } = await supabase
-        .from('submissions')
-        .update({ 
-          status: 'distributed',
-          distributed_at: new Date().toISOString(),
-          investor_matches: selectedInvestors.length
-        })
-        .in('id', selectedSubmissions);
-
-      if (error) throw error;
-
-      console.log('Distributed to investors:', {
+      // Simulate API call to distribute submissions
+      console.log('Distributing submissions to investors (simulated):', {
         submissions: selectedSubmissions,
         investors: selectedInvestors,
         message: customMessage
       });
 
+      // Simulate processing time
+      await new Promise(resolve => setTimeout(resolve, 2000));
+
+      console.log('Distribution completed successfully (simulated)');
       onClose();
     } catch (error) {
       console.error('Error distributing to investors:', error);
@@ -149,6 +172,12 @@ const InvestorMatchingModal: React.FC<InvestorMatchingModalProps> = ({
             Match with Investors
           </DialogTitle>
         </DialogHeader>
+        
+        <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 mb-4">
+          <p className="text-sm text-yellow-800">
+            <strong>Note:</strong> This feature is currently using mock data. Backend integration is pending to connect with your internal investor database.
+          </p>
+        </div>
         
         <div className="space-y-6">
           <div>

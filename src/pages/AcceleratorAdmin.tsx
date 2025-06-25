@@ -1,3 +1,4 @@
+
 import React, { useState, useMemo, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -10,7 +11,6 @@ import Header from '@/components/layout/Header';
 import AdminAuth from '@/components/auth/AdminAuth';
 import { Database, Users, TrendingUp, BarChart3, Home, ArrowLeft, Search, Filter, ExternalLink, MapPin, Calendar, Award, Eye } from 'lucide-react';
 import { accelerators, Accelerator } from '@/data/accelerators';
-import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 
 interface AcceleratorApplication {
@@ -25,6 +25,32 @@ interface AcceleratorApplication {
   submitted_at: string;
 }
 
+// Mock data for demonstration
+const mockApplications: AcceleratorApplication[] = [
+  {
+    id: '1',
+    startup_name: 'TechFlow Solutions',
+    founder_name: 'John Smith',
+    founder_email: 'john@techflow.com',
+    company_stage: 'seed',
+    industry: 'technology',
+    accelerator_id: 'general',
+    status: 'submitted',
+    submitted_at: new Date().toISOString()
+  },
+  {
+    id: '2',
+    startup_name: 'HealthTrack AI',
+    founder_name: 'Sarah Johnson',
+    founder_email: 'sarah@healthtrack.com',
+    company_stage: 'pre-seed',
+    industry: 'healthcare',
+    accelerator_id: 'general',
+    status: 'reviewing',
+    submitted_at: new Date(Date.now() - 86400000).toISOString()
+  }
+];
+
 const AcceleratorAdmin = () => {
   const { signOut } = useAuth();
   const [searchTerm, setSearchTerm] = useState('');
@@ -35,17 +61,14 @@ const AcceleratorAdmin = () => {
   const [applications, setApplications] = useState<AcceleratorApplication[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // Fetch accelerator applications from Supabase
+  // Fetch accelerator applications
   useEffect(() => {
     const fetchApplications = async () => {
       try {
-        const { data, error } = await supabase
-          .from('accelerator_applications')
-          .select('*')
-          .order('submitted_at', { ascending: false });
-
-        if (error) throw error;
-        setApplications(data || []);
+        console.log('Loading accelerator applications from mock data (backend integration pending)');
+        // Simulate API delay
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        setApplications(mockApplications);
       } catch (error) {
         console.error('Error fetching applications:', error);
       } finally {
@@ -142,6 +165,12 @@ const AcceleratorAdmin = () => {
             </div>
             
             <p className="text-gray-600 mt-2">Manage accelerator programs and startup applications</p>
+            
+            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 mt-4">
+              <p className="text-sm text-yellow-800">
+                <strong>Note:</strong> This admin panel is currently using mock data. Backend integration is pending to connect with your internal accelerator management system.
+              </p>
+            </div>
           </div>
 
           {/* Stats Cards */}

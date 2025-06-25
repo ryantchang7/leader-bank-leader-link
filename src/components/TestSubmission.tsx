@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { supabase } from '@/integrations/supabase/client';
+import { internalApi } from '@/lib/internalApi';
 
 const TestSubmission: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -39,42 +39,42 @@ const TestSubmission: React.FC = () => {
         throw new Error('Please fill in all required fields');
       }
 
-      const submissionPayload = {
-        ...formData,
-        submitted_at: new Date().toISOString(),
-        status: 'new',
-        priority: 'medium'
+      // Convert form data to internal API format
+      const submissionData = {
+        borrowerName: formData.borrower_name,
+        contactName: formData.contact_name,
+        contactEmail: formData.contact_email,
+        contactPhone: formData.contact_phone,
+        companyHQ: formData.company_hq,
+        businessStage: formData.business_stage,
+        industry: formData.industry,
+        seekingType: formData.seeking_type,
+        raiseAmount: formData.raise_amount,
+        productDescription: formData.business_description,
+        useOfFunds: formData.funding_purpose
       };
 
-      console.log('Sending payload to Supabase:', submissionPayload);
+      console.log('Sending payload to internal API:', submissionData);
 
-      const { data, error } = await supabase
-        .from('submissions')
-        .insert([submissionPayload])
-        .select();
+      const result = await internalApi.submitApplication(submissionData);
 
-      console.log('Supabase response:', { data, error });
+      console.log('Internal API response:', result);
 
-      if (error) {
-        console.error('Supabase error details:', {
-          message: error.message,
-          details: error.details,
-          hint: error.hint,
-          code: error.code
-        });
+      if (!result.success) {
+        console.error('Internal API error:', result.error);
         
         // Log fallback data for manual processing
         console.log('FALLBACK DATA FOR MANUAL PROCESSING:', {
           timestamp: new Date().toISOString(),
-          submissionPayload,
-          errorDetails: error
+          submissionData,
+          errorDetails: result.error
         });
         
-        throw new Error(`Database error: ${error.message}`);
+        throw new Error(`API error: ${result.error}`);
       }
 
-      if (data && data.length > 0) {
-        console.log('Successfully inserted:', data[0]);
+      if (result.data && result.data.submission_id) {
+        console.log('Successfully submitted:', result.data);
         setMessage('✅ Test submission created successfully! Check the admin panel to see it.');
         setFormData({
           borrower_name: '',
@@ -90,7 +90,7 @@ const TestSubmission: React.FC = () => {
           funding_purpose: ''
         });
       } else {
-        throw new Error('No data returned from insert operation');
+        throw new Error('No submission ID returned from API');
       }
     } catch (error: any) {
       console.error('Error creating test submission:', error);
@@ -112,7 +112,7 @@ const TestSubmission: React.FC = () => {
       <CardHeader>
         <CardTitle>Test Submission Form</CardTitle>
         <p className="text-sm text-gray-600">
-          Use this form to test that submissions are working properly and appearing in the admin panel
+          Use this form to test that submissions are working properly with the internal API
         </p>
       </CardHeader>
       <CardContent>

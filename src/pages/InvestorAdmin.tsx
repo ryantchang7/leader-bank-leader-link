@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -17,7 +18,6 @@ import SubmissionFilters from '@/components/admin/SubmissionFilters';
 import ExportModal from '@/components/admin/ExportModal';
 import InvestorMatchingModal from '@/components/admin/InvestorMatchingModal';
 import AddInvestorModal from '@/components/admin/AddInvestorModal';
-import { supabase } from '@/integrations/supabase/client';
 import { useToast } from "@/components/ui/use-toast";
 import { useAuth } from '@/hooks/useAuth';
 
@@ -68,6 +68,71 @@ interface FilterState {
   dateRange: string;
 }
 
+// Mock data for demonstration
+const mockSubmissions: Submission[] = [
+  {
+    id: '1',
+    borrower_name: 'TechFlow Solutions',
+    contact_name: 'John Smith',
+    contact_email: 'john@techflow.com',
+    contact_phone: '(555) 123-4567',
+    company_hq: 'San Francisco, CA',
+    business_stage: 'seed',
+    industry: 'technology',
+    seeking_type: 'equity',
+    raise_amount: '$2M',
+    business_description: 'AI-powered workflow automation platform',
+    funding_purpose: 'Product development and team expansion',
+    submitted_at: new Date().toISOString(),
+    status: 'new',
+    investor_matches: 0,
+    priority: 'high'
+  },
+  {
+    id: '2',
+    borrower_name: 'HealthTrack AI',
+    contact_name: 'Sarah Johnson',
+    contact_email: 'sarah@healthtrack.com',
+    company_hq: 'Boston, MA',
+    business_stage: 'pre-seed',
+    industry: 'healthcare',
+    seeking_type: 'equity',
+    raise_amount: '$500K',
+    business_description: 'AI-powered health monitoring platform',
+    submitted_at: new Date(Date.now() - 86400000).toISOString(),
+    status: 'reviewed',
+    investor_matches: 2,
+    priority: 'medium'
+  }
+];
+
+const mockInvestors: InvestorProfile[] = [
+  {
+    id: '1',
+    name: 'Sarah Chen',
+    firm: 'TechVentures Capital',
+    email: 'sarah@techventures.com',
+    focus_areas: ['Technology', 'FinTech', 'B2B SaaS'],
+    investment_range: '$500K - $5M',
+    preferred_stages: ['Seed', 'Series A'],
+    location: 'San Francisco, CA',
+    created_at: new Date().toISOString(),
+    status: 'active'
+  },
+  {
+    id: '2',
+    name: 'Michael Rodriguez',
+    firm: 'Growth Partners',
+    email: 'michael@growthpartners.com',
+    focus_areas: ['Healthcare', 'Biotech', 'MedTech'],
+    investment_range: '$1M - $10M',
+    preferred_stages: ['Series A', 'Series B'],
+    location: 'Boston, MA',
+    created_at: new Date().toISOString(),
+    status: 'active'
+  }
+];
+
 const InvestorAdmin = () => {
   const { toast } = useToast();
   const { signOut } = useAuth();
@@ -93,28 +158,16 @@ const InvestorAdmin = () => {
     dateRange: 'all'
   });
 
-  // Fetch data from Supabase
+  // Fetch data from mock sources
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Fetch submissions
-        const { data: submissionsData, error: submissionsError } = await supabase
-          .from('submissions')
-          .select('*')
-          .order('submitted_at', { ascending: false });
-
-        if (submissionsError) throw submissionsError;
-
-        // Fetch investors
-        const { data: investorsData, error: investorsError } = await supabase
-          .from('investor_profiles')
-          .select('*')
-          .order('created_at', { ascending: false });
-
-        if (investorsError) throw investorsError;
-
-        setSubmissions(submissionsData || []);
-        setInvestors(investorsData || []);
+        console.log('Loading data from mock sources (backend integration pending)');
+        // Simulate API delay
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        
+        setSubmissions(mockSubmissions);
+        setInvestors(mockInvestors);
       } catch (error) {
         console.error('Error fetching data:', error);
       } finally {
@@ -243,27 +296,13 @@ const InvestorAdmin = () => {
 
   // Calculate dynamic stats
   const totalSubmissions = submissions.length;
-  const activeMatches = submissions.reduce((sum, sub) => sum + sub.investor_matches, 0);
+  const activeInvestors = investors.filter(i => i.status === 'active').length;
   const capitalDistributed = 0; // Will be updated as deals close
   const successRate = totalSubmissions > 0 ? Math.round((submissions.filter(s => s.status === 'matched').length / totalSubmissions) * 100) : 0;
 
   const handleInvestorAdded = () => {
-    // Refresh investors list
-    const fetchInvestors = async () => {
-      try {
-        const { data: investorsData, error: investorsError } = await supabase
-          .from('investor_profiles')
-          .select('*')
-          .order('created_at', { ascending: false });
-
-        if (investorsError) throw investorsError;
-        setInvestors(investorsData || []);
-      } catch (error) {
-        console.error('Error fetching investors:', error);
-      }
-    };
-    
-    fetchInvestors();
+    // Refresh investors list (in production, this would refetch from API)
+    console.log('Investor added - refreshing list');
   };
 
   return (
@@ -319,6 +358,12 @@ const InvestorAdmin = () => {
             </div>
             
             <p className="text-gray-600 mt-2">Manage startup submissions and distribute opportunities to your investor network</p>
+            
+            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 mt-4">
+              <p className="text-sm text-yellow-800">
+                <strong>Note:</strong> This admin panel is currently using mock data. Backend integration is pending to connect with your internal systems.
+              </p>
+            </div>
           </div>
 
           {/* Stats Cards */}
@@ -340,7 +385,7 @@ const InvestorAdmin = () => {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-sm font-medium text-gray-600">Active Investors</p>
-                    <p className="text-2xl font-bold text-gray-900">{investors.filter(i => i.status === 'active').length}</p>
+                    <p className="text-2xl font-bold text-gray-900">{activeInvestors}</p>
                   </div>
                   <Users className="h-8 w-8 text-green-600" />
                 </div>

@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -7,7 +8,6 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { X, Plus, Loader2 } from 'lucide-react';
-import { supabase } from '@/integrations/supabase/client';
 import { useToast } from "@/components/ui/use-toast";
 import { useAuth } from '@/hooks/useAuth';
 
@@ -45,39 +45,20 @@ const AddInvestorModal: React.FC<AddInvestorModalProps> = ({ isOpen, onClose, on
     setIsSubmitting(true);
 
     try {
+      console.log('Adding investor via internal API');
       console.log('Current user:', user?.email);
       console.log('Is admin:', isAdmin);
-      console.log('User ID:', user?.id);
       
-      // Check admin status before attempting insert
-      const { data: adminCheck, error: adminError } = await supabase
-        .rpc('is_admin', { user_id: user?.id });
+      // For now, we'll simulate the API call since the backend isn't implemented yet
+      // In production, this would call the internal API
+      await new Promise(resolve => setTimeout(resolve, 1000));
       
-      console.log('Admin check result:', adminCheck);
-      console.log('Admin check error:', adminError);
-      
-      // Also check admin_users table directly
-      const { data: adminUsers, error: adminUsersError } = await supabase
-        .from('admin_users')
-        .select('*')
-        .eq('user_id', user?.id);
-      
-      console.log('Admin users table check:', adminUsers);
-      console.log('Admin users error:', adminUsersError);
-
-      const { error } = await supabase
-        .from('investor_profiles')
-        .insert([{
-          ...formData,
-          focus_areas: focusAreas,
-          preferred_stages: preferredStages
-        }]);
-
-      if (error) throw error;
+      // Simulate successful response
+      console.log('Investor added successfully (simulated)');
 
       toast({
         title: "Success",
-        description: "Investor added successfully!",
+        description: "Investor added successfully! (Note: This is currently simulated - backend integration pending)",
       });
 
       onInvestorAdded();
@@ -102,7 +83,7 @@ const AddInvestorModal: React.FC<AddInvestorModalProps> = ({ isOpen, onClose, on
       console.error('Error adding investor:', error);
       toast({
         title: "Error",
-        description: error.message || "Failed to add investor",
+        description: "Failed to add investor - backend integration pending",
         variant: "destructive",
       });
     } finally {
@@ -139,11 +120,10 @@ const AddInvestorModal: React.FC<AddInvestorModalProps> = ({ isOpen, onClose, on
           <DialogTitle>Add New Investor</DialogTitle>
         </DialogHeader>
         
-        <div className="bg-gray-100 p-3 rounded text-sm mb-4">
-          <p>Debug Info:</p>
-          <p>User: {user?.email}</p>
-          <p>Is Admin: {isAdmin ? 'Yes' : 'No'}</p>
-          <p>User ID: {user?.id}</p>
+        <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 mb-4">
+          <p className="text-sm text-yellow-800">
+            <strong>Note:</strong> This feature is currently simulated. Backend integration is pending to store investor data in your internal systems.
+          </p>
         </div>
         
         <form onSubmit={handleSubmit} className="space-y-4">
