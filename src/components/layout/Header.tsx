@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Users, TrendingUp, Shield, Lock } from 'lucide-react';
+import { Users, TrendingUp, Lock } from 'lucide-react';
 
 const Header = () => {
   return (
@@ -33,12 +33,6 @@ const Header = () => {
           </div>
           
           <div className="hidden lg:flex flex-col items-end space-y-3">
-            <div className="flex items-center space-x-3">
-              <span className="bg-gray-100 text-gray-800 px-4 py-2 rounded-full text-sm font-semibold flex items-center gap-2 border border-gray-300">
-                <Shield className="h-4 w-4" />
-                Bank-Grade Security
-              </span>
-            </div>
             <div className="flex items-center gap-6 text-sm text-gray-600">
               <div className="flex items-center gap-2">
                 <Users className="h-4 w-4 text-gray-700" />
