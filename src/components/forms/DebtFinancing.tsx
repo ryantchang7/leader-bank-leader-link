@@ -1,3 +1,5 @@
+
+
 import React from 'react';
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -44,27 +46,27 @@ const DebtFinancing: React.FC<DebtFinancingProps> = ({ formData, setFormData }) 
       <div className="bg-gradient-to-r from-green-50 to-green-100 border border-green-200 rounded-lg p-6">
         <div className="flex items-center gap-3 mb-3">
           <CreditCard className="h-6 w-6 text-green-600" />
-          <h3 className="font-semibold text-green-800">Premium Lending Partners Network</h3>
+          <h3 className="font-semibold text-green-800">Lending Partners Network</h3>
         </div>
         <p className="text-sm text-green-700 mb-4">
-          Access our exclusive network of institutional lenders, banks, and alternative financing providers with competitive rates and flexible terms.
+          Connect with our network of institutional lenders, banks, and alternative financing providers for business debt financing solutions.
         </p>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
           <div className="flex items-center gap-2 text-green-700">
             <Star className="h-4 w-4" />
-            <span>Pre-negotiated favorable rates</span>
+            <span>Multiple lending options</span>
           </div>
           <div className="flex items-center gap-2 text-green-700">
             <Handshake className="h-4 w-4" />
-            <span>Dedicated relationship managers</span>
+            <span>Professional introductions</span>
           </div>
           <div className="flex items-center gap-2 text-green-700">
             <Shield className="h-4 w-4" />
-            <span>Streamlined approval process</span>
+            <span>Application review process</span>
           </div>
           <div className="flex items-center gap-2 text-green-700">
             <Building2 className="h-4 w-4" />
-            <span>Flexible repayment structures</span>
+            <span>Various repayment structures</span>
           </div>
         </div>
       </div>
