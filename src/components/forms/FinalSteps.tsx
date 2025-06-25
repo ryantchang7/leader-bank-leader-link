@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -6,19 +5,21 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Shield, Users, CheckCircle, Award } from 'lucide-react';
 import { FormData } from '@/types/formData';
-
 interface FinalStepsProps {
   formData: FormData;
   setFormData: (data: FormData) => void;
 }
-
-const FinalSteps: React.FC<FinalStepsProps> = ({ formData, setFormData }) => {
+const FinalSteps: React.FC<FinalStepsProps> = ({
+  formData,
+  setFormData
+}) => {
   const handleInputChange = (field: keyof FormData, value: string) => {
-    setFormData({ ...formData, [field]: value });
+    setFormData({
+      ...formData,
+      [field]: value
+    });
   };
-
-  return (
-    <div className="space-y-6">
+  return <div className="space-y-6">
       {/* Welcome Section */}
       <Card className="bg-gradient-to-r from-red-50 to-blue-50 border-red-200">
         <CardHeader className="text-center">
@@ -32,7 +33,7 @@ const FinalSteps: React.FC<FinalStepsProps> = ({ formData, setFormData }) => {
           </CardTitle>
           <p className="text-gray-600 mt-2">
             You're one step away from connecting with our extensive network of {' '}
-            <span className="font-semibold text-red-600">150+ capital investors</span> and funding partners.
+            <span className="font-semibold text-red-600">capital investors</span> and funding partners.
           </p>
         </CardHeader>
       </Card>
@@ -50,26 +51,14 @@ const FinalSteps: React.FC<FinalStepsProps> = ({ formData, setFormData }) => {
             <Label htmlFor="finalFullName" className="text-sm font-medium text-gray-700 mb-2 block">
               Full Name <span className="text-red-500">*</span>
             </Label>
-            <Input
-              id="finalFullName"
-              value={formData.finalFullName}
-              onChange={(e) => handleInputChange('finalFullName', e.target.value)}
-              placeholder="Enter your full legal name"
-              className="w-full"
-            />
+            <Input id="finalFullName" value={formData.finalFullName} onChange={e => handleInputChange('finalFullName', e.target.value)} placeholder="Enter your full legal name" className="w-full" />
           </div>
           
           <div>
             <Label htmlFor="titleRole" className="text-sm font-medium text-gray-700 mb-2 block">
               Title/Role <span className="text-red-500">*</span>
             </Label>
-            <Input
-              id="titleRole"
-              value={formData.titleRole}
-              onChange={(e) => handleInputChange('titleRole', e.target.value)}
-              placeholder="e.g., CEO, Founder, CFO"
-              className="w-full"
-            />
+            <Input id="titleRole" value={formData.titleRole} onChange={e => handleInputChange('titleRole', e.target.value)} placeholder="e.g., CEO, Founder, CFO" className="w-full" />
           </div>
         </CardContent>
       </Card>
@@ -113,19 +102,9 @@ const FinalSteps: React.FC<FinalStepsProps> = ({ formData, setFormData }) => {
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="flex items-start space-x-3">
-            <Checkbox
-              id="agreeTerms"
-              checked={formData.agreeTerms === 'yes'}
-              onCheckedChange={(checked) => 
-                handleInputChange('agreeTerms', checked ? 'yes' : '')
-              }
-              className="mt-1"
-            />
+            <Checkbox id="agreeTerms" checked={formData.agreeTerms === 'yes'} onCheckedChange={checked => handleInputChange('agreeTerms', checked ? 'yes' : '')} className="mt-1" />
             <div className="flex-1">
-              <Label 
-                htmlFor="agreeTerms" 
-                className="text-sm text-gray-700 cursor-pointer leading-relaxed"
-              >
+              <Label htmlFor="agreeTerms" className="text-sm text-gray-700 cursor-pointer leading-relaxed">
                 I agree to Leader Bank's{' '}
                 <a href="#" className="text-red-600 hover:underline font-medium">
                   Terms of Service
@@ -136,19 +115,9 @@ const FinalSteps: React.FC<FinalStepsProps> = ({ formData, setFormData }) => {
           </div>
           
           <div className="flex items-start space-x-3">
-            <Checkbox
-              id="agreePrivacy"
-              checked={formData.agreePrivacy === 'yes'}
-              onCheckedChange={(checked) => 
-                handleInputChange('agreePrivacy', checked ? 'yes' : '')
-              }
-              className="mt-1"
-            />
+            <Checkbox id="agreePrivacy" checked={formData.agreePrivacy === 'yes'} onCheckedChange={checked => handleInputChange('agreePrivacy', checked ? 'yes' : '')} className="mt-1" />
             <div className="flex-1">
-              <Label 
-                htmlFor="agreePrivacy" 
-                className="text-sm text-gray-700 cursor-pointer leading-relaxed"
-              >
+              <Label htmlFor="agreePrivacy" className="text-sm text-gray-700 cursor-pointer leading-relaxed">
                 I acknowledge that I have read and agree to Leader Bank's{' '}
                 <a href="#" className="text-red-600 hover:underline font-medium">
                   Privacy Policy
@@ -171,8 +140,6 @@ const FinalSteps: React.FC<FinalStepsProps> = ({ formData, setFormData }) => {
           </div>
         </CardContent>
       </Card>
-    </div>
-  );
+    </div>;
 };
-
 export default FinalSteps;
