@@ -45,11 +45,14 @@ class InternalBankApi {
   private apiKey: string;
 
   constructor() {
-    // These will be replaced with your actual internal API endpoints
-    this.baseUrl = process.env.NODE_ENV === 'production' 
-      ? 'https://api.leaderbank.com/leader-link' 
-      : 'https://dev-api.leaderbank.com/leader-link';
-    this.apiKey = 'YOUR_INTERNAL_API_KEY'; // Replace with actual API key
+    // Production API endpoints - replace with actual internal bank URLs
+    this.baseUrl = import.meta.env.VITE_API_BASE_URL || 
+      (import.meta.env.MODE === 'production' 
+        ? 'https://api.leaderbank.com/leader-link' 
+        : 'https://dev-api.leaderbank.com/leader-link');
+    
+    // Replace with actual internal API key from environment
+    this.apiKey = import.meta.env.VITE_INTERNAL_API_KEY || 'PLACEHOLDER_API_KEY';
   }
 
   private async makeRequest<T>(
@@ -57,32 +60,45 @@ class InternalBankApi {
     options: RequestInit = {}
   ): Promise<ApiResponse<T>> {
     try {
-      const response = await fetch(`${this.baseUrl}${endpoint}`, {
+      const url = `${this.baseUrl}${endpoint}`;
+      console.log(`Making API request to: ${url}`);
+
+      const response = await fetch(url, {
         ...options,
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${this.apiKey}`,
           'X-API-Source': 'leader-link-frontend',
+          'X-Request-ID': crypto.randomUUID(),
           ...options.headers,
         },
       });
 
       if (!response.ok) {
-        throw new Error(`API Error: ${response.status} ${response.statusText}`);
+        const errorText = await response.text();
+        console.error(`API Error ${response.status}:`, errorText);
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
 
       const data = await response.json();
+      console.log('API Response received:', { endpoint, success: true });
       return { success: true, data };
+      
     } catch (error) {
-      console.error('Internal API Error:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Unknown API error';
+      console.error('Internal API Error:', { endpoint, error: errorMessage });
+      
       return { 
         success: false, 
-        error: error instanceof Error ? error.message : 'Unknown API error' 
+        error: errorMessage,
+        message: `Failed to ${endpoint.includes('POST') ? 'create' : 'retrieve'} data. Please try again or contact support.`
       };
     }
   }
 
-  // Submit form data to internal database
+  /**
+   * Submit startup application to internal database
+   */
   async submitApplication(formData: any): Promise<ApiResponse<{ submission_id: string }>> {
     const submissionPayload: SubmissionData = {
       borrower_name: formData.borrowerName || '',
@@ -104,16 +120,19 @@ class InternalBankApi {
       priority: 'medium'
     };
 
+    console.log('Submitting application:', { borrower: submissionPayload.borrower_name });
     return this.makeRequest<{ submission_id: string }>('/submissions', {
       method: 'POST',
       body: JSON.stringify(submissionPayload),
     });
   }
 
-  // Submit accelerator application
+  /**
+   * Submit accelerator-specific application
+   */
   async submitAcceleratorApplication(formData: any): Promise<ApiResponse<{ application_id: string }>> {
     if (formData.seekingType !== 'accelerator') {
-      return { success: true, data: { application_id: '' } };
+      return { success: true, data: { application_id: 'N/A' } };
     }
 
     const acceleratorPayload: AcceleratorApplication = {
@@ -129,50 +148,82 @@ class InternalBankApi {
       submitted_at: new Date().toISOString()
     };
 
+    console.log('Submitting accelerator application:', { startup: acceleratorPayload.startup_name });
     return this.makeRequest<{ application_id: string }>('/accelerator-applications', {
       method: 'POST',
       body: JSON.stringify(acceleratorPayload),
     });
   }
 
-  // Send comprehensive submission email via internal email service
+  /**
+   * Send comprehensive submission notification via internal email service
+   */
   async sendSubmissionEmail(formData: any): Promise<ApiResponse<{ email_id: string }>> {
+    const emailPayload = {
+      submission_data: formData,
+      recipients: [
+        'vitaliy.schafer@leaderbank.com',
+        'alex.guinta@leaderbank.com', 
+        'Summer.Hutchison@leaderbank.com'
+      ],
+      template: 'comprehensive-submission',
+      subject: `New ${formData.seekingType || 'funding'} Application: ${formData.borrowerName || 'Unknown Company'}`,
+      priority: 'normal'
+    };
+
+    console.log('Sending notification email:', { subject: emailPayload.subject });
     return this.makeRequest<{ email_id: string }>('/emails/submission', {
       method: 'POST',
-      body: JSON.stringify({
-        submission_data: formData,
-        recipients: [
-          'vitaliy.schafer@leaderbank.com',
-          'alex.guinta@leaderbank.com', 
-          'Summer.Hutchison@leaderbank.com'
-        ],
-        template: 'comprehensive-submission',
-        subject: `New ${formData.seekingType} Application: ${formData.borrowerName}`
-      }),
+      body: JSON.stringify(emailPayload),
     });
   }
 
-  // File upload handling for internal document management
+  /**
+   * Upload file to internal document management system
+   */
   async uploadFile(file: File, category: string): Promise<ApiResponse<{ file_url: string, file_id: string }>> {
     const formData = new FormData();
     formData.append('file', file);
     formData.append('category', category);
     formData.append('source', 'leader-link');
+    formData.append('upload_timestamp', new Date().toISOString());
 
+    console.log('Uploading file:', { name: file.name, size: file.size, category });
+    
     return this.makeRequest<{ file_url: string, file_id: string }>('/files/upload', {
       method: 'POST',
       body: formData,
       headers: {
-        // Don't set Content-Type for FormData, let browser set it
+        // Don't set Content-Type for FormData - let browser handle it
         'Authorization': `Bearer ${this.apiKey}`,
         'X-API-Source': 'leader-link-frontend',
+        'X-Request-ID': crypto.randomUUID(),
       },
     });
   }
 
-  // Health check for internal API
-  async healthCheck(): Promise<ApiResponse<{ status: string, timestamp: string }>> {
-    return this.makeRequest<{ status: string, timestamp: string }>('/health');
+  /**
+   * System health check for monitoring
+   */
+  async healthCheck(): Promise<ApiResponse<{ status: string, timestamp: string, version: string }>> {
+    return this.makeRequest<{ status: string, timestamp: string, version: string }>('/health');
+  }
+
+  /**
+   * Get all submissions for admin dashboard
+   */
+  async getSubmissions(filters?: Record<string, any>): Promise<ApiResponse<any[]>> {
+    const queryParams = filters ? new URLSearchParams(filters).toString() : '';
+    const endpoint = `/admin/submissions${queryParams ? `?${queryParams}` : ''}`;
+    
+    return this.makeRequest<any[]>(endpoint);
+  }
+
+  /**
+   * Get investor profiles for matching
+   */
+  async getInvestors(): Promise<ApiResponse<any[]>> {
+    return this.makeRequest<any[]>('/admin/investors');
   }
 }
 
