@@ -5,7 +5,6 @@ import ProcessOverview from '@/components/layout/ProcessOverview';
 import ProgressSection from '@/components/layout/ProgressSection';
 import FormContainer from '@/components/layout/FormContainer';
 import TrustIndicators from '@/components/layout/TrustIndicators';
-import AcceleratorResults from '@/components/AcceleratorResults';
 import ThankYouPage from '@/components/ThankYouPage';
 import { FormData } from '@/types/formData';
 
@@ -40,12 +39,11 @@ const MainLayout: React.FC<MainLayoutProps> = ({
   onPrevious,
   onSubmit
 }) => {
-  // Show results page for accelerator users after submission
-  if (showResults && formData?.seekingType === 'accelerator') {
+  // Show results page (simplified thank you)
+  if (showResults) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
-        <Header />
-        <AcceleratorResults formData={formData} />
+        <ThankYouPage formData={formData} />
         <TrustIndicators />
       </div>
     );
