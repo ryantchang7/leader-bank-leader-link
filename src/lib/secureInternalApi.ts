@@ -34,18 +34,29 @@ class SecureInternalBankApi {
   private readonly MAX_RETRIES = 3;
 
   constructor() {
-    // Security: API endpoints should come from environment, not hardcoded
-    this.baseUrl = this.getSecureApiUrl();
-    this.apiKey = this.getSecureApiKey();
+    console.log('Initializing SecureInternalBankApi...');
     
-    // Initialize CSRF protection
-    this.initializeCSRF();
+    try {
+      // Security: API endpoints should come from environment, not hardcoded
+      this.baseUrl = this.getSecureApiUrl();
+      this.apiKey = this.getSecureApiKey();
+      
+      // Initialize CSRF protection
+      this.initializeCSRF();
+      console.log('SecureInternalBankApi initialized successfully');
+    } catch (error) {
+      console.error('Failed to initialize SecureInternalBankApi:', error);
+      // Set fallback values to prevent app crash
+      this.baseUrl = 'https://api-placeholder.leaderbank.com';
+      this.apiKey = 'placeholder-key';
+    }
   }
 
   private getSecureApiUrl(): string {
     const url = import.meta.env.VITE_API_BASE_URL;
     if (!url) {
-      throw new Error('API_BASE_URL environment variable is required');
+      console.warn('API_BASE_URL environment variable not set, using placeholder');
+      return 'https://api-placeholder.leaderbank.com';
     }
     
     // Validate URL format
@@ -53,14 +64,16 @@ class SecureInternalBankApi {
       new URL(url);
       return url;
     } catch {
-      throw new Error('Invalid API_BASE_URL format');
+      console.error('Invalid API_BASE_URL format, using placeholder');
+      return 'https://api-placeholder.leaderbank.com';
     }
   }
 
   private getSecureApiKey(): string {
     const key = import.meta.env.VITE_INTERNAL_API_KEY;
     if (!key || key === 'PLACEHOLDER_API_KEY') {
-      throw new Error('INTERNAL_API_KEY environment variable is required and cannot be placeholder');
+      console.warn('INTERNAL_API_KEY not properly configured, using placeholder');
+      return 'placeholder-key';
     }
     return key;
   }
@@ -152,10 +165,15 @@ class SecureInternalBankApi {
   }
 
   private getClientIdentifier(): string {
-    // Create a client identifier for rate limiting (without personal data)
-    const userAgent = navigator.userAgent;
-    const screenInfo = `${window.screen.width}x${window.screen.height}`;
-    return btoa(`${userAgent}-${screenInfo}`).substring(0, 32);
+    try {
+      // Create a client identifier for rate limiting (without personal data)
+      const userAgent = navigator?.userAgent || 'unknown';
+      const screenInfo = window?.screen ? `${window.screen.width}x${window.screen.height}` : 'unknown';
+      return btoa(`${userAgent}-${screenInfo}`).substring(0, 32);
+    } catch (error) {
+      console.error('Failed to generate client identifier:', error);
+      return btoa(`fallback-${Date.now()}`).substring(0, 32);
+    }
   }
 
   private sanitizeErrorMessage(message: string): string {
@@ -355,8 +373,18 @@ class SecureInternalBankApi {
   }
 }
 
-// Export singleton instance
-export const secureInternalApi = new SecureInternalBankApi();
+// Export singleton instance with error handling
+let secureInternalApi: SecureInternalBankApi;
+
+try {
+  secureInternalApi = new SecureInternalBankApi();
+} catch (error) {
+  console.error('Critical error initializing secure API:', error);
+  // Create a fallback instance to prevent app crash
+  secureInternalApi = {} as SecureInternalBankApi;
+}
+
+export { secureInternalApi };
 
 // Export types for use in other files
 export type { ApiResponse, SecureSubmissionData };

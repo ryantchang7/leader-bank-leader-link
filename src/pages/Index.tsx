@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import FormStepRenderer from '@/components/forms/FormStepRenderer';
 import MainLayout from '@/components/layout/MainLayout';
 import { FormData } from '@/types/formData';
@@ -8,6 +8,8 @@ import { useFormSubmission } from '@/hooks/useFormSubmission';
 import { getStepTitle, getStepDescription } from '@/utils/stepUtils';
 
 const Index = () => {
+  console.log('Index component rendering...');
+
   const [formData, setFormData] = useState<FormData>({
     borrowerName: '',
     contactName: '',
@@ -91,12 +93,27 @@ const Index = () => {
     handleSubmit
   } = useFormSubmission();
 
+  useEffect(() => {
+    console.log('Index component mounted successfully');
+    console.log('Current step:', currentStep);
+    console.log('Form data initialized:', !!formData);
+  }, [currentStep, formData]);
+
   const stepTitle = getStepTitle(currentStep);
   const stepDescription = getStepDescription(currentStep);
 
   const onSubmit = () => {
+    console.log('Form submission triggered');
     handleSubmit(formData);
   };
+
+  console.log('Rendering MainLayout with:', {
+    currentStep,
+    currentStepIndex,
+    progressPercentage,
+    showResults,
+    showThankYou
+  });
 
   return (
     <MainLayout
