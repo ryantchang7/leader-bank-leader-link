@@ -1,4 +1,3 @@
-
 import { SecurityValidator, RateLimiter, FileValidator, csrfManager } from './security';
 
 interface ApiResponse<T = any> {
@@ -155,8 +154,8 @@ class SecureInternalBankApi {
   private getClientIdentifier(): string {
     // Create a client identifier for rate limiting (without personal data)
     const userAgent = navigator.userAgent;
-    const screen = `${screen.width}x${screen.height}`;
-    return btoa(`${userAgent}-${screen}`).substring(0, 32);
+    const screenInfo = `${window.screen.width}x${window.screen.height}`;
+    return btoa(`${userAgent}-${screenInfo}`).substring(0, 32);
   }
 
   private sanitizeErrorMessage(message: string): string {
