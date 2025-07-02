@@ -2,39 +2,44 @@
 import { useState } from 'react';
 import { FormData } from '@/types/formData';
 
-// Try to import secure API, fallback to regular API if not available
-let secureInternalApi: any;
-let SecurityValidator: any;
-let SessionManager: any;
-let RateLimiter: any;
+// Import APIs and security modules directly
+import { internalApi } from '@/lib/internalApi';
 
-try {
-  const secureApi = await import('@/lib/secureInternalApi');
-  secureInternalApi = secureApi.secureInternalApi;
-  
-  const security = await import('@/lib/security');
-  SecurityValidator = security.SecurityValidator;
-  SessionManager = security.SessionManager;
-  RateLimiter = security.RateLimiter;
-} catch (error) {
-  console.warn('Secure API not available, falling back to basic API:', error);
-  
-  // Fallback to the regular internal API
+// Try to import secure modules, but fall back gracefully
+let secureInternalApi: any = null;
+let SecurityValidator: any = null;
+let SessionManager: any = null;
+let RateLimiter: any = null;
+
+// Initialize secure modules function (called within the hook)
+const initializeSecureModules = async () => {
+  if (secureInternalApi !== null) return; // Already initialized
+
   try {
-    const regularApi = await import('@/lib/internalApi');
-    secureInternalApi = regularApi.internalApi;
-  } catch (fallbackError) {
-    console.error('No API available:', fallbackError);
+    const secureApi = await import('@/lib/secureInternalApi');
+    secureInternalApi = secureApi.secureInternalApi;
+    
+    const security = await import('@/lib/security');
+    SecurityValidator = security.SecurityValidator;
+    SessionManager = security.SessionManager;
+    RateLimiter = security.RateLimiter;
+    
+    console.log('Secure modules loaded successfully');
+  } catch (error) {
+    console.warn('Secure API not available, using fallbacks:', error);
+    
+    // Set fallback values
+    secureInternalApi = internalApi;
+    
+    // Create fallback security validators
+    SecurityValidator = {
+      getFormValidationSchema: () => ({ safeParse: (data: any) => ({ success: true, data }) }),
+      sanitizeInput: (input: string) => input
+    };
+    SessionManager = { validateSession: () => true };
+    RateLimiter = { canMakeRequest: () => true };
   }
-  
-  // Create fallback security validators
-  SecurityValidator = {
-    getFormValidationSchema: () => ({ safeParse: (data: any) => ({ success: true, data }) }),
-    sanitizeInput: (input: string) => input
-  };
-  SessionManager = { validateSession: () => true };
-  RateLimiter = { canMakeRequest: () => true };
-}
+};
 
 export const useFormSubmission = () => {
   const [showResults, setShowResults] = useState(false);
@@ -44,6 +49,9 @@ export const useFormSubmission = () => {
   const sendSubmissionEmail = async (submissionData: FormData) => {
     try {
       console.log('Sending submission notification email...');
+      
+      // Ensure secure modules are initialized
+      await initializeSecureModules();
       
       if (!secureInternalApi || !secureInternalApi.sendSubmissionEmail) {
         console.warn('Email service not available');
@@ -72,6 +80,9 @@ export const useFormSubmission = () => {
   const saveSubmissionToDatabase = async (submissionData: FormData) => {
     try {
       console.log('Saving submission to database...');
+      
+      // Ensure secure modules are initialized
+      await initializeSecureModules();
       
       if (!secureInternalApi || !secureInternalApi.submitApplication) {
         console.warn('Database service not available');
@@ -118,6 +129,9 @@ export const useFormSubmission = () => {
     setIsSubmitting(true);
     
     try {
+      // Initialize secure modules first
+      await initializeSecureModules();
+
       // Security checks if available
       if (SessionManager && !SessionManager.validateSession()) {
         console.warn('Session validation failed, proceeding with caution');
