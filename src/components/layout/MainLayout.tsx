@@ -39,8 +39,8 @@ const MainLayout: React.FC<MainLayoutProps> = ({
   onPrevious,
   onSubmit
 }) => {
-  // Show results page (simplified thank you)
-  if (showResults) {
+  // Show thank you page after successful submission
+  if (showThankYou && formData) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
         <ThankYouPage formData={formData} />
@@ -49,8 +49,8 @@ const MainLayout: React.FC<MainLayoutProps> = ({
     );
   }
 
-  // Show professional thank you page for non-accelerator users after submission
-  if (showThankYou && formData) {
+  // Show results page after submission
+  if (showResults && formData) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
         <ThankYouPage formData={formData} />
